@@ -1,0 +1,291 @@
+//file:noinspection GroovyAssignabilityCheck
+
+plugins {
+    id 'fabric-loom' version '1.11-SNAPSHOT'
+    id 'maven-publish'
+    // Quilt mappings
+    id 'org.quiltmc.quilt-mappings-on-loom' version '4.2.3'
+}
+
+repositories {
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/releases/"
+    }
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+    }
+    maven {
+        name = "ClothConfig"
+        url = "https://maven.shedaniel.me/"
+    }
+}
+
+ext.assertNotLoaded = { String thisScript, String otherScript ->
+    if (ext.has("${otherScript}Loaded")) throw new IllegalStateException("${thisScript}.gradle must be loaded before ${otherScript}.gradle!")
+}
+
+ext.assertLoaded = { String thisScript, String otherScript ->
+    if (!ext.has("${otherScript}Loaded")) throw new IllegalStateException("${thisScript}.gradle must be loaded after ${otherScript}.gradle!")
+}
+
+ext.extSetIfMssing = { String prop ->
+    if (!ext.has(prop)) ext.set(prop, "")
+    return project.property(prop)
+}
+
+assertNotLoaded ("depHelper", "processResources")
+assertNotLoaded ("depHelper", "publishing")
+assertNotLoaded ("depHelper", "fabricMod")
+
+final def defaultExcludedGroups = [ "net.fabricmc.fabric-api" ]
+final def defaultExcludedModules = [ ]
+
+ext.excludeGroups = { Object dep, String[] groups ->
+    for (String group_ : groups) dep.exclude(group : group_)
+}
+
+ext.excludeModules = { Object dep, String[] modules ->
+    for (String module_ : modules) dep.exclude(module : module_)
+}
+
+ext.excludeGroupsAndModules = { Object dep, String[] groups, String[] modules ->
+    excludeGroups(dep, groups)
+    excludeModules(dep, modules)
+}
+
+ext.extSetIfMssing("depends")
+ext.extSetIfMssing("suggests")
+//ext.extSetIfMssing("required_dependencies")
+//ext.extSetIfMssing("optional_dependencies")
+
+ext.putInExtProp = { String prop, String key, String value ->
+    String map = project.property(prop)
+
+    if (map != "") map += ","
+
+    map += "\n    \"$key\": \"$value\""
+    ext.set(prop, map)
+}
+
+ext.dependsMin = { String id ->
+    putInExtProp("depends", id, ">=${project.property("min_${id}_version")}")
+}
+
+ext.dependsMinMax = { String id ->
+    putInExtProp("depends", id, ">=${project.property("min_${id}_version")} <=${project.property("${id}_version")}")
+}
+
+ext.suggestsMin = { String id ->
+    putInExtProp("suggests", id, ">=${project.property("min_${id}_version")}")
+}
+
+def requiredMod(String depVer, String[] excludedGroups, String[] excludedModules) {
+    excludeGroupsAndModules(dependencies.modImplementation(depVer), excludedGroups, excludedModules)
+}
+
+ext.dependedMod = { String dep, String id, String[] excludedGroups = defaultExcludedGroups, String[] excludedModules = defaultExcludedModules ->
+    dependsMin(id)
+    requiredMod("$dep${project.property("${id}_version")}", excludedGroups, excludedModules)
+}
+
+ext.requiredApi = { String dep, String id, String[] excludedGroups = defaultExcludedGroups, String[] excludedModules = defaultExcludedModules ->
+    dependsMin(id)
+    excludeGroupsAndModules(dependencies.modApi(dep + project.property("${id}_version")), excludedGroups, excludedModules)
+}
+
+ext.bundled = {  String depVer, String[] excludedGroups = defaultExcludedGroups, String[] excludedModules = defaultExcludedModules ->
+    excludeGroupsAndModules(dependencies.include(depVer), excludedGroups, excludedModules)
+}
+
+ext.devRuntime = {  String depVer, String[] excludedGroups = defaultExcludedGroups, String[] excludedModules = defaultExcludedModules ->
+    excludeGroupsAndModules(dependencies.modLocalRuntime(depVer), excludedGroups, excludedModules)
+}
+
+ext.optionalMod = { Boolean enabled, String depVer, String[] excludedGroups = defaultExcludedGroups, String[] excludedModules = defaultExcludedModules ->
+    if (enabled) devRuntime(depVer, excludedGroups, excludedModules)
+    excludeGroupsAndModules(dependencies.modCompileOnly(depVer), excludedGroups, excludedModules)
+}
+
+ext.suggestedMod = { Boolean enabled, String dep, String id, String[] excludedGroups = defaultExcludedGroups, String[] excludedModules = defaultExcludedModules ->
+    suggestsMin(id)
+    optionalMod(enabled, dep + project.property("${id}_version"), excludedGroups, excludedModules)
+}
+
+ext.optionalApi = { Boolean enabled,  String depVer, String[] excludedGroups = defaultExcludedGroups, String[] excludedModules = defaultExcludedModules ->
+    if (enabled) devRuntime(depVer, excludedGroups, excludedModules)
+    excludeGroupsAndModules(dependencies.modCompileOnlyApi(depVer), excludedGroups, excludedModules)
+}
+
+ext.suggestedApi = { Boolean enabled, String dep, String id, String[] excludedGroups = defaultExcludedGroups, String[] excludedModules = defaultExcludedModules ->
+    suggestsMin(id)
+    optionalApi(enabled, dep + project.property("${id}_version"), excludedGroups, excludedModules)
+}
+
+ext.bundledMod = {  String dep, String[] excludedGroups = defaultExcludedGroups, String[] excludedModules = defaultExcludedModules ->
+    requiredMod(dep, excludedGroups, excludedModules)
+    bundled(dep, excludedGroups, excludedModules)
+}
+
+ext.bundledApi = {  String dep, String[] excludedGroups = defaultExcludedGroups, String[] excludedModules = defaultExcludedModules ->
+    requiredMod(dep, excludedGroups, excludedModules)
+    bundled(dep, excludedGroups, excludedModules)
+}
+
+String unPunctuated = project.mod_name.replaceAll("[',!?]", "")
+
+project.ext {
+    ModId = unPunctuated.replace(" ", "")
+    mod_id = unPunctuated.toLowerCase().replace(" ", "_")
+    archives_base_name = project.ext.mod_id.replace("_", "-")
+
+    minecraft_version_list = project.minecraft_versions.split(",")
+    min_minecraft_version = project.ext.minecraft_version_list[0]
+    min_minecraft_semver = toSemver(project.ext.min_minecraft_version, getMajorVersion(project.ext.min_minecraft_version))
+    minecraft_version = project.ext.minecraft_version_list[project.ext.minecraft_version_list.size() - 1]
+    minecraft_semver = toSemver(project.ext.minecraft_version, getMajorVersion(project.ext.minecraft_version))
+
+    mc_ver_suffix = "+MC" + ((project.ext.minecraft_version_list.size() > 1 ?
+            project.ext.min_minecraft_version + "-" : "") +
+            project.ext.minecraft_version)
+}
+
+static def toSemver(String baseVersion, String majorVersion) {
+    def length = baseVersion.length()
+    for (int i = 0; i < length; i++) {
+        char c = baseVersion.charAt(i);
+        switch (i) {
+            case 0: if (c != (char)'1') return snapshotToSemver(baseVersion, i, majorVersion); break
+            case 1: if (c != (char)'.') return snapshotToSemver(baseVersion, i, majorVersion); break
+            case 2||3: if (!(""+c).matches("\\d")) throw illegalVersionFormatException(); break
+            default: if (c == (char)'-') return betaOrRcToSemver(baseVersion, i); break
+        }
+    }
+    return baseVersion
+}
+
+static def snapshotToSemver(baseVersion, i, majorVersion) {
+    def length = baseVersion.length()
+    if (length != 6) throw illegalVersionFormatException()
+    StringBuilder snapShotSemver = majorVersion + "-alpha."
+    for (int j = 0; j < length; j++) {
+        char c = baseVersion.charAt(i)
+        switch (j) {
+            case 2:
+                if (c != (char)'w') throw illegalVersionFormatException()
+                else snapShotSemver.append("."); break
+            case 5:
+                if (c != (char)'a') throw illegalVersionFormatException()
+                else snapShotSemver.append(".a"); break
+            default:
+                if (!(""+c).matches("\\d")) throw illegalVersionFormatException()
+                snapShotSemver.append(c); break
+        }
+    }
+    return snapShotSemver.toString()
+}
+
+static def betaOrRcToSemver(baseVersion, i) {
+    ++i
+    def endPre = i + 3
+    if (baseVersion.substring(i, endPre) == "pre") return blindReplace(baseVersion, i, endPre, "beta.")
+    else {
+        def endRc = i + 2
+        if (baseVersion.substring(i, endRc) == "rc") return blindReplace(baseVersion, i, endRc, "rc.")
+        else throw illegalVersionFormatException()
+    }
+}
+
+static def getMajorVersion(String version) {
+    return version.split(".", 2)[0];
+}
+
+static def blindReplace(string, start, end, replacement) {
+    return string.substring(0, start) + replacement + string.substring(end)
+}
+
+static def illegalVersionFormatException() {
+    return new IllegalStateException("Illegal version format!")
+}
+
+assertNotLoaded("fabricMod", "processResources")
+ext.set("fabricModLoaded", true)
+
+sourceCompatibility = project.hasProperty("javaSourceCompatibility") ? project.javaSourceCompatibility : JavaVersion.VERSION_17
+targetCompatibility = project.hasProperty("javaTargetCompatibility") ? project.javaTargetCompatibility : JavaVersion.VERSION_17
+
+project.version = project.mod_version + project.ext.mc_ver_suffix
+archivesBaseName = project.ext.archives_base_name
+
+project.group = project.maven_group
+
+configurations.all {
+    resolutionStrategy {
+        force("net.fabricmc:fabric-loader:$project.fabricloader_version")
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:$project.ext.minecraft_version"
+//    mappings(loom.layered {
+//        officialMojangMappings()
+//        mappings "org.quiltmc:quilt-mappings:$project.ext.minecraft_version+build.$project.quilt_build_number:intermediary-v2"
+//    })
+
+//    mappings(loom.layered {
+//        addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:1.19.3+build.1:intermediary-v2"))
+//
+//    })
+    mappings "org.quiltmc:quilt-mappings:$project.ext.minecraft_version+build.$project.quilt_build_number:intermediary-v2"
+    modImplementation "net.fabricmc:fabric-loader:$project.fabricloader_version"
+
+    dependsMin("fabricloader")
+    dependsMinMax("minecraft")
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 17
+}
+
+java {
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
+
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+jar {
+    from "LICENSE"
+}
+
+ext.set("processResourcesLoaded", true)
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mod_id", project.mod_id
+
+    filesMatching("fabric.mod.json") {
+        expand (project.properties)
+    }
+}
+
+dependencies {
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+	dependedMod "net.fabricmc.fabric-api:fabric-api:", "fabric", null, null
+
+    suggestedMod true, "me.shedaniel.cloth:cloth-config-fabric:", "cloth_config"
+
+	// optional, json api only
+	devRuntime "com.terraformersmc:modmenu:$project.modmenu_version"
+
+	// dev convenience
+	// devRuntime "net.dblsaiko:winwonders:$project.winwonders_version"
+	devRuntime "maven.modrinth:global-options:$project.global_options_version"
+}
+
