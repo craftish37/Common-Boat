@@ -45,6 +45,15 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                     .setSaveConsumer(v -> cfg.velocityMultiplier = v)
                     .build());
 
+            general.addEntry(entryBuilder
+                    .startDoubleField(net.minecraft.text.Text.literal("Boat Step Height"), cfg.boatStepHeight)
+                    .setDefaultValue(1.0)
+                    .setMin(0.0)
+                    .setMax(2.0)
+                    .setTooltip(net.minecraft.text.Text.literal("Client-side only. May cause rubber-banding on servers. Vanilla is 0."))
+                    .setSaveConsumer(v -> cfg.boatStepHeight = v)
+                    .build());
+
             return builder.build();
         };
     }

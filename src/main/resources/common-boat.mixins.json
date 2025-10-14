@@ -3,9 +3,10 @@
   "minVersion": "0.8",
   "package": "net.craftish37.commonboat.mixin",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [
+  "client": [
     "AbstractBoatEntityMixin",
-    "EntityMixin"
+    "EntityMixin",
+    "EntityStepMixin"
   ],
   "injectors": {
     "defaultRequire": 1

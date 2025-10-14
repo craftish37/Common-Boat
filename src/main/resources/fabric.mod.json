@@ -21,9 +21,9 @@
   },
   "license": "GPLv3+",
   "icon": "assets/${mod_id}/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
-    "main": [
+    "client": [
       "net.craftish37.commonboat.CommonBoat"
     ],
     "modmenu": [

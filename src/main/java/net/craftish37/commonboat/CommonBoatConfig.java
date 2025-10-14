@@ -8,9 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class CommonBoatConfig {
-    public boolean enabled = true;
+    public boolean enabled = false;
     public double slipperiness = 0.989;
     public double velocityMultiplier = 1.1;
+    public double boatStepHeight = 0.5;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File FILE = new File("config/commonboat.json");
@@ -25,7 +26,6 @@ public class CommonBoatConfig {
         }
         return new CommonBoatConfig();
     }
-
     public void save() {
         FILE.getParentFile().mkdirs();
         try (FileWriter writer = new FileWriter(FILE)) {

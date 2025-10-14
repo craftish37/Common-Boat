@@ -15,7 +15,6 @@ public abstract class EntityMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;getVelocityMultiplier()F"))
     private float getVelocityMultiplier(Block target) {
         if (!ConfigAccess.get().enabled) return target.getVelocityMultiplier();
-
         Entity entity = ((Entity)(Object)this);
         if (entity instanceof AbstractBoatEntity && target instanceof FluidBlock) {
             return (float) ConfigAccess.get().velocityMultiplier;
