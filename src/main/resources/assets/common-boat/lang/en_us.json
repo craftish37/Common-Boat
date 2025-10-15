@@ -20,6 +20,9 @@
   "text.commonboat.config.step_height_value": "Step Height",
   "text.commonboat.config.step_height_value.tooltip": "Overrides step height for boats. Vanilla is 0.",
 
+  "text.commonboat.config.remove_air_drag": "Remove Air Drag",
+  "text.commonboat.config.remove_air_drag.tooltip": "Prevents the boat from slowing down while in the air.",
+
   "text.commonboat.config.enable_easter_eggs": "Enable Easter Eggs",
   "text.commonboat.config.enable_easter_eggs.tooltip": "0w0",
 

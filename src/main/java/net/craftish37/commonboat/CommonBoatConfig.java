@@ -13,6 +13,7 @@ public class CommonBoatConfig {
     public boolean slipperinessEnabled = true;
     public boolean velocityMultiplierEnabled = true;
     public boolean boatStepHeightEnabled = true;
+    public boolean removeAirDrag = true;
 
     public double slipperiness = 0.989;
     public double velocityMultiplier = 1.1;

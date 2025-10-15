@@ -6,7 +6,9 @@
   "client": [
     "AbstractBoatEntityMixin",
     "EntityMixin",
-    "EntityStepMixin"
+    "EntityStepMixin",
+    "BoatTransitionMixin",
+    "AbstractBoatEntityAirDragMixin"
   ],
   "injectors": {
     "defaultRequire": 1

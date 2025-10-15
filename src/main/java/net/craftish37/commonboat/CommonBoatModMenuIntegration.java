@@ -71,6 +71,13 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                     .build());
 
             general.addEntry(entryBuilder
+                    .startBooleanToggle(Text.translatable("text.commonboat.config.remove_air_drag"), cfg.removeAirDrag)
+                    .setDefaultValue(false)
+                    .setTooltip(Text.translatable("text.commonboat.config.remove_air_drag.tooltip"))
+                    .setSaveConsumer(v -> cfg.removeAirDrag = v)
+                    .build());
+
+            general.addEntry(entryBuilder
                     .startBooleanToggle(Text.translatable("text.commonboat.config.enable_easter_eggs"), cfg.easterEggsEnabled)
                     .setDefaultValue(false)
                     .setTooltip(Text.translatable("text.commonboat.config.enable_easter_eggs.tooltip"))
