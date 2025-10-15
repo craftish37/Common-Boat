@@ -8,10 +8,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class CommonBoatConfig {
-    public boolean enabled = false;
+    public boolean enabled = true;
+
+    public boolean slipperinessEnabled = true;
+    public boolean velocityMultiplierEnabled = true;
+    public boolean boatStepHeightEnabled = true;
+
     public double slipperiness = 0.989;
     public double velocityMultiplier = 1.1;
-    public double boatStepHeight = 0.5;
+    public double boatStepHeight = 1.0;
+
+    public boolean easterEggsEnabled = true;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File FILE = new File("config/commonboat.json");

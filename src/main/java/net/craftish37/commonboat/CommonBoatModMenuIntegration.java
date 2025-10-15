@@ -6,6 +6,7 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.text.Text;
 
 public class CommonBoatModMenuIntegration implements ModMenuApi {
     @Override
@@ -14,44 +15,66 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
             CommonBoatConfig cfg = ConfigAccess.get();
             ConfigBuilder builder = ConfigBuilder.create()
                     .setParentScreen(parent)
-                    .setTitle(net.minecraft.text.Text.literal("Common-Boat Config"))
+                    .setTitle(Text.translatable("text.commonboat.config.title"))
                     .setSavingRunnable(ConfigAccess::save);
 
-            ConfigCategory general = builder.getOrCreateCategory(net.minecraft.text.Text.literal("General"));
+            ConfigCategory general = builder.getOrCreateCategory(Text.translatable("text.commonboat.config.category.general"));
             ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
             general.addEntry(entryBuilder
-                    .startBooleanToggle(net.minecraft.text.Text.literal("Enabled"), cfg.enabled)
-                    .setDefaultValue(true)
-                    .setTooltip(net.minecraft.text.Text.literal("Toggle to enable or disable Common-Boat entirely"))
+                    .startBooleanToggle(Text.translatable("text.commonboat.config.enable_mod"), cfg.enabled)
+                    .setDefaultValue(false)
+                    .setTooltip(Text.translatable("text.commonboat.config.enable_mod.tooltip"))
                     .setSaveConsumer(v -> cfg.enabled = v)
                     .build());
 
             general.addEntry(entryBuilder
-                    .startDoubleField(net.minecraft.text.Text.literal("Slipperiness"), cfg.slipperiness)
+                    .startBooleanToggle(Text.translatable("text.commonboat.config.enable_slipperiness"), cfg.slipperinessEnabled)
+                    .setDefaultValue(false)
+                    .setSaveConsumer(v -> cfg.slipperinessEnabled = v)
+                    .build());
+            general.addEntry(entryBuilder
+                    .startDoubleField(Text.translatable("text.commonboat.config.slipperiness_value"), cfg.slipperiness)
                     .setDefaultValue(0.989)
-                    .setMin(0.8)
+                    .setMin(0.1)
                     .setMax(1.0)
-                    .setTooltip(net.minecraft.text.Text.literal("Adjust slipperiness for boats on ice"))
+                    .setTooltip(Text.translatable("text.commonboat.config.slipperiness_value.tooltip"))
                     .setSaveConsumer(v -> cfg.slipperiness = v)
                     .build());
 
             general.addEntry(entryBuilder
-                    .startDoubleField(net.minecraft.text.Text.literal("Velocity Multiplier"), cfg.velocityMultiplier)
+                    .startBooleanToggle(Text.translatable("text.commonboat.config.enable_velocity"), cfg.velocityMultiplierEnabled)
+                    .setDefaultValue(false)
+                    .setSaveConsumer(v -> cfg.velocityMultiplierEnabled = v)
+                    .build());
+            general.addEntry(entryBuilder
+                    .startDoubleField(Text.translatable("text.commonboat.config.velocity_value"), cfg.velocityMultiplier)
                     .setDefaultValue(1.1)
                     .setMin(0.1)
                     .setMax(2.0)
-                    .setTooltip(net.minecraft.text.Text.literal("Adjust velocity multiplier for boats in water"))
+                    .setTooltip(Text.translatable("text.commonboat.config.velocity_value.tooltip"))
                     .setSaveConsumer(v -> cfg.velocityMultiplier = v)
                     .build());
 
             general.addEntry(entryBuilder
-                    .startDoubleField(net.minecraft.text.Text.literal("Boat Step Height"), cfg.boatStepHeight)
-                    .setDefaultValue(1.0)
+                    .startBooleanToggle(Text.translatable("text.commonboat.config.enable_step_height"), cfg.boatStepHeightEnabled)
+                    .setDefaultValue(false)
+                    .setSaveConsumer(v -> cfg.boatStepHeightEnabled = v)
+                    .build());
+            general.addEntry(entryBuilder
+                    .startDoubleField(Text.translatable("text.commonboat.config.step_height_value"), cfg.boatStepHeight)
+                    .setDefaultValue(0.5)
                     .setMin(0.0)
-                    .setMax(2.0)
-                    .setTooltip(net.minecraft.text.Text.literal("Client-side only. May cause rubber-banding on servers. Vanilla is 0."))
+                    .setMax(5.0)
+                    .setTooltip(Text.translatable("text.commonboat.config.step_height_value.tooltip"))
                     .setSaveConsumer(v -> cfg.boatStepHeight = v)
+                    .build());
+
+            general.addEntry(entryBuilder
+                    .startBooleanToggle(Text.translatable("text.commonboat.config.enable_easter_eggs"), cfg.easterEggsEnabled)
+                    .setDefaultValue(false)
+                    .setTooltip(Text.translatable("text.commonboat.config.enable_easter_eggs.tooltip"))
+                    .setSaveConsumer(v -> cfg.easterEggsEnabled = v)
                     .build());
 
             return builder.build();

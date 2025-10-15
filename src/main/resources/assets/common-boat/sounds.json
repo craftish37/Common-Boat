@@ -1,0 +1,7 @@
+{
+  "easteregg.disable": {
+    "sounds": [
+      "common-boat:easteregg/handbrake"
+    ]
+  }
+}

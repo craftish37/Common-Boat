@@ -1,4 +1,28 @@
 {
   "category.commonboat": "Cmmonbowt",
-  "key.commonboat.toggle": "TogGL Cmmonbowt PweaSe :3"
+  "key.commonboat.toggle": "TogGL Cmmonbowt PweaSe :3",
+
+  "text.commonboat.config.title": "Cmmonbowt Config",
+  "text.commonboat.config.category.general": "General",
+
+  "text.commonboat.config.enable_mod": "enabl Mod",
+  "text.commonboat.config.enable_mod.tooltip": "mastr toGGL to enabl OR DIsabl Cmmonbowt intirele",
+
+  "text.commonboat.config.enable_slipperiness": "enabl slipPERInes oVRride",
+  "text.commonboat.config.slipperiness_value": "slipPERInes Meow",
+  "text.commonboat.config.slipperiness_value.tooltip": "oVRrideZ slipPERInes fr boATZ?? ON ISSSsss",
+
+  "text.commonboat.config.enable_velocity": "enabl velOcitie multipliR oVRride",
+  "text.commonboat.config.velocity_value": "velOcitie multipliR Meow",
+  "text.commonboat.config.velocity_value.tooltip": "oVRrideZ velOcitie multipliR fr boATZ?? im watr",
+
+  "text.commonboat.config.enable_step_height": "enabl STEP HEIte oVRride",
+  "text.commonboat.config.step_height_value": "STEP HEIte Meow",
+  "text.commonboat.config.step_height_value.tooltip": "oVRrideZ STEP HEIte fr boATZ??. Vanuwla r 0",
+
+  "text.commonboat.config.enable_easter_eggs": "enabl eastr EGgz",
+  "text.commonboat.config.enable_easter_eggs.tooltip": "nename nenajyuunanado no neRABI de nEKUNAKU ENanaku nenahAN nenadai nenNAku neraBETE neganAgame :3c",
+
+  "text.commonboat.status.enabled": "Cmmonbowt enabld",
+  "text.commonboat.status.disabled": "Cmmonbowt disubLd"
 }

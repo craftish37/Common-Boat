@@ -1,6 +1,7 @@
 package net.craftish37.commonboat.mixin;
 
 import net.craftish37.commonboat.ConfigAccess;
+import net.craftish37.commonboat.CommonBoatConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.vehicle.AbstractBoatEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,8 +16,9 @@ public class EntityStepMixin {
     )
     private float modifyBoatStepHeight(Entity instance) {
         if (instance instanceof AbstractBoatEntity) {
-            if (ConfigAccess.get().enabled) {
-                return (float) ConfigAccess.get().boatStepHeight;
+            CommonBoatConfig cfg = ConfigAccess.get();
+            if (cfg.enabled && cfg.boatStepHeightEnabled) {
+                return (float) cfg.boatStepHeight;
             }
         }
         return instance.getStepHeight();

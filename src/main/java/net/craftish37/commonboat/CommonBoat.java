@@ -12,6 +12,7 @@ public class CommonBoat implements ClientModInitializer {
     private static KeyBinding toggleKey;
     @Override
     public void onInitializeClient() {
+        Sounds.registerSounds();
         ConfigAccess.get();
         toggleKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.commonboat.toggle",
@@ -22,13 +23,15 @@ public class CommonBoat implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (toggleKey.wasPressed()) {
                 CommonBoatConfig cfg = ConfigAccess.get();
+                boolean wasEnabled = cfg.enabled;
                 cfg.enabled = !cfg.enabled;
                 cfg.save();
                 if (client.player != null) {
-                    client.player.sendMessage(
-                            Text.literal("Common Boat " + (cfg.enabled ? "Enabled" : "Disabled")),
-                            true
-                    );
+                    if (wasEnabled && cfg.easterEggsEnabled) {
+                        client.player.playSound(Sounds.EASTER_EGG_DISABLE_SOUND);
+                    }
+                    String messageKey = cfg.enabled ? "text.commonboat.status.enabled" : "text.commonboat.status.disabled";
+                    client.player.sendMessage(Text.translatable(messageKey), true);
                 }
             }
         });

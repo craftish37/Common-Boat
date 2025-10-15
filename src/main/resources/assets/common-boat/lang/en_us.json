@@ -1,4 +1,28 @@
 {
   "category.commonboat": "Common-Boat",
-  "key.commonboat.toggle": "Toggle Common-Boat"
+  "key.commonboat.toggle": "Toggle Common-Boat",
+
+  "text.commonboat.config.title": "Common-Boat Config",
+  "text.commonboat.config.category.general": "General",
+
+  "text.commonboat.config.enable_mod": "Enable Mod",
+  "text.commonboat.config.enable_mod.tooltip": "Master toggle to enable or disable Common-Boat entirely.",
+
+  "text.commonboat.config.enable_slipperiness": "Enable Slipperiness Override",
+  "text.commonboat.config.slipperiness_value": "Slipperiness",
+  "text.commonboat.config.slipperiness_value.tooltip": "Overrides slipperiness for boats on ice.",
+
+  "text.commonboat.config.enable_velocity": "Enable Velocity Multiplier Override",
+  "text.commonboat.config.velocity_value": "Velocity Multiplier",
+  "text.commonboat.config.velocity_value.tooltip": "Overrides velocity multiplier for boats in water.",
+
+  "text.commonboat.config.enable_step_height": "Enable Step Height Override",
+  "text.commonboat.config.step_height_value": "Step Height",
+  "text.commonboat.config.step_height_value.tooltip": "Overrides step height for boats. Vanilla is 0.",
+
+  "text.commonboat.config.enable_easter_eggs": "Enable Easter Eggs",
+  "text.commonboat.config.enable_easter_eggs.tooltip": "0w0",
+
+  "text.commonboat.status.enabled": "Common-Boat Enabled",
+  "text.commonboat.status.disabled": "Common-Boat Disabled"
 }

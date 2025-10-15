@@ -3,6 +3,7 @@ package net.craftish37.commonboat.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.vehicle.AbstractBoatEntity;
 import net.craftish37.commonboat.ConfigAccess;
+import net.craftish37.commonboat.CommonBoatConfig;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,8 +12,9 @@ import org.spongepowered.asm.mixin.injection.At;
 public class AbstractBoatEntityMixin {
     @ModifyReturnValue(method = "getNearbySlipperiness", at = @At("RETURN"))
     private float modifySlipperiness(float original) {
-        if (!ConfigAccess.get().enabled) return original;
-        double minSlip = ConfigAccess.get().slipperiness;
+        CommonBoatConfig cfg = ConfigAccess.get();
+        if (!cfg.enabled || !cfg.slipperinessEnabled) return original;
+        double minSlip = cfg.slipperiness;
         return MathHelper.clamp(original, (float) minSlip, 1.0F);
     }
 }
