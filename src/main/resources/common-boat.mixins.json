@@ -9,7 +9,8 @@
     "EntityStepMixin",
     "BoatTransitionMixin",
     "AbstractBoatEntityAirDragMixin",
-    "BoatJumpMixin"
+    "BoatJumpMixin",
+    "TropicalFishEntityAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

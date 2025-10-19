@@ -4,6 +4,8 @@
 
   "text.commonboat.config.title": "Common-Boat Config",
   "text.commonboat.config.category.general": "General",
+  "text.commonboat.config.category.values": "Values",
+  "text.commonboat.config.category.eastereggs": "Easter Eggs",
 
   "text.commonboat.config.enable_mod": "Enable Mod",
   "text.commonboat.config.enable_mod.tooltip": "Master toggle to enable or disable Common-Boat entirely.",
@@ -25,6 +27,10 @@
 
   "text.commonboat.config.enable_easter_eggs": "Enable Easter Eggs",
   "text.commonboat.config.enable_easter_eggs.tooltip": "0w0",
+
+  "text.commonboat.config.enable_handbrake": "Enable Handbrake",
+  "text.commonboat.config.enable_flappybird": "Enable Flappy Bird",
+  "text.commonboat.config.enable_lefischeauchocolat": "Enable Le Fische Au Chocolat",
 
   "text.commonboat.status.enabled": "Common-Boat Enabled",
   "text.commonboat.status.disabled": "Common-Boat Disabled"

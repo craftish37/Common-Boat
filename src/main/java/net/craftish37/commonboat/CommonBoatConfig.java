@@ -20,6 +20,9 @@ public class CommonBoatConfig {
     public double boatStepHeight = 1.0;
 
     public boolean easterEggsEnabled = true;
+    public boolean handbrakeEnabled = true;
+    public boolean flappyBirdEnabled = true;
+    public boolean leFischeAuChocolatEnabled = true;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File FILE = new File("config/commonboat.json");

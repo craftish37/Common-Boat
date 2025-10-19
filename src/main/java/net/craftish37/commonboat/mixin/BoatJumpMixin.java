@@ -23,7 +23,7 @@ public class BoatJumpMixin {
         ClientPlayerEntity player = (ClientPlayerEntity) (Object) this;
         CommonBoatConfig cfg = ConfigAccess.get();
 
-        if (cfg.enabled && cfg.easterEggsEnabled) {
+        if (cfg.enabled && cfg.easterEggsEnabled && cfg.flappyBirdEnabled) {
             if (player.getVehicle() instanceof AbstractBoatEntity boat) {
                 boolean canJump = boat.getVelocity().y <= 0.05;
 

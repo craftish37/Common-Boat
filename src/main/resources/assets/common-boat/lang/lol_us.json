@@ -3,7 +3,9 @@
   "key.commonboat.toggle": "TogGL Cmmonbowt PweaSe :3",
 
   "text.commonboat.config.title": "Cmmonbowt Config",
-  "text.commonboat.config.category.general": "General",
+  "text.commonboat.config.category.general": "Genrwal",
+  "text.commonboat.config.category.values": "VAhHlHueS",
+  "text.commonboat.config.category.eastereggs": "eastr EGgz",
 
   "text.commonboat.config.enable_mod": "enabl Mod",
   "text.commonboat.config.enable_mod.tooltip": "mastr toGGL to enabl OR DIsabl Cmmonbowt intirele",
@@ -25,6 +27,10 @@
 
   "text.commonboat.config.enable_easter_eggs": "enabl eastr EGgz",
   "text.commonboat.config.enable_easter_eggs.tooltip": "nename nenajyuunanado no neRABI de nEKUNAKU ENanaku nenahAN nenadai nenNAku neraBETE neganAgame :3c",
+
+  "text.commonboat.config.enable_handbrake": "enabl hundbwaaaKE",
+  "text.commonboat.config.enable_flappybird": "enabl FlaP FlaP BIrB",
+  "text.commonboat.config.enable_lefischeauchocolat": "enabl CrAFtfisH O chockylAT",
 
   "text.commonboat.status.enabled": "Cmmonbowt enabld",
   "text.commonboat.status.disabled": "Cmmonbowt disubLd"

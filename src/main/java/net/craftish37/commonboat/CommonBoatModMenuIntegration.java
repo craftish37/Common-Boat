@@ -19,6 +19,7 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                     .setSavingRunnable(ConfigAccess::save);
 
             ConfigCategory general = builder.getOrCreateCategory(Text.translatable("text.commonboat.config.category.general"));
+            ConfigCategory values = builder.getOrCreateCategory(Text.translatable("text.commonboat.config.category.values"));
             ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
             general.addEntry(entryBuilder
@@ -33,7 +34,7 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                     .setDefaultValue(false)
                     .setSaveConsumer(v -> cfg.slipperinessEnabled = v)
                     .build());
-            general.addEntry(entryBuilder
+            values.addEntry(entryBuilder
                     .startDoubleField(Text.translatable("text.commonboat.config.slipperiness_value"), cfg.slipperiness)
                     .setDefaultValue(0.989)
                     .setMin(0.1)
@@ -47,7 +48,7 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                     .setDefaultValue(false)
                     .setSaveConsumer(v -> cfg.velocityMultiplierEnabled = v)
                     .build());
-            general.addEntry(entryBuilder
+            values.addEntry(entryBuilder
                     .startDoubleField(Text.translatable("text.commonboat.config.velocity_value"), cfg.velocityMultiplier)
                     .setDefaultValue(1.1)
                     .setMin(0.1)
@@ -61,7 +62,7 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                     .setDefaultValue(false)
                     .setSaveConsumer(v -> cfg.boatStepHeightEnabled = v)
                     .build());
-            general.addEntry(entryBuilder
+            values.addEntry(entryBuilder
                     .startDoubleField(Text.translatable("text.commonboat.config.step_height_value"), cfg.boatStepHeight)
                     .setDefaultValue(0.5)
                     .setMin(0.0)
@@ -83,6 +84,24 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                     .setTooltip(Text.translatable("text.commonboat.config.enable_easter_eggs.tooltip"))
                     .setSaveConsumer(v -> cfg.easterEggsEnabled = v)
                     .build());
+            if (cfg.easterEggsEnabled) {
+                ConfigCategory eastereggs = builder.getOrCreateCategory(Text.translatable("text.commonboat.config.category.eastereggs"));
+                eastereggs.addEntry(entryBuilder
+                        .startBooleanToggle(Text.translatable("text.commonboat.config.enable_handbrake"), cfg.handbrakeEnabled)
+                        .setDefaultValue(false)
+                        .setSaveConsumer(v -> cfg.handbrakeEnabled = v)
+                        .build());
+                eastereggs.addEntry(entryBuilder
+                        .startBooleanToggle(Text.translatable("text.commonboat.config.enable_flappybird"), cfg.flappyBirdEnabled)
+                        .setDefaultValue(false)
+                        .setSaveConsumer(v -> cfg.flappyBirdEnabled = v)
+                        .build());
+                eastereggs.addEntry(entryBuilder
+                        .startBooleanToggle(Text.translatable("text.commonboat.config.enable_lefischeauchocolat"), cfg.leFischeAuChocolatEnabled)
+                        .setDefaultValue(false)
+                        .setSaveConsumer(v -> cfg.leFischeAuChocolatEnabled = v)
+                        .build());
+            }
 
             return builder.build();
         };
