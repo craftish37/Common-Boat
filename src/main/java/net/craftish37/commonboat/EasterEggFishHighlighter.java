@@ -1,11 +1,16 @@
 package net.craftish37.commonboat;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.DepthTestFunction;
 import net.craftish37.commonboat.mixin.TropicalFishEntityAccessor;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.render.*;
+import net.minecraft.client.util.BufferAllocator;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.TropicalFishEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
@@ -43,7 +48,7 @@ public class EasterEggFishHighlighter {
         if (client.world == null || client.player == null) return;
         Vec3d cameraPos = client.gameRenderer.getCamera().getPos();
         VertexConsumerProvider.Immediate provider = client.getBufferBuilders().getEntityVertexConsumers();
-        VertexConsumer consumer = provider.getBuffer(RenderLayer.getDebugLineStrip(1));
+        VertexConsumer consumer = provider.getBuffer(RenderLayer.getLineStrip());
         for (Entity entity : client.world.getOtherEntities(client.player, client.player.getBoundingBox().expand(48))) {
             if (!(entity instanceof TropicalFishEntity fish)) continue;
             int variant = fish.getDataTracker().get(TropicalFishEntityAccessor.getVariantTrackedData());
@@ -52,6 +57,12 @@ public class EasterEggFishHighlighter {
         }
         provider.draw();
     }
+    private static final RenderPipeline FILLED_THROUGH_WALLS = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.POSITION_COLOR_SNIPPET)
+            .withLocation(Identifier.of("pipeline/debug_filled_box_through_walls"))
+            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+            .build()
+    );
+
     private static void drawBoxOutline(MatrixStack matrices, VertexConsumer consumer, Vec3d cameraPos, Box box) {
         Matrix4f matrix = matrices.peek().getPositionMatrix();
 
@@ -78,6 +89,7 @@ public class EasterEggFishHighlighter {
         line(consumer, matrix, minX, minY, maxZ, minX, maxY, maxZ);
     }
     private static void line(VertexConsumer consumer, Matrix4f matrix, double x1, double y1, double z1, double x2, double y2, double z2) {
+        new BufferBuilder((BufferAllocator) consumer, FILLED_THROUGH_WALLS.getVertexFormatMode(), FILLED_THROUGH_WALLS.getVertexFormat());
         consumer.vertex(matrix, (float) x1, (float) y1, (float) z1).color(1.0F, 1.0F, 1.0F, 1.0F);
         consumer.vertex(matrix, (float) x2, (float) y2, (float) z2).color(1.0F, 1.0F, 1.0F, 1.0F);
     }
