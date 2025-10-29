@@ -37,13 +37,13 @@ public class EasterEggFishHighlighter {
             234882305,  // Emperor Red Snapper
             235340288   // Red Lipped Blenny
     );
-    public static void onWorldRender(MatrixStack matrices) {
+    public static void onWorldRender(@org.jetbrains.annotations.Nullable MatrixStack matrices) {
         var cfg = ConfigAccess.get();
         if (!cfg.enabled || !cfg.easterEggsEnabled || !cfg.leFischeAuChocolatEnabled) return;
-        if (client.world == null || client.player == null) return;
+        if (client.world == null || client.player == null || matrices == null) return;
         Vec3d cameraPos = client.gameRenderer.getCamera().getPos();
         VertexConsumerProvider.Immediate provider = client.getBufferBuilders().getEntityVertexConsumers();
-        VertexConsumer consumer = provider.getBuffer(RenderLayer.getDebugLineStrip(1));
+        VertexConsumer consumer = provider.getBuffer(RenderLayer.getLines());
         for (Entity entity : client.world.getOtherEntities(client.player, client.player.getBoundingBox().expand(48))) {
             if (!(entity instanceof TropicalFishEntity fish)) continue;
             int variant = fish.getDataTracker().get(TropicalFishEntityAccessor.getVariantTrackedData());
@@ -78,7 +78,7 @@ public class EasterEggFishHighlighter {
         line(consumer, matrix, minX, minY, maxZ, minX, maxY, maxZ);
     }
     private static void line(VertexConsumer consumer, Matrix4f matrix, double x1, double y1, double z1, double x2, double y2, double z2) {
-        consumer.vertex(matrix, (float) x1, (float) y1, (float) z1).color(1.0F, 1.0F, 1.0F, 1.0F);
-        consumer.vertex(matrix, (float) x2, (float) y2, (float) z2).color(1.0F, 1.0F, 1.0F, 1.0F);
+        consumer.vertex(matrix, (float) x1, (float) y1, (float) z1).color(1.0F, 1.0F, 1.0F, 1.0F).normal(2.0F, 2.0F, 2.0F);
+        consumer.vertex(matrix, (float) x2, (float) y2, (float) z2).color(1.0F, 1.0F, 1.0F, 1.0F).normal(2.0F, 2.0F, 2.0F);
     }
 }
