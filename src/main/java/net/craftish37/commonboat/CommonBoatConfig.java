@@ -18,11 +18,14 @@ public class CommonBoatConfig {
     public double slipperiness = 0.989;
     public double velocityMultiplier = 1.1;
     public double boatStepHeight = 1.0;
+    public double maxSpeed = -1.0;
+    public double maxJumpHeight = -1.0;
 
     public boolean easterEggsEnabled = true;
     public boolean handbrakeEnabled = true;
     public boolean flappyBirdEnabled = true;
     public boolean leFischeAuChocolatEnabled = true;
+    public double leFischeAuChocolatThiccness = 1.0;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File FILE = new File("config/commonboat.json");

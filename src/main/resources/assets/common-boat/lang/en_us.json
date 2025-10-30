@@ -25,12 +25,19 @@
   "text.commonboat.config.remove_air_drag": "Remove Air Drag",
   "text.commonboat.config.remove_air_drag.tooltip": "Prevents the boat from slowing down while in the air.",
 
+  "text.commonboat.config.max_jump_height": "Max Jump Height",
+  "text.commonboat.config.max_jump_height.tooltip": "Limits the Flappy Bird jump height. Set to -1 to disable.",
+  "text.commonboat.config.max_speed": "Max Speed",
+  "text.commonboat.config.max_speed.tooltip": "Limits the speed of the boat. Set to -1 to disable.",
+
   "text.commonboat.config.enable_easter_eggs": "Enable Easter Eggs",
   "text.commonboat.config.enable_easter_eggs.tooltip": "0w0",
 
   "text.commonboat.config.enable_handbrake": "Enable Handbrake",
   "text.commonboat.config.enable_flappybird": "Enable Flappy Bird",
   "text.commonboat.config.enable_lefischeauchocolat": "Enable Le Fische Au Chocolat",
+  "text.commonboat.config.le_fische_au_chocolat_thiccness": "Le Fische Au Chocolat's Line Thickness",
+  "text.commonboat.config.le_fische_au_chocolat_thiccness.tooltip": "Adjust the line thickness for Le Fische Au Chocolat",
 
   "text.commonboat.status.enabled": "Common-Boat Enabled",
   "text.commonboat.status.disabled": "Common-Boat Disabled"

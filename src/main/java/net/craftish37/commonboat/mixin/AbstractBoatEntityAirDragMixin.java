@@ -3,22 +3,54 @@ package net.craftish37.commonboat.mixin;
 import net.craftish37.commonboat.ConfigAccess;
 import net.craftish37.commonboat.CommonBoatConfig;
 import net.minecraft.entity.vehicle.AbstractBoatEntity;
+import net.minecraft.entity.vehicle.AbstractBoatEntity.Location;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AbstractBoatEntity.class)
 public abstract class AbstractBoatEntityAirDragMixin {
+    @Unique
+    private Vec3d commonboat$savedVelocity = Vec3d.ZERO;
+    @Shadow private Location location;
+    @Shadow private float yawVelocity;
+    @Shadow private boolean pressingLeft;
+    @Shadow private boolean pressingRight;
+    @Shadow private boolean pressingForward;
+    @Shadow private boolean pressingBack;
+    @Inject(method = "updateVelocity", at = @At("HEAD"))
+    private void saveVelocity(CallbackInfo ci) {
+        AbstractBoatEntity self = (AbstractBoatEntity) (Object) this;
+        this.commonboat$savedVelocity = self.getVelocity();
+    }
     @Inject(method = "updateVelocity", at = @At("TAIL"))
-    private void removeAirDrag(CallbackInfo ci) {
-        AbstractBoatEntity boat = (AbstractBoatEntity) (Object) this;
+    private void applyCustomPhysics(CallbackInfo ci) {
         CommonBoatConfig cfg = ConfigAccess.get();
-        boolean isInAir = !boat.isOnGround() && !boat.isSubmergedInWater();
-        if (cfg.enabled && cfg.removeAirDrag && isInAir) {
-            Vec3d currentVelocity = boat.getVelocity();
-            boat.setVelocity(currentVelocity.multiply(1.0 / 0.99F));
+        AbstractBoatEntity self = (AbstractBoatEntity) (Object) this;
+        if (!cfg.enabled) {
+            return;
+        }
+        Vec3d currentVelocity = self.getVelocity();
+        double savedSpeed = this.commonboat$savedVelocity.horizontalLength();
+        Vec3d savedHorizontalVector = new Vec3d(this.commonboat$savedVelocity.x, 0, this.commonboat$savedVelocity.z);
+        if (this.location == Location.IN_AIR && cfg.removeAirDrag) {
+            if (currentVelocity.y > 0) {
+                Vec3d horizontalFacing = Vec3d.fromPolar(0.0F, self.getYaw());
+                Vec3d newHorizontalVelocity = horizontalFacing.multiply(savedSpeed);
+                self.setVelocity(new Vec3d(newHorizontalVelocity.x, currentVelocity.y, newHorizontalVelocity.z));
+            } else {
+                self.setVelocity(new Vec3d(savedHorizontalVector.x, currentVelocity.y, savedHorizontalVector.z));
+            }
+        } else if (this.location == Location.IN_WATER && cfg.velocityMultiplierEnabled) {
+            boolean isPaddling = this.pressingForward || this.pressingBack;
+            boolean isTurning = this.pressingLeft || this.pressingRight || this.yawVelocity != 0.0F;
+            if (!isPaddling && !isTurning) {
+                self.setVelocity(new Vec3d(savedHorizontalVector.x, currentVelocity.y, savedHorizontalVector.z));
+            }
         }
     }
 }

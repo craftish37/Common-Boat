@@ -5,6 +5,7 @@ import net.craftish37.commonboat.CommonBoatConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.vehicle.AbstractBoatEntity;
+import net.minecraft.entity.vehicle.AbstractBoatEntity.Location;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,24 +16,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
 public class BoatJumpMixin {
-
     @Shadow @Final protected MinecraftClient client;
-
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         ClientPlayerEntity player = (ClientPlayerEntity) (Object) this;
         CommonBoatConfig cfg = ConfigAccess.get();
-
         if (cfg.enabled && cfg.easterEggsEnabled && cfg.flappyBirdEnabled) {
             if (player.getVehicle() instanceof AbstractBoatEntity boat) {
-                boolean canJump = boat.getVelocity().y <= 0.05;
-
-                if (canJump && this.client.options.jumpKey.isPressed()) {
-                    Vec3d velocity = boat.getVelocity();
-                    double horizontalSpeed = velocity.horizontalLength();
-                    double jumpVelocity = horizontalSpeed * 1;
-                    if (jumpVelocity > 0) {
-                        boat.addVelocity(0.0, jumpVelocity, 0.0);
+                boolean canInitiateJump = boat.getVelocity().y <= 0.01;
+                double gravity = 0.04D;
+                if (this.client.options.jumpKey.isPressed()) {
+                    Location currentLocation = ((AbstractBoatEntityAccessor) boat).getLocationField();
+                    boolean onSurface = boat.isOnGround() || currentLocation == Location.IN_WATER;
+                    if (onSurface && canInitiateJump) {
+                        double jumpVelocity = boat.getVelocity().horizontalLength() * 1;
+                        if (cfg.maxJumpHeight != -1.0) {
+                            double maxVerticalVelocity = Math.sqrt(2 * gravity * cfg.maxJumpHeight);
+                            if (jumpVelocity > maxVerticalVelocity) {
+                                jumpVelocity = maxVerticalVelocity;
+                            }
+                        }
+                        if (jumpVelocity > 0) {
+                            boat.addVelocity(0.0, jumpVelocity, 0.0);
+                        }
+                    } else if (!onSurface) {
+                        double airJumpVelocity = Math.sqrt(2 * gravity * 1.0);
+                        Vec3d currentVel = boat.getVelocity();
+                        if (currentVel.y <= 0.0 && airJumpVelocity > 0) {
+                            boat.setVelocity(currentVel.x, airJumpVelocity, currentVel.z);
+                        }
                     }
                 }
             }
