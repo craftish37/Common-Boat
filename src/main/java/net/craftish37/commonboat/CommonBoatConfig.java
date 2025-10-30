@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CommonBoatConfig {
     public boolean enabled = true;
@@ -20,6 +22,8 @@ public class CommonBoatConfig {
     public double boatStepHeight = 1.0;
     public double maxSpeed = -1.0;
     public double maxJumpHeight = -1.0;
+
+    public Map<String, Double> customBlockSlipperiness = new HashMap<>();
 
     public boolean easterEggsEnabled = true;
     public boolean handbrakeEnabled = true;

@@ -37,6 +37,6 @@
   "text.commonboat.config.enable_flappybird": "Activer Flappy Bird",
   "text.commonboat.config.enable_lefischeauchocolat": "Activer Le Fische Au Chocolat",
 
-  "text.commonboat.status.enabled": "Common-Boat Activé",
-  "text.commonboat.status.disabled": "Common-Boat Désactivé"
+  "text.commonboat.status.enabled": "Activé",
+  "text.commonboat.status.disabled": "Désactivé"
 }
