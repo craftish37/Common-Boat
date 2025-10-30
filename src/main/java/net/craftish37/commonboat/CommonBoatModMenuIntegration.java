@@ -26,7 +26,7 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
 
             ConfigCategory general = builder.getOrCreateCategory(Text.translatable("text.commonboat.config.category.general"));
             ConfigCategory values = builder.getOrCreateCategory(Text.translatable("text.commonboat.config.category.values"));
-            ConfigCategory blockSettings = builder.getOrCreateCategory(Text.translatable("text.commonboat.config.enable_slipperiness"));
+            ConfigCategory blockSettings = builder.getOrCreateCategory(Text.translatable("text.commonboat.config.slipperiness_value"));
             ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
             general.addEntry(entryBuilder
@@ -57,7 +57,7 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                 initialStringList.add("minecraft:blue_ice=0.989");
             }
             blockSettings.addEntry(entryBuilder.startStrList(
-                            Text.translatable("text.commonboat.config.enable_slipperiness"),
+                            Text.translatable("text.commonboat.config.slipperiness_value"),
                             initialStringList
                     )
                     .setExpanded(true)
