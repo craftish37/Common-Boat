@@ -13,7 +13,7 @@ public class CommonBoat implements ClientModInitializer {
     private static KeyBinding toggleKey;
     @Override
     public void onInitializeClient() {
-        WorldRenderEvents.AFTER_ENTITIES.register(context -> EasterEggFishHighlighter.onWorldRender(context.matrixStack()));
+        WorldRenderEvents.LAST.register(context -> EasterEggFishHighlighter.onWorldRender(context.matrixStack()));
         Sounds.registerSounds();
         ConfigAccess.get();
         toggleKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(

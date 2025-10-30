@@ -25,8 +25,8 @@
   "text.commonboat.config.remove_air_drag": "Wemov Aiw dRRRRAG",
   "text.commonboat.config.remove_air_drag.tooltip": "prevenTZ TEH boATZ?? Frum slowin dowN wil iN teh Aiw",
 
-  "text.commonbot.config.max_jump_height": "maks BOING HEIte",
-  "text.commonbot.config.max_jump_height.tooltip": "Bonk TEH FlaP FlaP BIrB BOING HEIte. Meow 2 '-1' 2 DIsabl",
+  "text.commonboat.config.max_jump_height": "maks BOING HEIte",
+  "text.commonboat.config.max_jump_height.tooltip": "Bonk TEH FlaP FlaP BIrB BOING HEIte. Meow 2 '-1' 2 DIsabl",
   "text.commonboat.config.max_speed": "maks ZOOOOOOOM",
   "text.commonboat.config.max_speed.tooltip": "Bonk TEH ZOOOOOOOM uf TEH bowt. Meow 2 '-1' 2 DIsabl",
 
@@ -36,8 +36,6 @@
   "text.commonboat.config.enable_handbrake": "enabl hundbwaaaKE",
   "text.commonboat.config.enable_flappybird": "enabl FlaP FlaP BIrB",
   "text.commonboat.config.enable_lefischeauchocolat": "enabl CrAFtfisH O chockylAT",
-  "text.commonboat.config.le_fische_au_chocolat_thiccness": "CrAFtfisH O chockylAT's Lan THICCness",
-  "text.commonboat.config.le_fische_au_chocolat_thiccness.tooltip": "Zoomies TEH lan THICCness fr CrAFtfisH O chockylAT",
 
   "text.commonboat.status.enabled": "Cmmonbowt enabld",
   "text.commonboat.status.disabled": "Cmmonbowt disubLd"

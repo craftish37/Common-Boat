@@ -118,14 +118,6 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                         .setTooltip(Text.translatable("text.commonboat.config.max_jump_height.tooltip"))
                         .setSaveConsumer(v -> cfg.maxJumpHeight = v)
                         .build());
-                eastereggs.addEntry(entryBuilder
-                        .startDoubleField(Text.translatable("text.commonboat.config.le_fische_au_chocolat_thiccness"), cfg.leFischeAuChocolatThiccness)
-                        .setDefaultValue(1.0)
-                        .setMin(0.0)
-                        .setMax(69.0)
-                        .setTooltip(Text.translatable("text.commonboat.config.le_fische_au_chocolat_thiccness.tooltip"))
-                        .setSaveConsumer(v -> cfg.leFischeAuChocolatThiccness = v)
-                        .build());
             }
 
             return builder.build();
