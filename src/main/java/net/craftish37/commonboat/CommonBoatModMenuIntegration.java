@@ -154,6 +154,12 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                         .setSaveConsumer(v -> cfg.flappyBirdEnabled = v)
                         .build());
                 eastereggs.addEntry(entryBuilder
+                        .startBooleanToggle(Text.translatable("text.commonboat.config.enable_flappybird_pitch_control"), cfg.flappyBirdPitchControl)
+                        .setDefaultValue(false)
+                        .setTooltip(Text.translatable("text.commonboat.config.enable_flappybird_pitch_control.tooltip"))
+                        .setSaveConsumer(v -> cfg.flappyBirdPitchControl = v)
+                        .build());
+                eastereggs.addEntry(entryBuilder
                         .startBooleanToggle(Text.translatable("text.commonboat.config.enable_lefischeauchocolat"), cfg.leFischeAuChocolatEnabled)
                         .setDefaultValue(false)
                         .setSaveConsumer(v -> cfg.leFischeAuChocolatEnabled = v)

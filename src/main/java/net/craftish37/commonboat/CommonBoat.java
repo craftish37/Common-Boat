@@ -19,6 +19,7 @@ public class CommonBoat implements ClientModInitializer {
     private static KeyBinding easterEggsToggleKey;
     private static KeyBinding handbrakeToggleKey;
     private static KeyBinding flappyBirdToggleKey;
+    private static KeyBinding flappyBirdPitchToggleKey;
     private static KeyBinding leFischeAuChocolatToggleKey;
     private static KeyBinding registerToggleKey(String key) {
         return KeyBindingHelper.registerKeyBinding(new KeyBinding(
@@ -56,6 +57,7 @@ public class CommonBoat implements ClientModInitializer {
         easterEggsToggleKey = registerToggleKey("text.commonboat.config.enable_easter_eggs");
         handbrakeToggleKey = registerToggleKey("text.commonboat.config.enable_handbrake");
         flappyBirdToggleKey = registerToggleKey("text.commonboat.config.enable_flappybird");
+        flappyBirdPitchToggleKey = registerToggleKey("text.commonboat.config.enable_flappybird_pitch_control");
         leFischeAuChocolatToggleKey = registerToggleKey("text.commonboat.config.enable_lefischeauchocolat");
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             CommonBoatConfig cfg = ConfigAccess.get();
@@ -95,6 +97,10 @@ public class CommonBoat implements ClientModInitializer {
                 if (flappyBirdToggleKey.wasPressed()) {
                     cfg.flappyBirdEnabled = !cfg.flappyBirdEnabled;
                     performToggle(client, cfg, "enable_flappybird", cfg.flappyBirdEnabled);
+                }
+                if (flappyBirdPitchToggleKey.wasPressed()) {
+                    cfg.flappyBirdPitchControl = !cfg.flappyBirdPitchControl;
+                    performToggle(client, cfg, "enable_flappybird_pitch_control", cfg.flappyBirdPitchControl);
                 }
                 if (leFischeAuChocolatToggleKey.wasPressed()) {
                     cfg.leFischeAuChocolatEnabled = !cfg.leFischeAuChocolatEnabled;

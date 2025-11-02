@@ -29,8 +29,8 @@ public class CommonBoatConfig {
     public boolean easterEggsEnabled = false;
     public boolean handbrakeEnabled = false;
     public boolean flappyBirdEnabled = false;
+    public boolean flappyBirdPitchControl = false;
     public boolean leFischeAuChocolatEnabled = false;
-    public boolean highlightFishWithBeacon = false;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File FILE = new File("config/commonboat.json");
