@@ -173,6 +173,12 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                         .setSaveConsumer(v -> cfg.fishDetectionDistance = v)
                         .build());
                 eastereggs.addEntry(entryBuilder
+                        .startStrField(Text.translatable("text.commonboat.config.captured_fish_sheet_url"), cfg.capturedFishSheetUrl)
+                        .setDefaultValue("")
+                        .setTooltip(Text.translatable("text.commonboat.config.captured_fish_sheet_url.tooltip"))
+                        .setSaveConsumer(v -> cfg.capturedFishSheetUrl = v)
+                        .build());
+                eastereggs.addEntry(entryBuilder
                         .startDoubleField(Text.translatable("text.commonboat.config.max_jump_height"), cfg.maxJumpHeight)
                         .setDefaultValue(-1.0)
                         .setMin(-1.0)

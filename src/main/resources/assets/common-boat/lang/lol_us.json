@@ -33,6 +33,9 @@
   "text.commonboat.config.fish_detection_distance.tooltip": "Sat TEH DeTEKshuN DistunCe fr CrAFtfisH O chockylAT",
   "text.commonboat.config.enable_flappybird_pitch_control": "enabl PSCHIT Contwool",
   "text.commonboat.config.enable_flappybird_pitch_control.tooltip": "Contwool iN-Aiw BOING HEIte wif vew PSCHIT.\nLuk op 2 BOING heigher (+ 5), luk dawn 2 BOING lawer (+ 0)",
+  "text.commonboat.config.captured_fish_sheet_url": "capturd fish gogl shet url",
+  "text.commonboat.config.captured_fish_sheet_url.tooltip": "public gogl shet url to oVRrideZ TEH capturd fish lis\nMus B csv EXPort lINK or standard shet lINK K?\nleeve MT 2 us TEH deefalt lis",
+  "text.commonboat.config.fish_list_updated": "fish HIghlite lis mowed(%s intrEIS)",
 
   "text.commonboat.config.enable_easter_eggs": "enabl eastr EGgz",
   "text.commonboat.config.enable_easter_eggs.tooltip": "nename nenajyuunanado no neRABI de nEKUNAKU ENanaku nenahAN nenadai nenNAku neraBETE neganAgame :3c",
@@ -42,5 +45,6 @@
   "text.commonboat.config.enable_lefischeauchocolat": "enabl CrAFtfisH O chockylAT",
 
   "text.commonboat.status.enabled": "enabld",
-  "text.commonboat.status.disabled": "disubLd"
+  "text.commonboat.status.disabled": "disubLd",
+  "common-boat.ggsheet": "gogl shet exampul"
 }

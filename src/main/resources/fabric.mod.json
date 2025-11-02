@@ -15,7 +15,8 @@
   "custom": {
     "modmenu": {
       "links": {
-        "modmenu.discord": "https://discord.gg/H8xZpfscCg"
+        "modmenu.discord": "https://discord.gg/H8xZpfscCg",
+        "common-boat.ggsheet": "https://docs.google.com/spreadsheets/d/10PoZU0dvucEBCPU1BnEu5d4V8ol_lFoo3iybZ0aAuds/edit?gid=397238900#gid=397238900"
       }
     }
   },

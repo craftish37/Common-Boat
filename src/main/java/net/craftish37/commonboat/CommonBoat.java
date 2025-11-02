@@ -44,6 +44,7 @@ public class CommonBoat implements ClientModInitializer {
         WorldRenderEvents.LAST.register(context -> EasterEggFishHighlighter.onWorldRender(context.matrixStack()));
         Sounds.registerSounds();
         ConfigAccess.get();
+        EasterEggFishHighlighter.startUpdater();
         masterToggleKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.commonboat.toggle",
                 InputUtil.Type.KEYSYM,
