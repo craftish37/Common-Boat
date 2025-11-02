@@ -48,7 +48,7 @@ public class EasterEggFishHighlighter {
         VertexConsumerProvider.Immediate provider = client.getBufferBuilders().getEntityVertexConsumers();
         VertexConsumer consumer = provider.getBuffer(RenderLayer.getLines());
         List<TropicalFishEntity> fishToHighlight = new ArrayList<>();
-        for (Entity entity : client.world.getOtherEntities(client.player, client.player.getBoundingBox().expand(48))) {
+        for (Entity entity : client.world.getOtherEntities(client.player, client.player.getBoundingBox().expand(cfg.fishDetectionDistance))) {
             if (!(entity instanceof TropicalFishEntity fish)) continue;
             int variant = fish.getDataTracker().get(TropicalFishEntityAccessor.getVariantTrackedData());
             if (UNIQUE_VARIANT_IDS.contains(variant)) continue;

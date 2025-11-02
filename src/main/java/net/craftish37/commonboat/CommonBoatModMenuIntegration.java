@@ -137,7 +137,7 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                     .startDoubleField(Text.translatable("text.commonboat.config.max_speed"), cfg.maxSpeed)
                     .setDefaultValue(-1.0)
                     .setMin(-1.0)
-                    .setMax(150.0)
+                    .setMax(220.0)
                     .setTooltip(Text.translatable("text.commonboat.config.max_speed.tooltip"))
                     .setSaveConsumer(v -> cfg.maxSpeed = v)
                     .build());
@@ -157,6 +157,14 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                         .startBooleanToggle(Text.translatable("text.commonboat.config.enable_lefischeauchocolat"), cfg.leFischeAuChocolatEnabled)
                         .setDefaultValue(false)
                         .setSaveConsumer(v -> cfg.leFischeAuChocolatEnabled = v)
+                        .build());
+                eastereggs.addEntry(entryBuilder
+                        .startDoubleField(Text.translatable("text.commonboat.config.fish_detection_distance"), cfg.fishDetectionDistance)
+                        .setDefaultValue(48.0)
+                        .setMin(0.0)
+                        .setMax(256.0)
+                        .setTooltip(Text.translatable("text.commonboat.config.fish_detection_distance.tooltip"))
+                        .setSaveConsumer(v -> cfg.fishDetectionDistance = v)
                         .build());
                 eastereggs.addEntry(entryBuilder
                         .startDoubleField(Text.translatable("text.commonboat.config.max_jump_height"), cfg.maxJumpHeight)
