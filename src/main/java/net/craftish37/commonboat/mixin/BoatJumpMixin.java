@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.vehicle.AbstractBoatEntity;
 import net.minecraft.entity.vehicle.AbstractBoatEntity.Location;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,10 +21,66 @@ public class BoatJumpMixin {
     @Shadow @Final protected MinecraftClient client;
     @Unique
     private double commonboat$lastJumpPeakY = 0.0;
+    @Unique
+    private float commonboat$elytraCurrentSpeed = 0.0F;
+    @Unique
+    private void commonboat$handleElytraBoat(ClientPlayerEntity player, AbstractBoatEntity boat, CommonBoatConfig cfg) {
+        boat.setYaw(player.getYaw());
+        boat.setPitch(player.getPitch());
+        float currentActualSpeed = (float) boat.getVelocity().length();
+        if (currentActualSpeed < this.commonboat$elytraCurrentSpeed - 0.05F) {
+            this.commonboat$elytraCurrentSpeed = currentActualSpeed;
+        }
+        ((AbstractBoatEntityAccessor) boat).setPressingLeft(false);
+        ((AbstractBoatEntityAccessor) boat).setPressingRight(false);
+
+        Vec3d lookDirection = player.getRotationVector();
+        float acceleration = 0.04F;
+        float deceleration = 0.02F;
+        boolean pressingForward = client.options.forwardKey.isPressed();
+        boolean pressingBack = client.options.backKey.isPressed();
+        if (pressingForward) {
+            this.commonboat$elytraCurrentSpeed += acceleration;
+        } else if (pressingBack) {
+            this.commonboat$elytraCurrentSpeed -= deceleration;
+        } else {
+        }
+        if (cfg.maxSpeed != -1.0) {
+            float maxSpeedCap = (float) (cfg.maxSpeed / 20.0);
+            this.commonboat$elytraCurrentSpeed = MathHelper.clamp(this.commonboat$elytraCurrentSpeed, (float) (-maxSpeedCap * 0.5), maxSpeedCap);
+        }
+        if (Math.abs(this.commonboat$elytraCurrentSpeed) < 0.005F) {
+            this.commonboat$elytraCurrentSpeed = 0.0F;
+        }
+        Vec3d newVelocity = lookDirection.multiply(this.commonboat$elytraCurrentSpeed);
+        boat.setVelocity(newVelocity);
+
+        this.commonboat$lastJumpPeakY = boat.getY();
+    }
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         ClientPlayerEntity player = (ClientPlayerEntity) (Object) this;
         CommonBoatConfig cfg = ConfigAccess.get();
+        if (cfg.enabled && cfg.easterEggsEnabled && player.getVehicle() instanceof AbstractBoatEntity boat) {
+
+            boolean isElytraBoatActive = cfg.elytraBoatEnabled && this.client.options.jumpKey.isPressed();
+
+            if (isElytraBoatActive) {
+                this.commonboat$handleElytraBoat(player, boat, cfg);
+                return;
+            } else {
+                if (cfg.elytraBoatEnabled) {
+                    this.commonboat$elytraCurrentSpeed = (float) (this.commonboat$elytraCurrentSpeed * 0.9);
+                    if (Math.abs(this.commonboat$elytraCurrentSpeed) < 0.005F) {
+                        this.commonboat$elytraCurrentSpeed = 0.0F;
+                    }
+                    float currentActualSpeed = (float) boat.getVelocity().length();
+                    if (currentActualSpeed < this.commonboat$elytraCurrentSpeed - 0.05F) {
+                        this.commonboat$elytraCurrentSpeed = currentActualSpeed;
+                    }
+                }
+            }
+        }
         if (cfg.enabled && cfg.easterEggsEnabled && cfg.flappyBirdEnabled) {
             if (player.getVehicle() instanceof AbstractBoatEntity boat) {
                 boolean canInitiateJump = boat.getVelocity().y <= 0.01;

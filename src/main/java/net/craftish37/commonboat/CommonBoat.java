@@ -21,6 +21,7 @@ public class CommonBoat implements ClientModInitializer {
     private static KeyBinding flappyBirdToggleKey;
     private static KeyBinding flappyBirdPitchToggleKey;
     private static KeyBinding leFischeAuChocolatToggleKey;
+    private static KeyBinding elytraBoatToggleKey;
     private static KeyBinding registerToggleKey(String key) {
         return KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 key,
@@ -60,6 +61,7 @@ public class CommonBoat implements ClientModInitializer {
         flappyBirdToggleKey = registerToggleKey("text.commonboat.config.enable_flappybird");
         flappyBirdPitchToggleKey = registerToggleKey("text.commonboat.config.enable_flappybird_pitch_control");
         leFischeAuChocolatToggleKey = registerToggleKey("text.commonboat.config.enable_lefischeauchocolat");
+        elytraBoatToggleKey = registerToggleKey("text.commonboat.config.enable_elytraboat");
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             CommonBoatConfig cfg = ConfigAccess.get();
             while (masterToggleKey.wasPressed()) {
@@ -106,6 +108,10 @@ public class CommonBoat implements ClientModInitializer {
                 if (leFischeAuChocolatToggleKey.wasPressed()) {
                     cfg.leFischeAuChocolatEnabled = !cfg.leFischeAuChocolatEnabled;
                     performToggle(client, cfg, "enable_lefischeauchocolat", cfg.leFischeAuChocolatEnabled);
+                }
+                if (elytraBoatToggleKey.wasPressed()) {
+                    cfg.elytraBoatEnabled = !cfg.elytraBoatEnabled;
+                    performToggle(client, cfg, "enable_elytraboat", cfg.elytraBoatEnabled);
                 }
             }
         });

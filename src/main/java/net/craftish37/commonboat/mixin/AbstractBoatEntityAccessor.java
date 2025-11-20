@@ -8,4 +8,10 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface AbstractBoatEntityAccessor {
     @Accessor("location")
     AbstractBoatEntity.Location getLocationField();
+
+    @Accessor("pressingLeft")
+    void setPressingLeft(boolean pressingLeft);
+
+    @Accessor("pressingRight")
+    void setPressingRight(boolean pressingRight);
 }

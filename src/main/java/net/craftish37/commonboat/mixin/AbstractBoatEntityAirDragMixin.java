@@ -22,16 +22,43 @@ public abstract class AbstractBoatEntityAirDragMixin {
     @Shadow private boolean pressingRight;
     @Shadow private boolean pressingForward;
     @Shadow private boolean pressingBack;
-    @Inject(method = "updateVelocity", at = @At("HEAD"))
+    @Inject(method = "updatePaddles", at = @At("HEAD"))
+    private void preventPaddling(CallbackInfo ci) {
+        CommonBoatConfig cfg = ConfigAccess.get();
+        if (cfg.enabled && cfg.easterEggsEnabled && cfg.elytraBoatEnabled) {
+            net.minecraft.client.MinecraftClient client = net.minecraft.client.MinecraftClient.getInstance();
+            AbstractBoatEntity self = (AbstractBoatEntity) (Object) this;
+            if (client.player != null && client.player.getVehicle() == self && client.options.jumpKey.isPressed()) {
+                this.pressingLeft = false;
+                this.pressingRight = false;
+            }
+        }
+    }
+    @Inject(method = "updateVelocity", at = @At("HEAD"), cancellable = true)
     private void saveVelocity(CallbackInfo ci) {
         AbstractBoatEntity self = (AbstractBoatEntity) (Object) this;
         this.commonboat$savedVelocity = self.getVelocity();
+        CommonBoatConfig cfg = ConfigAccess.get();
+        if (cfg.enabled && cfg.easterEggsEnabled && cfg.elytraBoatEnabled) {
+            net.minecraft.client.MinecraftClient client = net.minecraft.client.MinecraftClient.getInstance();
+            if (client.player != null && client.player.getVehicle() == self && client.options.jumpKey.isPressed()) {
+                this.yawVelocity = 0.0F;
+                this.pressingLeft = false;
+                this.pressingRight = false;
+                if (!self.isOnGround()) {
+                    ci.cancel();
+                }
+            }
+        }
     }
     @Inject(method = "updateVelocity", at = @At("TAIL"))
     private void applyCustomPhysics(CallbackInfo ci) {
         CommonBoatConfig cfg = ConfigAccess.get();
         AbstractBoatEntity self = (AbstractBoatEntity) (Object) this;
         if (!cfg.enabled) {
+            return;
+        }
+        if (cfg.easterEggsEnabled && cfg.elytraBoatEnabled) {
             return;
         }
         Vec3d currentVelocity = self.getVelocity();
