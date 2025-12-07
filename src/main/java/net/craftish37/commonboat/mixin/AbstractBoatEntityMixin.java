@@ -21,7 +21,7 @@ public class AbstractBoatEntityMixin {
         if (!cfg.enabled) return original;
         if (!cfg.customBlockSlipperiness.isEmpty()) {
             BlockPos blockPos = boat.getSteppingPos();
-            BlockState blockState = boat.getWorld().getBlockState(blockPos);
+            BlockState blockState = boat.getEntityWorld().getBlockState(blockPos);
             Identifier blockId = Registries.BLOCK.getId(blockState.getBlock());
             Double customSlip = cfg.customBlockSlipperiness.get(blockId.toString());
             if (customSlip != null) {

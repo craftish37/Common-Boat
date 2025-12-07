@@ -25,7 +25,7 @@ public abstract class BoatTransitionMixin {
         double speed = velocity.horizontalLength();
         if (speed <= 0) return;
         Vec3d direction = velocity.normalize();
-        Vec3d boatPos = boat.getPos();
+        Vec3d boatPos = boat.getEntityPos();
         Vec3d rightVec = new Vec3d(-direction.z, 0, direction.x);
         Vec3d[] checkPoints = {
                 boatPos.add(direction.multiply(0.9)),
@@ -34,15 +34,15 @@ public abstract class BoatTransitionMixin {
         };
         for (Vec3d point : checkPoints) {
             BlockPos wallPos = BlockPos.ofFloored(point.x, boat.getY(), point.z);
-            BlockState wallState = boat.getWorld().getBlockState(wallPos);
-            VoxelShape wallShape = wallState.getCollisionShape(boat.getWorld(), wallPos);
+            BlockState wallState = boat.getEntityWorld().getBlockState(wallPos);
+            VoxelShape wallShape = wallState.getCollisionShape(boat.getEntityWorld(), wallPos);
             if (!wallShape.isEmpty() && wallState.getFluidState().isEmpty()) {
-                boolean isStepValid = wallState.isSideSolidFullSquare(boat.getWorld(), wallPos, Direction.UP);
+                boolean isStepValid = wallState.isSideSolidFullSquare(boat.getEntityWorld(), wallPos, Direction.UP);
                 if (!isStepValid) {
                     BlockPos centerSupportPos = wallPos.down();
                     for (BlockPos supportPos : BlockPos.iterate(centerSupportPos.add(-1, 0, -1), centerSupportPos.add(1, 0, 1))) {
-                        BlockState supportState = boat.getWorld().getBlockState(supportPos);
-                        VoxelShape supportShape = supportState.getCollisionShape(boat.getWorld(), supportPos);
+                        BlockState supportState = boat.getEntityWorld().getBlockState(supportPos);
+                        VoxelShape supportShape = supportState.getCollisionShape(boat.getEntityWorld(), supportPos);
                         if (!supportShape.isEmpty() && supportState.getFluidState().isEmpty()) {
                             Box wallBox = wallShape.getBoundingBox();
                             Box supportBox = supportShape.getBoundingBox();
@@ -56,7 +56,7 @@ public abstract class BoatTransitionMixin {
                 }
                 if (!isStepValid) continue;
                 BlockPos posAbove = wallPos.up();
-                if (!boat.getWorld().getBlockState(posAbove).getCollisionShape(boat.getWorld(), posAbove).isEmpty()) {
+                if (!boat.getEntityWorld().getBlockState(posAbove).getCollisionShape(boat.getEntityWorld(), posAbove).isEmpty()) {
                     continue;
                 }
                 double targetY = wallPos.getY() + wallShape.getMax(Direction.Axis.Y);

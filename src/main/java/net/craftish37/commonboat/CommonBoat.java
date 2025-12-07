@@ -2,12 +2,12 @@ package net.craftish37.commonboat;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class CommonBoat implements ClientModInitializer {
@@ -27,7 +27,7 @@ public class CommonBoat implements ClientModInitializer {
                 key,
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_UNKNOWN,
-                "category.commonboat"
+                new KeyBinding.Category(Identifier.of("commonboat", "general"))
         ));
     }
     private void performToggle(MinecraftClient client, CommonBoatConfig cfg, String configKey, boolean newState) {
@@ -42,7 +42,6 @@ public class CommonBoat implements ClientModInitializer {
     }
     @Override
     public void onInitializeClient() {
-        WorldRenderEvents.LAST.register(context -> EasterEggFishHighlighter.onWorldRender(context.matrixStack()));
         Sounds.registerSounds();
         ConfigAccess.get();
         EasterEggFishHighlighter.startUpdater();
@@ -50,7 +49,7 @@ public class CommonBoat implements ClientModInitializer {
                 "key.commonboat.toggle",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_G,
-                "category.commonboat"
+                new KeyBinding.Category(Identifier.of("commonboat", "general"))
         ));
         slipperinessToggleKey = registerToggleKey("text.commonboat.config.enable_slipperiness");
         velocityToggleKey = registerToggleKey("text.commonboat.config.enable_velocity");

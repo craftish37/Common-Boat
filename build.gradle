@@ -207,11 +207,11 @@ static def illegalVersionFormatException() {
 assertNotLoaded("fabricMod", "processResources")
 ext.set("fabricModLoaded", true)
 
-sourceCompatibility = project.hasProperty("javaSourceCompatibility") ? project.javaSourceCompatibility : JavaVersion.VERSION_17
-targetCompatibility = project.hasProperty("javaTargetCompatibility") ? project.javaTargetCompatibility : JavaVersion.VERSION_17
 
 project.version = project.mod_version + project.ext.mc_ver_suffix
-archivesBaseName = project.ext.archives_base_name
+base {
+    archivesName = project.ext.archives_base_name
+}
 
 project.group = project.maven_group
 
@@ -223,7 +223,7 @@ configurations.all {
 
 dependencies {
     minecraft "com.mojang:minecraft:$project.ext.minecraft_version"
-    mappings "net.fabricmc:yarn:1.21.8+build.1:v2"
+    mappings "net.fabricmc:yarn:1.21.9+build.1:v2"
     modImplementation "net.fabricmc:fabric-loader:$project.fabricloader_version"
 
     dependsMin("fabricloader")
