@@ -15,15 +15,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,6 +86,8 @@ public class EasterEggFishHighlighter {
     private static final Set<Integer> DEFAULT_IGNORED_FISH_IDS = Set.copyOf(SPECIAL_FISH_NAME_TO_ID_MAP.values());
     private static volatile Set<Integer> HIGHLIGHT_FISH_IDS = Set.of();
     private static volatile boolean usingSheetOverride = false;
+    private static volatile Set<Integer> HIGHLIGHT_FISH_IDS_2 = Set.of();
+    private static volatile boolean usingSheetOverride2 = false;
     private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private static final Pattern SHEET_ID_PATTERN = Pattern.compile("spreadsheets/d/([a-zA-Z0-9_-]+)");
     private static final Pattern GID_PATTERN = Pattern.compile("[#&]gid=(\\d+)");
@@ -149,28 +147,24 @@ public class EasterEggFishHighlighter {
         }
         return count;
     }
-    private static void updateCapturedFishList() {
+    private static Set<Integer> fetchSheetData(String sheetUrl) {
+        if (sheetUrl == null || sheetUrl.trim().isEmpty()) {
+            return null;
+        }
+        Matcher idMatcher = SHEET_ID_PATTERN.matcher(sheetUrl);
+        if (!idMatcher.find()) {
+            System.err.println("[CommonBoat] Invalid Google Sheets URL format: " + sheetUrl);
+            return null;
+        }
+        String sheetId = idMatcher.group(1);
+        String gid = "0";
+        Matcher gidMatcher = GID_PATTERN.matcher(sheetUrl);
+        if (gidMatcher.find()) {
+            gid = gidMatcher.group(1);
+        }
+        String exportUrl = "https://docs.google.com/spreadsheets/d/" + sheetId + "/export?format=csv&gid=" + gid;
+        Set<Integer> newHighlightIdSet = ConcurrentHashMap.newKeySet();
         try {
-            CommonBoatConfig cfg = ConfigAccess.get();
-            String sheetUrl = cfg.capturedFishSheetUrl;
-            if (sheetUrl == null || sheetUrl.trim().isEmpty()) {
-                usingSheetOverride = false;
-                return;
-            }
-            Matcher idMatcher = SHEET_ID_PATTERN.matcher(sheetUrl);
-            if (!idMatcher.find()) {
-                System.err.println("[CommonBoat] Invalid Google Sheets URL format.");
-                usingSheetOverride = false;
-                return;
-            }
-            String sheetId = idMatcher.group(1);
-            String gid = "0";
-            Matcher gidMatcher = GID_PATTERN.matcher(sheetUrl);
-            if (gidMatcher.find()) {
-                gid = gidMatcher.group(1);
-            }
-            String exportUrl = "https://docs.google.com/spreadsheets/d/" + sheetId + "/export?format=csv&gid=" + gid;
-            Set<Integer> newHighlightIdSet = ConcurrentHashMap.newKeySet();
             URL url = new URL(exportUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -200,25 +194,52 @@ public class EasterEggFishHighlighter {
                             Integer variantId = null;
                             if (name.equals("-")) {
                                 variantId = getVariantIdFromTypeString(type);
-                                if (variantId != null) {
-                                    newHighlightIdSet.add(variantId);
-                                }
                             } else {
                                 variantId = SPECIAL_FISH_NAME_TO_ID_MAP.get(name);
-                                if (variantId != null) {
-                                    newHighlightIdSet.add(variantId);
-                                }
+                            }
+                            if (variantId != null) {
+                                newHighlightIdSet.add(variantId);
                             }
                         }
                     }
                 }
             }
-            HIGHLIGHT_FISH_IDS = newHighlightIdSet;
-            usingSheetOverride = true;
+            return newHighlightIdSet;
         } catch (Exception e) {
-            System.err.println("[CommonBoat] Failed to update captured fish list:");
+            System.err.println("[CommonBoat] Failed to fetch sheet data from: " + sheetUrl);
             e.printStackTrace();
+            return null;
+        }
+    }
+    private static void updateCapturedFishList() {
+        CommonBoatConfig cfg = ConfigAccess.get();
+        Set<Integer> list1 = fetchSheetData(cfg.capturedFishSheetUrl);
+        if (list1 != null) {
+            HIGHLIGHT_FISH_IDS = list1;
+            usingSheetOverride = true;
+        } else {
             usingSheetOverride = false;
+        }
+        Set<Integer> list2 = fetchSheetData(cfg.capturedFishSheetUrl2);
+        if (list2 != null) {
+            HIGHLIGHT_FISH_IDS_2 = list2;
+            usingSheetOverride2 = true;
+        } else {
+            usingSheetOverride2 = false;
+        }
+    }
+    private static float[] getRGBFromHex(String hex) {
+        if (hex == null) return new float[]{0.0f, 0.0f, 0.0f};
+        hex = hex.trim();
+        if (hex.startsWith("#")) hex = hex.substring(1);
+        if (hex.length() != 6) return new float[]{0.0f, 0.0f, 0.0f};
+        try {
+            int r = Integer.parseInt(hex.substring(0, 2), 16);
+            int g = Integer.parseInt(hex.substring(2, 4), 16);
+            int b = Integer.parseInt(hex.substring(4, 6), 16);
+            return new float[]{r / 255.0f, g / 255.0f, b / 255.0f};
+        } catch (NumberFormatException e) {
+            return new float[]{0.0f, 0.0f, 0.0f};
         }
     }
     public static void onWorldRender(@org.jetbrains.annotations.Nullable MatrixStack matrices) {
@@ -226,33 +247,51 @@ public class EasterEggFishHighlighter {
         if (!cfg.enabled || !cfg.easterEggsEnabled || !cfg.leFischeAuChocolatEnabled) return;
         if (client.world == null || client.player == null || matrices == null) return;
         Vec3d cameraPos = client.gameRenderer.getCamera().getPos();
-        VertexConsumerProvider.Immediate provider = client.getBufferBuilders().getEntityVertexConsumers();
-        VertexConsumer consumer = provider.getBuffer(RenderLayer.getLines());
-        List<TropicalFishEntity> fishToHighlight = new ArrayList<>();
+        List<TropicalFishEntity> fishToHighlight1 = new ArrayList<>();
+        List<TropicalFishEntity> fishToHighlight2 = new ArrayList<>();
         for (Entity entity : client.world.getOtherEntities(client.player, client.player.getBoundingBox().expand(cfg.fishDetectionDistance))) {
             if (!(entity instanceof TropicalFishEntity fish)) continue;
             int variant = fish.getDataTracker().get(TropicalFishEntityAccessor.getVariantTrackedData());
 
-            if (usingSheetOverride) {
-                if (HIGHLIGHT_FISH_IDS.contains(variant)) {
-                    fishToHighlight.add(fish);
+            if (usingSheetOverride || usingSheetOverride2) {
+                if (usingSheetOverride && HIGHLIGHT_FISH_IDS.contains(variant)) {
+                    fishToHighlight1.add(fish);
+                }
+                else if (usingSheetOverride2 && HIGHLIGHT_FISH_IDS_2.contains(variant)) {
+                    fishToHighlight2.add(fish);
                 }
             } else {
                 if (!DEFAULT_IGNORED_FISH_IDS.contains(variant)) {
-                    fishToHighlight.add(fish);
+                    fishToHighlight1.add(fish);
                 }
             }
         }
+        VertexConsumerProvider.Immediate provider = client.getBufferBuilders().getEntityVertexConsumers();
+        provider.draw();
+
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(false);
-        for (TropicalFishEntity fish : fishToHighlight) {
-            drawBoxOutline(matrices, consumer, cameraPos, fish.getBoundingBox());
+        GL11.glLineWidth(1.0f);
+
+        VertexConsumer consumer = provider.getBuffer(RenderLayer.getLines());
+        renderFishList(consumer, matrices, cameraPos, fishToHighlight1, 1.0f, 1.0f, 1.0f);
+
+        float[] color2 = getRGBFromHex(cfg.capturedFishSheetUrl2Color);
+        renderFishList(consumer, matrices, cameraPos, fishToHighlight2, color2[0], color2[1], color2[2]);
+        provider.draw();
+
+        GL11.glDepthMask(true);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+    }
+    private static void renderFishList(VertexConsumer consumer, MatrixStack matrices, Vec3d cameraPos, List<TropicalFishEntity> fishList, float r, float g, float b) {
+        for (TropicalFishEntity fish : fishList) {
+            drawBoxOutline(matrices, consumer, cameraPos, fish.getBoundingBox(), r, g, b);
         }
-        if (fishToHighlight.size() > 1) {
+        if (fishList.size() > 1) {
             Matrix4f matrix = matrices.peek().getPositionMatrix();
-            for (int i = 0; i < fishToHighlight.size() - 1; i++) {
-                TropicalFishEntity fish1 = fishToHighlight.get(i);
-                TropicalFishEntity fish2 = fishToHighlight.get(i + 1);
+            for (int i = 0; i < fishList.size() - 1; i++) {
+                TropicalFishEntity fish1 = fishList.get(i);
+                TropicalFishEntity fish2 = fishList.get(i + 1);
 
                 Vec3d center1 = fish1.getBoundingBox().getCenter();
                 Vec3d center2 = fish2.getBoundingBox().getCenter();
@@ -264,16 +303,11 @@ public class EasterEggFishHighlighter {
                 double y2 = center2.y - cameraPos.y;
                 double z2 = center2.z - cameraPos.z;
 
-                line(consumer, matrix, x1, y1, z1, x2, y2, z2);
+                line(consumer, matrix, x1, y1, z1, x2, y2, z2, r, g, b);
             }
         }
-
-        provider.draw();
-        GL11.glDepthMask(true);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glLineWidth(1.0f);
     }
-    private static void drawBoxOutline(MatrixStack matrices, VertexConsumer consumer, Vec3d cameraPos, Box box) {
+    private static void drawBoxOutline(MatrixStack matrices, VertexConsumer consumer, Vec3d cameraPos, Box box, float r, float g, float b) {
         Matrix4f matrix = matrices.peek().getPositionMatrix();
 
         double minX = box.minX - cameraPos.x;
@@ -283,23 +317,24 @@ public class EasterEggFishHighlighter {
         double maxY = box.maxY - cameraPos.y;
         double maxZ = box.maxZ - cameraPos.z;
 
-        line(consumer, matrix, minX, minY, minZ, maxX, minY, minZ);
-        line(consumer, matrix, maxX, minY, minZ, maxX, minY, maxZ);
-        line(consumer, matrix, maxX, minY, maxZ, minX, minY, maxZ);
-        line(consumer, matrix, minX, minY, maxZ, minX, minY, minZ);
+        line(consumer, matrix, minX, minY, minZ, maxX, minY, minZ, r, g, b);
+        line(consumer, matrix, maxX, minY, minZ, maxX, minY, maxZ, r, g, b);
+        line(consumer, matrix, maxX, minY, maxZ, minX, minY, maxZ, r, g, b);
+        line(consumer, matrix, minX, minY, maxZ, minX, minY, minZ, r, g, b);
 
-        line(consumer, matrix, minX, maxY, minZ, maxX, maxY, minZ);
-        line(consumer, matrix, maxX, maxY, minZ, maxX, maxY, maxZ);
-        line(consumer, matrix, maxX, maxY, maxZ, minX, maxY, maxZ);
-        line(consumer, matrix, minX, maxY, maxZ, minX, maxY, minZ);
+        line(consumer, matrix, minX, maxY, minZ, maxX, maxY, minZ, r, g, b);
+        line(consumer, matrix, maxX, maxY, minZ, maxX, maxY, maxZ, r, g, b);
+        line(consumer, matrix, maxX, maxY, maxZ, minX, maxY, maxZ, r, g, b);
+        line(consumer, matrix, minX, maxY, maxZ, minX, maxY, minZ, r, g, b);
 
-        line(consumer, matrix, minX, minY, minZ, minX, maxY, minZ);
-        line(consumer, matrix, maxX, minY, minZ, maxX, maxY, minZ);
-        line(consumer, matrix, maxX, minY, maxZ, maxX, maxY, maxZ);
-        line(consumer, matrix, minX, minY, maxZ, minX, maxY, maxZ);
+        line(consumer, matrix, minX, minY, minZ, minX, maxY, minZ, r, g, b);
+        line(consumer, matrix, maxX, minY, minZ, maxX, maxY, minZ, r, g, b);
+        line(consumer, matrix, maxX, minY, maxZ, maxX, maxY, maxZ, r, g, b);
+        line(consumer, matrix, minX, minY, maxZ, minX, maxY, maxZ, r, g, b);
     }
-    private static void line(VertexConsumer consumer, Matrix4f matrix, double x1, double y1, double z1, double x2, double y2, double z2) {
-        consumer.vertex(matrix, (float) x1, (float) y1, (float) z1).color(1.0F, 1.0F, 1.0F, 1.0F).normal(1.0F, 1.0F, 1.0F);
-        consumer.vertex(matrix, (float) x2, (float) y2, (float) z2).color(1.0F, 1.0F, 1.0F, 1.0F).normal(1.0F, 1.0F, 1.0F);
+
+    private static void line(VertexConsumer consumer, Matrix4f matrix, double x1, double y1, double z1, double x2, double y2, double z2, float r, float g, float b) {
+        consumer.vertex(matrix, (float) x1, (float) y1, (float) z1).color(r, g, b, 1.0F).normal(1.0F, 1.0F, 1.0F);
+        consumer.vertex(matrix, (float) x2, (float) y2, (float) z2).color(r, g, b, 1.0F).normal(1.0F, 1.0F, 1.0F);
     }
 }

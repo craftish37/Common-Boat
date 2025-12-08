@@ -184,6 +184,17 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                         .setSaveConsumer(v -> cfg.capturedFishSheetUrl = v)
                         .build());
                 eastereggs.addEntry(entryBuilder
+                        .startStrField(Text.translatable("text.commonboat.config.captured_fish_sheet_url_2"), cfg.capturedFishSheetUrl2)
+                        .setDefaultValue("")
+                        .setTooltip(Text.translatable("text.commonboat.config.captured_fish_sheet_url_2.tooltip"))
+                        .setSaveConsumer(v -> cfg.capturedFishSheetUrl2 = v)
+                        .build());
+                eastereggs.addEntry(entryBuilder
+                        .startStrField(Text.translatable("text.commonboat.config.captured_fish_sheet_url_2_color"), cfg.capturedFishSheetUrl2Color)
+                        .setDefaultValue("#000000")
+                        .setSaveConsumer(v -> cfg.capturedFishSheetUrl2Color = v)
+                        .build());
+                eastereggs.addEntry(entryBuilder
                         .startDoubleField(Text.translatable("text.commonboat.config.max_jump_height"), cfg.maxJumpHeight)
                         .setDefaultValue(-1.0)
                         .setMin(-1.0)

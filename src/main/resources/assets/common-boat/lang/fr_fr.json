@@ -35,6 +35,9 @@
   "text.commonboat.config.enable_flappybird_pitch_control.tooltip": "Controllez la hateur de saut en l'air à l'aide de l'inclinaison de caméra.\nRegardez en l'air pour sauter plus haut (max 5), regardez plus bas pour sauter moins haut (min 0).",
   "text.commonboat.config.captured_fish_sheet_url": "URL Google Sheet des poissons capturés",
   "text.commonboat.config.captured_fish_sheet_url.tooltip": "Une URL publique Google Sheets pour remplacer la liste des poissons capturés.\nDoit être un lien d'export CSV ou un lien de feuille standard.\nLaissez vide pour utiliser la liste par défaut.",
+  "text.commonboat.config.captured_fish_sheet_url_2": "URL Google Sheet secondaire des poissons capturés",
+  "text.commonboat.config.captured_fish_sheet_url_2.tooltip": "Une URL publique Google Sheets secondaire pour remplacer la liste des poissons capturés.\nLes poissons de la première liste sont prioritaires.",
+  "text.commonboat.config.captured_fish_sheet_url_2_color": "Couleur de la liste secondaire (Hex)",
   "text.commonboat.config.fish_list_updated": "Liste des poissons mise à jour (%s entries)",
 
   "text.commonboat.config.enable_easter_eggs": "Activer les Easter Eggs",

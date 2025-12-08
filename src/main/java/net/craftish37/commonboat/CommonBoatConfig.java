@@ -33,6 +33,8 @@ public class CommonBoatConfig {
     public boolean leFischeAuChocolatEnabled = false;
     public boolean elytraBoatEnabled = false;
     public String capturedFishSheetUrl = "";
+    public String capturedFishSheetUrl2 = "";
+    public String capturedFishSheetUrl2Color = "#000000";
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File FILE = new File("config/commonboat.json");

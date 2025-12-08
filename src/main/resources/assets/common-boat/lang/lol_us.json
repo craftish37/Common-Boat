@@ -35,6 +35,9 @@
   "text.commonboat.config.enable_flappybird_pitch_control.tooltip": "Contwool iN-Aiw BOING HEIte wif vew PSCHIT.\nLuk op 2 BOING heigher (+ 5), luk dawn 2 BOING lawer (+ 0)",
   "text.commonboat.config.captured_fish_sheet_url": "capturd fish gogl shet url",
   "text.commonboat.config.captured_fish_sheet_url.tooltip": "public gogl shet url to oVRrideZ TEH capturd fish lis\nMus B csv EXPort lINK or standard shet lINK K?\nleeve MT 2 us TEH deefalt lis",
+  "text.commonboat.config.captured_fish_sheet_url_2": "SHEcundawy capturd fish gogl shet url",
+  "text.commonboat.config.captured_fish_sheet_url_2.tooltip": "SHEcundawy public gogl shet url to oVRrideZ TEH capturd fish lis\nfish iN TEH furst lis tak pwiowity",
+  "text.commonboat.config.captured_fish_sheet_url_2_color": "Secondary List Color (Hex)",
   "text.commonboat.config.fish_list_updated": "fish HIghlite lis mowed(%s intrEIS)",
 
   "text.commonboat.config.enable_easter_eggs": "enabl eastr EGgz",
