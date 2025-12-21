@@ -12,7 +12,8 @@
     "BoatJumpMixin",
     "TropicalFishEntityAccessor",
     "AbstractBoatEntityAccessor",
-    "AbstractBoatEntityTickMixin"
+    "AbstractBoatEntityTickMixin",
+    "PlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

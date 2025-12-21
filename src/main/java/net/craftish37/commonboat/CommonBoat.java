@@ -26,6 +26,7 @@ public class CommonBoat implements ClientModInitializer {
     private static KeyBinding flappyBirdPitchToggleKey;
     private static KeyBinding leFischeAuChocolatToggleKey;
     private static KeyBinding elytraBoatToggleKey;
+    private static KeyBinding blockBreakingPenaltyToggleKey;
     private static final Set<String> flaggedNames = new HashSet<>();
     private static KeyBinding registerToggleKey(String key) {
         return KeyBindingHelper.registerKeyBinding(new KeyBinding(
@@ -70,6 +71,7 @@ public class CommonBoat implements ClientModInitializer {
         flappyBirdPitchToggleKey = registerToggleKey("text.commonboat.config.enable_flappybird_pitch_control");
         leFischeAuChocolatToggleKey = registerToggleKey("text.commonboat.config.enable_lefischeauchocolat");
         elytraBoatToggleKey = registerToggleKey("text.commonboat.config.enable_elytraboat");
+        blockBreakingPenaltyToggleKey = registerToggleKey("text.commonboat.config.disable_block_breaking_penalty");
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             CommonBoatConfig cfg = ConfigAccess.get();
             if (client.getNetworkHandler() != null && cfg.disableOnNameMatch && !cfg.nameMatchString.isEmpty()) {
@@ -148,6 +150,10 @@ public class CommonBoat implements ClientModInitializer {
                 if (elytraBoatToggleKey.wasPressed()) {
                     cfg.elytraBoatEnabled = !cfg.elytraBoatEnabled;
                     performToggle(client, cfg, "enable_elytraboat", cfg.elytraBoatEnabled);
+                }
+                if (blockBreakingPenaltyToggleKey.wasPressed()) {
+                    cfg.disableBlockBreakingPenalty = !cfg.disableBlockBreakingPenalty;
+                    performToggle(client, cfg, "disable_block_breaking_penalty", cfg.disableBlockBreakingPenalty);
                 }
             }
         });

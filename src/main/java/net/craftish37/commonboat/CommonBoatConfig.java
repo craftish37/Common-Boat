@@ -33,6 +33,7 @@ public class CommonBoatConfig {
     public boolean flappyBirdPitchControl = false;
     public boolean leFischeAuChocolatEnabled = false;
     public boolean elytraBoatEnabled = false;
+    public boolean disableBlockBreakingPenalty = false;
     public String capturedFishSheetUrl = "";
     public String capturedFishSheetUrl2 = "";
     public String capturedFishSheetUrl2Color = "#000000";

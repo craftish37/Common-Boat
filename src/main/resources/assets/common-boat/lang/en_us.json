@@ -51,6 +51,7 @@
   "text.commonboat.config.enable_flappybird": "Enable Flappy Bird",
   "text.commonboat.config.enable_lefischeauchocolat": "Enable Le Fische Au Chocolat",
   "text.commonboat.config.enable_elytraboat": "Enable Elytra-Boat (Hold Jump)",
+  "text.commonboat.config.disable_block_breaking_penalty": "Disable In-Air Break Debuff",
 
   "text.commonboat.status.enabled": "Enabled",
   "text.commonboat.status.disabled": "Disabled",

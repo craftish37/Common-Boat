@@ -51,6 +51,7 @@
   "text.commonboat.config.enable_flappybird": "Activer Flappy Bird",
   "text.commonboat.config.enable_lefischeauchocolat": "Activer Le Fische Au Chocolat",
   "text.commonboat.config.enable_elytraboat": "Activer le Bateau-Élytres (Maintenez Sauter)",
+  "text.commonboat.config.disable_block_breaking_penalty": "Désactiver la pénalité de cassage en l'air",
 
   "text.commonboat.status.enabled": "Activé",
   "text.commonboat.status.disabled": "Désactivé",
