@@ -52,6 +52,7 @@
   "text.commonboat.config.enable_lefischeauchocolat": "enabl CrAFtfisH O chockylAT",
   "text.commonboat.config.enable_elytraboat": "enabl Wingus-boATZ?? (hOLD BOING)",
   "text.commonboat.config.disable_block_breaking_penalty": "DIsabl iN-Aiw bwaaaKE deBFF",
+  "text.commonboat.config.prevent_underwater_eject": "pWEvent Undawatr bonkt",
 
   "text.commonboat.status.enabled": "enabld",
   "text.commonboat.status.disabled": "disubLd",

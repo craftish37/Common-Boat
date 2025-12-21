@@ -187,6 +187,11 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                         .setSaveConsumer(v -> cfg.disableBlockBreakingPenalty = v)
                         .build());
                 eastereggs.addEntry(entryBuilder
+                        .startBooleanToggle(Text.translatable("text.commonboat.config.prevent_underwater_eject"), cfg.preventUnderwaterEject)
+                        .setDefaultValue(false)
+                        .setSaveConsumer(v -> cfg.preventUnderwaterEject = v)
+                        .build());
+                eastereggs.addEntry(entryBuilder
                         .startDoubleField(Text.translatable("text.commonboat.config.fish_detection_distance"), cfg.fishDetectionDistance)
                         .setDefaultValue(48.0)
                         .setMin(0.0)

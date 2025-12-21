@@ -11,6 +11,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractBoatEntity.class)
 public class AbstractBoatEntityMixin {
@@ -33,5 +35,12 @@ public class AbstractBoatEntityMixin {
             return MathHelper.clamp(original, (float) minSlip, 1.0F);
         }
         return original;
+    }
+    @Inject(method = "checkBoatInWater", at = @At("RETURN"), cancellable = true)
+    private void commonboat$overrideWaterCheck(CallbackInfoReturnable<Boolean> cir) {
+        CommonBoatConfig cfg = ConfigAccess.get();
+        if (cfg.enabled && cfg.preventUnderwaterEject) {
+            cir.setReturnValue(false);
+        }
     }
 }
