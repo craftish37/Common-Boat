@@ -10,6 +10,9 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CommonBoat implements ClientModInitializer {
     private static KeyBinding masterToggleKey;
@@ -23,6 +26,7 @@ public class CommonBoat implements ClientModInitializer {
     private static KeyBinding flappyBirdPitchToggleKey;
     private static KeyBinding leFischeAuChocolatToggleKey;
     private static KeyBinding elytraBoatToggleKey;
+    private static final Set<String> flaggedNames = new HashSet<>();
     private static KeyBinding registerToggleKey(String key) {
         return KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 key,
@@ -47,7 +51,6 @@ public class CommonBoat implements ClientModInitializer {
         ConfigAccess.get();
         EasterEggFishHighlighter.startUpdater();
 
-        // Register the render event using AFTER_TRANSLUCENT (safest for lines) or LAST
         WorldRenderEvents.END_MAIN.register(context -> {
             EasterEggFishHighlighter.onWorldRender(context.matrices());
         });
@@ -69,6 +72,34 @@ public class CommonBoat implements ClientModInitializer {
         elytraBoatToggleKey = registerToggleKey("text.commonboat.config.enable_elytraboat");
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             CommonBoatConfig cfg = ConfigAccess.get();
+            if (client.getNetworkHandler() != null && cfg.disableOnNameMatch && !cfg.nameMatchString.isEmpty()) {
+                String[] prohibitedStrings = cfg.nameMatchString.split(";");
+                Collection<String> onlinePlayerNames = client.getNetworkHandler().getCommandSource().getPlayerNames();
+                Set<String> currentMatches = new HashSet<>();
+                for (String name : onlinePlayerNames) {
+                    boolean matchFound = false;
+                    for (String part : prohibitedStrings) {
+                        String trimmedPart = part.trim();
+                        if (!trimmedPart.isEmpty() && name.contains(trimmedPart)) {
+                            matchFound = true;
+                            break;
+                        }
+                    }
+                    if (matchFound) {
+                        currentMatches.add(name);
+                        if (!flaggedNames.contains(name)) {
+                            flaggedNames.add(name);
+                            if (cfg.enabled) {
+                                cfg.enabled = false;
+                                performToggle(client, cfg, "enable_mod", false);
+                            }
+                        }
+                    }
+                }
+                flaggedNames.removeIf(n -> !currentMatches.contains(n));
+            } else {
+                flaggedNames.clear();
+            }
             while (masterToggleKey.wasPressed()) {
                 boolean wasEnabled = cfg.enabled;
                 cfg.enabled = !cfg.enabled;

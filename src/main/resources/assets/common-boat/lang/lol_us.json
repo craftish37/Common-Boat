@@ -13,6 +13,10 @@
   "text.commonboat.config.enable_slipperiness": "enabl slipPERInes oVRride",
   "text.commonboat.config.slipperiness_value": "slipPERInes Meow",
   "text.commonboat.config.slipperiness_value.tooltip": "oVRrideZ slipPERInes fr boATZ?? ON ISSSsss",
+  "text.commonboat.config.disable_on_name_match": "DIsabl ON nahm metch",
+  "text.commonboat.config.disable_on_name_match.tooltip": "DIsabl TEH Mod if catnahm has sPECifid stwing",
+  "text.commonboat.config.name_match_string": "nahm metch stwing",
+  "text.commonboat.config.name_match_string.tooltip": "TEH stwing 2 meow fr iN catnahm. \nOoose ';' as sePAW-ator",
 
   "text.commonboat.config.enable_velocity": "enabl velOcitie multipliR oVRride",
   "text.commonboat.config.velocity_value": "velOcitie multipliR Meow",
@@ -23,7 +27,7 @@
   "text.commonboat.config.step_height_value.tooltip": "oVRrideZ STEP HEIte fr boATZ??. Vanuwla r 0",
 
   "text.commonboat.config.remove_air_drag": "Wemov Aiw dRRRRAG",
-  "text.commonboat.config.remove_air_drag.tooltip": "prevenTZ TEH boATZ?? Frum slowin dowN wil iN teh Aiw",
+  "text.commonboat.config.remove_air_drag.tooltip": "prevenTZ TEH boATZ?? Frum slowin dowN wil iN TEH Aiw",
 
   "text.commonboat.config.max_jump_height": "maks BOING HEIte",
   "text.commonboat.config.max_jump_height.tooltip": "Bonk TEH FlaP FlaP BIrB BOING HEIte. Meow 2 '-1' 2 DIsabl",

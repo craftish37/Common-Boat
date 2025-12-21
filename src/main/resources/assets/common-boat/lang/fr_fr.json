@@ -13,6 +13,10 @@
   "text.commonboat.config.enable_slipperiness": "Activer le remplacement de Slipperiness",
   "text.commonboat.config.slipperiness_value": "Slipperiness",
   "text.commonboat.config.slipperiness_value.tooltip": "Remplace la valeur de slipperiness pour les bateaux sur la glace.",
+  "text.commonboat.config.disable_on_name_match": "Désactivation Automatique",
+  "text.commonboat.config.disable_on_name_match.tooltip": "Désactive le mod automatiquement si un pseudonyme contient ces caractères.",
+  "text.commonboat.config.name_match_string": "Caractères visés",
+  "text.commonboat.config.name_match_string.tooltip": "Les caractères à vérifier dans les pseudonymes. \nUtiliser ';' comme séparateur.",
 
   "text.commonboat.config.enable_velocity": "Activer le remplacement de Velocity Multiplier",
   "text.commonboat.config.velocity_value": "Velocity Multiplier",

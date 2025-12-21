@@ -16,6 +16,7 @@ public class CommonBoatConfig {
     public boolean velocityMultiplierEnabled = false;
     public boolean boatStepHeightEnabled = false;
     public boolean removeAirDrag = false;
+    public boolean disableOnNameMatch = false;
 
     public double slipperiness = 0.989;
     public double velocityMultiplier = 1.1;
@@ -35,6 +36,7 @@ public class CommonBoatConfig {
     public String capturedFishSheetUrl = "";
     public String capturedFishSheetUrl2 = "";
     public String capturedFishSheetUrl2Color = "#000000";
+    public String nameMatchString = "";
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File FILE = new File("config/commonboat.json");

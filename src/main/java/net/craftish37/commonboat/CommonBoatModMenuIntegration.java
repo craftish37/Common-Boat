@@ -37,6 +37,18 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                     .build());
 
             general.addEntry(entryBuilder
+                    .startBooleanToggle(Text.translatable("text.commonboat.config.disable_on_name_match"), cfg.disableOnNameMatch)
+                    .setDefaultValue(false)
+                    .setTooltip(Text.translatable("text.commonboat.config.disable_on_name_match.tooltip"))
+                    .setSaveConsumer(v -> cfg.disableOnNameMatch = v)
+                    .build());
+            general.addEntry(entryBuilder
+                    .startStrField(Text.translatable("text.commonboat.config.name_match_string"), cfg.nameMatchString)
+                    .setDefaultValue("")
+                    .setTooltip(Text.translatable("text.commonboat.config.name_match_string.tooltip"))
+                    .setSaveConsumer(v -> cfg.nameMatchString = v)
+                    .build());
+            general.addEntry(entryBuilder
                     .startBooleanToggle(Text.translatable("text.commonboat.config.enable_slipperiness"), cfg.slipperinessEnabled)
                     .setDefaultValue(false)
                     .setSaveConsumer(v -> cfg.slipperinessEnabled = v)

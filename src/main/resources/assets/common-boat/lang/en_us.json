@@ -13,6 +13,10 @@
   "text.commonboat.config.enable_slipperiness": "Enable Slipperiness Override",
   "text.commonboat.config.slipperiness_value": "Slipperiness",
   "text.commonboat.config.slipperiness_value.tooltip": "Overrides slipperiness for boats on ice.",
+  "text.commonboat.config.disable_on_name_match": "Disable on Name Match",
+  "text.commonboat.config.disable_on_name_match.tooltip": "Automatically disable the mod if a username contains the specified string.",
+  "text.commonboat.config.name_match_string": "Name Match String",
+  "text.commonboat.config.name_match_string.tooltip": "The string to check for in usernames. \nUse ';' as a separator.",
 
   "text.commonboat.config.enable_velocity": "Enable Velocity Multiplier Override",
   "text.commonboat.config.velocity_value": "Velocity Multiplier",
