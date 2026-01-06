@@ -262,6 +262,7 @@ dependencies {
 
     dependedMod "net.fabricmc.fabric-api:fabric-api:", "fabric", null, null
 
+    suggestedMod true, "me.shedaniel:RoughlyEnoughItems-fabric:", "rei"
     suggestedMod true, "me.shedaniel.cloth:cloth-config-fabric:", "cloth_config"
 
 	// optional, json api only
