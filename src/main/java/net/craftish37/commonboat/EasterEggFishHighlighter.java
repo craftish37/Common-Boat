@@ -133,6 +133,30 @@ public class EasterEggFishHighlighter {
             return null;
         }
     }
+    public static Integer getFishVariantColor(int variantId) {
+        if (usingSheetOverride && HIGHLIGHT_FISH_IDS.contains(variantId)) {
+            return 0xFFFFFFFF; // White
+        }
+        if (usingSheetOverride2 && HIGHLIGHT_FISH_IDS_2.contains(variantId)) {
+            return getColorIntFromHex(ConfigAccess.get().capturedFishSheetUrl2Color);
+        }
+        return null;
+    }
+
+    private static int getColorIntFromHex(String hex) {
+        if (hex == null) return 0xFFFFFFFF;
+        hex = hex.trim();
+        if (hex.startsWith("#")) hex = hex.substring(1);
+        if (hex.length() != 6) return 0xFFFFFFFF;
+        try {
+            int r = Integer.parseInt(hex.substring(0, 2), 16);
+            int g = Integer.parseInt(hex.substring(2, 4), 16);
+            int b = Integer.parseInt(hex.substring(4, 6), 16);
+            return (0xFF << 24) | (r << 16) | (g << 8) | b;
+        } catch (NumberFormatException e) {
+            return 0xFFFFFFFF;
+        }
+    }
     public static void startUpdater() {
         scheduler.scheduleAtFixedRate(
                 EasterEggFishHighlighter::updateCapturedFishList,
