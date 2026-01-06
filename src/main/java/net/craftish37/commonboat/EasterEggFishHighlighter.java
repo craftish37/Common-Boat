@@ -1,19 +1,15 @@
 package net.craftish37.commonboat;
 
+import org.lwjgl.opengl.GL11;
 import net.craftish37.commonboat.mixin.TropicalFishEntityAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.TropicalFishEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Box;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -99,14 +95,14 @@ public class EasterEggFishHighlighter {
     private static final Pattern QUOTE_COUNT_REGEX = Pattern.compile("\"");
     private static Integer getVariantIdFromTypeString(String type) {
         try {
-            String[] parts = type.split("\\r?\\n");
-            if (parts.length != 2) return null;
-            String shapeName = parts[0].trim();
-            String colorString = parts[1].trim();
-            String[] colorParts = colorString.split(",\\s*");
+            String shapeName;
             String baseColorName;
             String patternColorName;
-
+            String[] parts = type.split("\\r?\\n");
+            if (parts.length != 2) return null;
+            shapeName = parts[0].trim();
+            String colorString = parts[1].trim();
+            String[] colorParts = colorString.split(",\\s*");
             if (colorParts.length == 1) {
                 baseColorName = colorParts[0].trim();
                 patternColorName = baseColorName;
@@ -322,7 +318,7 @@ public class EasterEggFishHighlighter {
         double maxZ = box.maxZ - cameraPos.z;
 
         line(consumer, matrix, minX, minY, minZ, maxX, minY, minZ, r, g, b);
-        line(consumer, matrix, maxX, minY, minZ, maxX, minY, minZ, r, g, b);
+        line(consumer, matrix, maxX, minY, minZ, maxX, minY, maxZ, r, g, b);
         line(consumer, matrix, maxX, minY, maxZ, minX, minY, maxZ, r, g, b);
         line(consumer, matrix, minX, minY, maxZ, minX, minY, minZ, r, g, b);
 
@@ -340,51 +336,5 @@ public class EasterEggFishHighlighter {
     private static void line(VertexConsumer consumer, Matrix4f matrix, double x1, double y1, double z1, double x2, double y2, double z2, float r, float g, float b) {
         consumer.vertex(matrix, (float) x1, (float) y1, (float) z1).color(r, g, b, 1.0F).normal(1.0F, 1.0F, 1.0F);
         consumer.vertex(matrix, (float) x2, (float) y2, (float) z2).color(r, g, b, 1.0F).normal(1.0F, 1.0F, 1.0F);
-    }
-    public static Object getTropicalFishVariant(ItemStack stack) {
-        // In 1.20.5+ / 1.21, the entity data is in a component.
-        NbtComponent nbtComponent = stack.get(DataComponentTypes.BUCKET_ENTITY_DATA);
-        if (nbtComponent != null) {
-            NbtCompound nbt = nbtComponent.copyNbt();
-            // The tropical fish entity uses "Variant" (int) to store its data.
-            // It is NOT "BucketVariantTag" inside the component.
-            if (nbt.contains("Variant")) {
-                return nbt.getInt("Variant");
-            }
-        }
-        return Optional.of(0);
-    }
-    public static int getFishOverlayColor(Optional<Integer> variantId) {
-        CommonBoatConfig cfg = ConfigAccess.get();
-        if (!cfg.enabled || !cfg.easterEggsEnabled || !cfg.leFischeAuChocolatEnabled) return 0;
-
-        if (usingSheetOverride || usingSheetOverride2) {
-            if (usingSheetOverride && HIGHLIGHT_FISH_IDS.contains(variantId)) {
-                return 0xFFFFFFFF; // White
-            } else if (usingSheetOverride2 && HIGHLIGHT_FISH_IDS_2.contains(variantId)) {
-                return getIntFromHex(cfg.capturedFishSheetUrl2Color);
-            }
-        } else {
-            if (!DEFAULT_IGNORED_FISH_IDS.contains(variantId)) {
-                return 0xFFFFFFFF; // White
-            }
-        }
-        return 0; // Return 0 if no match
-    }
-
-    private static int getIntFromHex(String hex) {
-        if (hex == null) return 0xFFFFFFFF;
-        hex = hex.trim();
-        if (hex.startsWith("#")) hex = hex.substring(1);
-        if (hex.length() != 6) return 0xFFFFFFFF;
-        try {
-            int r = Integer.parseInt(hex.substring(0, 2), 16);
-            int g = Integer.parseInt(hex.substring(2, 4), 16);
-            int b = Integer.parseInt(hex.substring(4, 6), 16);
-            // ARGB
-            return (0xFF << 24) | (r << 16) | (g << 8) | b;
-        } catch (NumberFormatException e) {
-            return 0xFFFFFFFF;
-        }
     }
 }
