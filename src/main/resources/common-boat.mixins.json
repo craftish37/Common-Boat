@@ -13,8 +13,7 @@
     "TropicalFishEntityAccessor",
     "AbstractBoatEntityAccessor",
     "AbstractBoatEntityTickMixin",
-    "PlayerEntityMixin",
-    "ItemRendererMixin"
+    "PlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

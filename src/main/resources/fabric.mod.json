@@ -41,7 +41,6 @@
   },
   "suggests": {
     "modmenu": "*",
-    "cloth-config": "*",
-    "roughlyenoughitems": "*"
+    "cloth-config": "*"
   }
 }

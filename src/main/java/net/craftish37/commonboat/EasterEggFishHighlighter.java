@@ -22,11 +22,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.nbt.NbtCompound;
 
 public class EasterEggFishHighlighter {
     private static final MinecraftClient client = MinecraftClient.getInstance();
@@ -246,30 +241,6 @@ public class EasterEggFishHighlighter {
         } catch (NumberFormatException e) {
             return new float[]{0.0f, 0.0f, 0.0f};
         }
-    }
-    public static float[] getItemHighlightColor(ItemStack stack) {
-        CommonBoatConfig cfg = ConfigAccess.get();
-        if (!cfg.enabled || !cfg.easterEggsEnabled || !cfg.leFischeAuChocolatEnabled) return null;
-        if (!stack.isOf(Items.TROPICAL_FISH_BUCKET)) return null;
-        NbtComponent nbtComponent = stack.get(DataComponentTypes.BUCKET_ENTITY_DATA);
-        if (nbtComponent == null) return null;
-        NbtCompound nbt = nbtComponent.copyNbt();
-        if (!nbt.contains("BucketVariantTag")) return null;
-        Optional<Integer> variantOpt = nbt.getInt("BucketVariantTag");
-        if (variantOpt.isEmpty()) return null;
-        int variant = variantOpt.get();
-        if (usingSheetOverride || usingSheetOverride2) {
-            if (usingSheetOverride && HIGHLIGHT_FISH_IDS.contains(variant)) {
-                return new float[]{1.0f, 1.0f, 1.0f};
-            } else if (usingSheetOverride2 && HIGHLIGHT_FISH_IDS_2.contains(variant)) {
-                return getRGBFromHex(cfg.capturedFishSheetUrl2Color);
-            }
-        } else {
-            if (!DEFAULT_IGNORED_FISH_IDS.contains(variant)) {
-                return new float[]{1.0f, 1.0f, 1.0f};
-            }
-        }
-        return null;
     }
     public static void onWorldRender(@org.jetbrains.annotations.Nullable MatrixStack matrices) {
         var cfg = ConfigAccess.get();
