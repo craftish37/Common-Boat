@@ -1,6 +1,5 @@
 package net.craftish37.commonboat;
 
-import org.lwjgl.opengl.GL11;
 import net.craftish37.commonboat.mixin.TropicalFishEntityAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
@@ -10,6 +9,11 @@ import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL11;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.util.DyeColor;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -93,6 +97,48 @@ public class EasterEggFishHighlighter {
     private static final Pattern GID_PATTERN = Pattern.compile("[#&]gid=(\\d+)");
     private static final Pattern CSV_SPLIT_REGEX = Pattern.compile(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
     private static final Pattern QUOTE_COUNT_REGEX = Pattern.compile("\"");
+    public static Integer getVariantIdFromBucket(ItemStack stack) {
+        if (stack.isEmpty() || stack.getItem() != Items.TROPICAL_FISH_BUCKET) return null;
+        Object patternObj = stack.get(DataComponentTypes.TROPICAL_FISH_PATTERN);
+        DyeColor baseColor = stack.get(DataComponentTypes.TROPICAL_FISH_BASE_COLOR);
+        DyeColor patternColor = stack.get(DataComponentTypes.TROPICAL_FISH_PATTERN_COLOR);
+        if (patternObj != null && baseColor != null && patternColor != null) {
+            String patternName = patternObj.toString().toLowerCase();
+            int shapeId = 0;
+            int size = 0;
+            boolean found = false;
+            for (Map.Entry<String, Integer> entry : SMALL_SHAPE_MAP.entrySet()) {
+                if (entry.getKey().equalsIgnoreCase(patternName)) {
+                    shapeId = entry.getValue();
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                for (Map.Entry<String, Integer> entry : LARGE_SHAPE_MAP.entrySet()) {
+                    if (entry.getKey().equalsIgnoreCase(patternName)) {
+                        shapeId = entry.getValue();
+                        size = 1;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (found) {
+                int baseId = baseColor.ordinal();
+                int patternId = patternColor.ordinal();
+                return (patternId << 24) | (baseId << 16) | (shapeId << 8) | size;
+            }
+        }
+        var customData = stack.get(DataComponentTypes.CUSTOM_DATA);
+        if (customData != null) {
+            var nbt = customData.copyNbt();
+            if (nbt.contains("BucketVariantTag")) {
+                return nbt.getInt("BucketVariantTag").orElse(0);
+            }
+        }
+        return null;
+    }
     private static Integer getVariantIdFromTypeString(String type) {
         try {
             String shapeName;
@@ -135,7 +181,7 @@ public class EasterEggFishHighlighter {
     }
     public static Integer getFishVariantColor(int variantId) {
         if (usingSheetOverride && HIGHLIGHT_FISH_IDS.contains(variantId)) {
-            return 0xFFFFFFFF; // White
+            return 0xFFFFFFFF;
         }
         if (usingSheetOverride2 && HIGHLIGHT_FISH_IDS_2.contains(variantId)) {
             return getColorIntFromHex(ConfigAccess.get().capturedFishSheetUrl2Color);
