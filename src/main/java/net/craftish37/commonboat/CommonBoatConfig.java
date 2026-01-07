@@ -2,44 +2,85 @@ package net.craftish37.commonboat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import fi.dy.masa.malilib.config.IConfigOptionListEntry;
+import fi.dy.masa.malilib.util.StringUtils;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CommonBoatConfig {
+    public enum BlackWhiteList implements IConfigOptionListEntry {
+        BLACKLIST("blacklist", "text.commonboat.config.namematch.blacklist"),
+        WHITELIST("whitelist", "text.commonboat.config.namematch.whitelist");
+        private final String configString;
+        private final String translationKey;
+        BlackWhiteList(String configString, String translationKey) {
+            this.configString = configString;
+            this.translationKey = translationKey;
+        }
+        @Override
+        public String getStringValue() { return this.configString; }
+        @Override
+        public String getDisplayName() { return StringUtils.translate(this.translationKey); }
+        @Override
+        public IConfigOptionListEntry cycle(boolean forward) { return this == BLACKLIST ? WHITELIST : BLACKLIST; }
+        @Override
+        public IConfigOptionListEntry fromString(String value) {
+            for (BlackWhiteList entry : values()) {
+                if (entry.configString.equalsIgnoreCase(value)) return entry;
+            }
+            return BLACKLIST;
+        }
+    }
+
     public boolean enabled = false;
+    public boolean disableOnNameMatch = false;
+    public BlackWhiteList nameMatchMode = BlackWhiteList.BLACKLIST;
+    public List<String> nameMatchList = new ArrayList<>();
 
     public boolean slipperinessEnabled = false;
     public boolean velocityMultiplierEnabled = false;
     public boolean boatStepHeightEnabled = false;
     public boolean removeAirDrag = false;
-    public boolean disableOnNameMatch = false;
+    public boolean easterEggsEnabled = false;
 
     public double slipperiness = 0.989;
     public double velocityMultiplier = 1.1;
     public double boatStepHeight = 1.0;
     public double maxSpeed = -1.0;
-    public double maxJumpHeight = -1.0;
-    public double fishDetectionDistance = 48.0;
-
     public Map<String, Double> customBlockSlipperiness = new HashMap<>();
 
-    public boolean easterEggsEnabled = false;
     public boolean handbrakeEnabled = false;
     public boolean flappyBirdEnabled = false;
     public boolean flappyBirdPitchControl = false;
     public boolean leFischeAuChocolatEnabled = false;
     public boolean elytraBoatEnabled = false;
     public boolean disableBlockBreakingPenalty = false;
-    public String capturedFishSheetUrl = "";
-    public String capturedFishSheetUrl2 = "";
-    public String capturedFishSheetUrl2Color = "#000000";
-    public String nameMatchString = "";
+    public double fishDetectionDistance = 48.0;
 
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public List<String> capturedFishSheetUrls = new ArrayList<>();
+    public Map<String, String> capturedFishSheetColors = new HashMap<>();
+    public double maxJumpHeight = -1.0;
+
+    public String masterToggleKey = "G";
+    public String slipperinessToggleKey = "";
+    public String velocityToggleKey = "";
+    public String stepHeightToggleKey = "";
+    public String airDragToggleKey = "";
+    public String easterEggsToggleKey = "";
+    public String handbrakeToggleKey = "";
+    public String flappyBirdToggleKey = "";
+    public String flappyBirdPitchToggleKey = "";
+    public String leFischeAuChocolatToggleKey = "";
+    public String elytraBoatToggleKey = "";
+    public String blockBreakingPenaltyToggleKey = "";
+
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final File FILE = new File("config/commonboat.json");
 
     public static CommonBoatConfig load() {

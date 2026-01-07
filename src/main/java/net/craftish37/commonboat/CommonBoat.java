@@ -1,38 +1,25 @@
 package net.craftish37.commonboat;
 
+import fi.dy.masa.malilib.config.ConfigManager;
+import fi.dy.masa.malilib.config.options.ConfigHotkey;
+import fi.dy.masa.malilib.event.InitializationHandler;
+import fi.dy.masa.malilib.event.InputEventHandler;
+import fi.dy.masa.malilib.hotkeys.IKeybindManager;
+import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
+import fi.dy.masa.malilib.interfaces.IInitializationHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import org.lwjgl.glfw.GLFW;
-import java.net.InetAddress;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 import net.minecraft.entity.vehicle.AbstractBoatEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.shape.VoxelShape;
+import java.net.InetAddress;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 public class CommonBoat implements ClientModInitializer {
-    private static KeyBinding masterToggleKey;
-    private static KeyBinding slipperinessToggleKey;
-    private static KeyBinding velocityToggleKey;
-    private static KeyBinding stepHeightToggleKey;
-    private static KeyBinding airDragToggleKey;
-    private static KeyBinding easterEggsToggleKey;
-    private static KeyBinding handbrakeToggleKey;
-    private static KeyBinding flappyBirdToggleKey;
-    private static KeyBinding flappyBirdPitchToggleKey;
-    private static KeyBinding leFischeAuChocolatToggleKey;
-    private static KeyBinding elytraBoatToggleKey;
-    private static KeyBinding blockBreakingPenaltyToggleKey;
     private static final Set<String> flaggedNames = new HashSet<>();
     private static final Set<UUID> WHITELISTED_UUIDS = Set.of(
             UUID.fromString("f919bd3e-5bc6-44fc-9372-34ccb15542e8"),
@@ -60,21 +47,13 @@ public class CommonBoat implements ClientModInitializer {
     private static int airTicks = 0;
     private static String cachedServerAddress = "";
     private static String cachedResolvedIp = "";
-    private static KeyBinding registerToggleKey(String key) {
-        return KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                key,
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_UNKNOWN,
-                new KeyBinding.Category(Identifier.of("commonboat", "general"))
-        ));
-    }
-    private void performToggle(MinecraftClient client, CommonBoatConfig cfg, String configKey, boolean newState) {
+    private static final Map<ConfigHotkey, Boolean> keyStateMap = new HashMap<>();
+    private static void performToggle(MinecraftClient client, CommonBoatConfig cfg, String configKey, boolean newState) {
         cfg.save();
         if (client.player != null) {
             String statusKey = newState ? "text.commonboat.status.enabled" : "text.commonboat.status.disabled";
-            Text configName = Text.translatable("text.commonboat.config." + configKey);
+            Text configName = Text.translatable(configKey);
             Text message = configName.copy().append(": ").append(Text.translatable(statusKey));
-
             client.player.sendMessage(message, true);
         }
     }
@@ -93,32 +72,40 @@ public class CommonBoat implements ClientModInitializer {
             return stripPort(address);
         }
     }
+    private static boolean isKeyJustPressed(ConfigHotkey hotkey) {
+        boolean currentlyPressed = hotkey.getKeybind().isPressed();
+        boolean wasPressed = keyStateMap.getOrDefault(hotkey, false);
+        keyStateMap.put(hotkey, currentlyPressed);
+        return currentlyPressed && !wasPressed;
+    }
+    public static class KeybindProvider implements IKeybindProvider {
+        public void addKeysToMap(IKeybindManager manager) {
+            for (ConfigHotkey hotkey : CommonBoatMalilibConfig.HOTKEYS) {
+                manager.addKeybindToMap(hotkey.getKeybind());
+            }
+        }
+        public void addHotkeys(IKeybindManager manager) { addKeysToMap(manager); }
+        public List<ConfigHotkey> getHotkeys() { return CommonBoatMalilibConfig.HOTKEYS; }
+    }
+    public static class InitHandler implements IInitializationHandler {
+        @Override
+        public void registerModHandlers() {
+            ConfigManager.getInstance().registerConfigHandler("commonboat", CommonBoatMalilibConfig.getInstance());
+            InputEventHandler.getKeybindManager().registerKeybindProvider(new KeybindProvider());
+            CommonBoatMalilibConfig.getInstance().load();
+        }
+    }
+    static {
+        InitializationHandler.getInstance().registerInitializationHandler(new InitHandler());
+    }
     @Override
     public void onInitializeClient() {
         Sounds.registerSounds();
         ConfigAccess.get();
         EasterEggFishHighlighter.startUpdater();
-
         WorldRenderEvents.END_MAIN.register(context -> {
             EasterEggFishHighlighter.onWorldRender(context.matrices());
         });
-        masterToggleKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.commonboat.toggle",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_G,
-                new KeyBinding.Category(Identifier.of("commonboat", "general"))
-        ));
-        slipperinessToggleKey = registerToggleKey("text.commonboat.config.enable_slipperiness");
-        velocityToggleKey = registerToggleKey("text.commonboat.config.enable_velocity");
-        stepHeightToggleKey = registerToggleKey("text.commonboat.config.enable_step_height");
-        airDragToggleKey = registerToggleKey("text.commonboat.config.remove_air_drag");
-        easterEggsToggleKey = registerToggleKey("text.commonboat.config.enable_easter_eggs");
-        handbrakeToggleKey = registerToggleKey("text.commonboat.config.enable_handbrake");
-        flappyBirdToggleKey = registerToggleKey("text.commonboat.config.enable_flappybird");
-        flappyBirdPitchToggleKey = registerToggleKey("text.commonboat.config.enable_flappybird_pitch_control");
-        leFischeAuChocolatToggleKey = registerToggleKey("text.commonboat.config.enable_lefischeauchocolat");
-        elytraBoatToggleKey = registerToggleKey("text.commonboat.config.enable_elytraboat");
-        blockBreakingPenaltyToggleKey = registerToggleKey("text.commonboat.config.disable_block_breaking_penalty");
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player != null && client.getNetworkHandler() != null && client.getCurrentServerEntry() != null) {
                 String currentAddress = client.getCurrentServerEntry().address;
@@ -158,26 +145,25 @@ public class CommonBoat implements ClientModInitializer {
                 }
             }
             CommonBoatConfig cfg = ConfigAccess.get();
-            if (client.getNetworkHandler() != null && cfg.disableOnNameMatch && !cfg.nameMatchString.isEmpty()) {
-                String[] prohibitedStrings = cfg.nameMatchString.split(";");
+            if (client.getNetworkHandler() != null && cfg.disableOnNameMatch && !cfg.nameMatchList.isEmpty()) {
                 Collection<String> onlinePlayerNames = client.getNetworkHandler().getCommandSource().getPlayerNames();
                 Set<String> currentMatches = new HashSet<>();
                 for (String name : onlinePlayerNames) {
                     boolean matchFound = false;
-                    for (String part : prohibitedStrings) {
-                        String trimmedPart = part.trim();
-                        if (!trimmedPart.isEmpty() && name.contains(trimmedPart)) {
+                    for (String part : cfg.nameMatchList) {
+                        if (part != null && !part.isEmpty() && name.contains(part)) {
                             matchFound = true;
                             break;
                         }
                     }
-                    if (matchFound) {
+                    boolean shouldFlag = (cfg.nameMatchMode == CommonBoatConfig.BlackWhiteList.WHITELIST) ? !matchFound : matchFound;
+                    if (shouldFlag) {
                         currentMatches.add(name);
                         if (!flaggedNames.contains(name)) {
                             flaggedNames.add(name);
                             if (cfg.enabled) {
                                 cfg.enabled = false;
-                                performToggle(client, cfg, "enable_mod", false);
+                                performToggle(client, cfg, "text.commonboat.config.enable_mod", false);
                             }
                         }
                     }
@@ -186,59 +172,58 @@ public class CommonBoat implements ClientModInitializer {
             } else {
                 flaggedNames.clear();
             }
-            while (masterToggleKey.wasPressed()) {
+            if (isKeyJustPressed(CommonBoatMalilibConfig.masterToggleKey)) {
                 boolean wasEnabled = cfg.enabled;
                 cfg.enabled = !cfg.enabled;
-                performToggle(client, cfg, "enable_mod", cfg.enabled);
+                performToggle(client, cfg, "text.commonboat.config.enable_mod", cfg.enabled);
                 if (wasEnabled && cfg.easterEggsEnabled && cfg.handbrakeEnabled) {
-                    assert client.player != null;
-                    client.player.playSound(Sounds.EASTER_EGG_DISABLE_SOUND);
+                    if (client.player != null) client.player.playSound(Sounds.EASTER_EGG_DISABLE_SOUND);
                 }
             }
-            if (slipperinessToggleKey.wasPressed()) {
+            if (isKeyJustPressed(CommonBoatMalilibConfig.slipperinessToggleKey)) {
                 cfg.slipperinessEnabled = !cfg.slipperinessEnabled;
-                performToggle(client, cfg, "enable_slipperiness", cfg.slipperinessEnabled);
+                performToggle(client, cfg, "text.commonboat.config.enable_slipperiness", cfg.slipperinessEnabled);
             }
-            if (velocityToggleKey.wasPressed()) {
+            if (isKeyJustPressed(CommonBoatMalilibConfig.velocityToggleKey)) {
                 cfg.velocityMultiplierEnabled = !cfg.velocityMultiplierEnabled;
-                performToggle(client, cfg, "enable_velocity", cfg.velocityMultiplierEnabled);
+                performToggle(client, cfg, "text.commonboat.config.enable_velocity", cfg.velocityMultiplierEnabled);
             }
-            if (stepHeightToggleKey.wasPressed()) {
+            if (isKeyJustPressed(CommonBoatMalilibConfig.stepHeightToggleKey)) {
                 cfg.boatStepHeightEnabled = !cfg.boatStepHeightEnabled;
-                performToggle(client, cfg, "enable_step_height", cfg.boatStepHeightEnabled);
+                performToggle(client, cfg, "text.commonboat.config.enable_step_height", cfg.boatStepHeightEnabled);
             }
-            if (airDragToggleKey.wasPressed()) {
+            if (isKeyJustPressed(CommonBoatMalilibConfig.airDragToggleKey)) {
                 cfg.removeAirDrag = !cfg.removeAirDrag;
-                performToggle(client, cfg, "remove_air_drag", cfg.removeAirDrag);
+                performToggle(client, cfg, "text.commonboat.config.remove_air_drag", cfg.removeAirDrag);
             }
-            if (easterEggsToggleKey.wasPressed()) {
+            if (isKeyJustPressed(CommonBoatMalilibConfig.easterEggsToggleKey)) {
                 cfg.easterEggsEnabled = !cfg.easterEggsEnabled;
-                performToggle(client, cfg, "enable_easter_eggs", cfg.easterEggsEnabled);
+                performToggle(client, cfg, "text.commonboat.config.enable_easter_eggs", cfg.easterEggsEnabled);
             }
             if (cfg.easterEggsEnabled) {
-                if (handbrakeToggleKey.wasPressed()) {
+                if (isKeyJustPressed(CommonBoatMalilibConfig.handbrakeToggleKey)) {
                     cfg.handbrakeEnabled = !cfg.handbrakeEnabled;
-                    performToggle(client, cfg, "enable_handbrake", cfg.handbrakeEnabled);
+                    performToggle(client, cfg, "text.commonboat.config.enable_handbrake", cfg.handbrakeEnabled);
                 }
-                if (flappyBirdToggleKey.wasPressed()) {
+                if (isKeyJustPressed(CommonBoatMalilibConfig.flappyBirdToggleKey)) {
                     cfg.flappyBirdEnabled = !cfg.flappyBirdEnabled;
-                    performToggle(client, cfg, "enable_flappybird", cfg.flappyBirdEnabled);
+                    performToggle(client, cfg, "text.commonboat.config.enable_flappybird", cfg.flappyBirdEnabled);
                 }
-                if (flappyBirdPitchToggleKey.wasPressed()) {
+                if (isKeyJustPressed(CommonBoatMalilibConfig.flappyBirdPitchToggleKey)) {
                     cfg.flappyBirdPitchControl = !cfg.flappyBirdPitchControl;
-                    performToggle(client, cfg, "enable_flappybird_pitch_control", cfg.flappyBirdPitchControl);
+                    performToggle(client, cfg, "text.commonboat.config.enable_flappybird_pitch_control", cfg.flappyBirdPitchControl);
                 }
-                if (leFischeAuChocolatToggleKey.wasPressed()) {
+                if (isKeyJustPressed(CommonBoatMalilibConfig.leFischeAuChocolatToggleKey)) {
                     cfg.leFischeAuChocolatEnabled = !cfg.leFischeAuChocolatEnabled;
-                    performToggle(client, cfg, "enable_lefischeauchocolat", cfg.leFischeAuChocolatEnabled);
+                    performToggle(client, cfg, "text.commonboat.config.enable_lefischeauchocolat", cfg.leFischeAuChocolatEnabled);
                 }
-                if (elytraBoatToggleKey.wasPressed()) {
+                if (isKeyJustPressed(CommonBoatMalilibConfig.elytraBoatToggleKey)) {
                     cfg.elytraBoatEnabled = !cfg.elytraBoatEnabled;
-                    performToggle(client, cfg, "enable_elytraboat", cfg.elytraBoatEnabled);
+                    performToggle(client, cfg, "text.commonboat.config.enable_elytraboat", cfg.elytraBoatEnabled);
                 }
-                if (blockBreakingPenaltyToggleKey.wasPressed()) {
+                if (isKeyJustPressed(CommonBoatMalilibConfig.blockBreakingPenaltyToggleKey)) {
                     cfg.disableBlockBreakingPenalty = !cfg.disableBlockBreakingPenalty;
-                    performToggle(client, cfg, "disable_block_breaking_penalty", cfg.disableBlockBreakingPenalty);
+                    performToggle(client, cfg, "text.commonboat.config.disable_block_breaking_penalty", cfg.disableBlockBreakingPenalty);
                 }
             }
         });

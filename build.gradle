@@ -14,8 +14,8 @@ repositories {
         url = "https://api.modrinth.com/maven"
     }
     maven {
-        name = "ClothConfig"
-        url = "https://maven.shedaniel.me/"
+        name = "MasaMaven"
+        url = "https://masa.dy.fi/maven"
     }
 }
 
@@ -257,12 +257,10 @@ processResources {
 
 dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
+    modImplementation "maven.modrinth:malilib:${project.malilib_version}"
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     dependedMod "net.fabricmc.fabric-api:fabric-api:", "fabric", null, null
-
-    suggestedMod true, "me.shedaniel.cloth:cloth-config-fabric:", "cloth_config"
 
 	// optional, json api only
 	devRuntime "com.terraformersmc:modmenu:$project.modmenu_version"

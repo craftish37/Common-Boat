@@ -2,10 +2,10 @@
   "category.commonboat": "Cmmonbowt",
   "key.commonboat.toggle": "TogGL Cmmonbowt PweaSe :3",
 
-  "text.commonboat.config.title": "Cmmonbowt Config",
   "text.commonboat.config.category.general": "Genrwal",
   "text.commonboat.config.category.values": "VAhHlHueS",
   "text.commonboat.config.category.eastereggs": "eastr EGgz",
+  "text.commonboat.config.category.hotkeys": "hutkis",
 
   "text.commonboat.config.enable_mod": "enabl Mod",
   "text.commonboat.config.enable_mod.tooltip": "mastr toGGL 2 enabl OR DIsabl Cmmonbowt intirele",
@@ -15,8 +15,8 @@
   "text.commonboat.config.slipperiness_value.tooltip": "oVRrideZ slipPERInes fr boATZ?? ON ISSSsss",
   "text.commonboat.config.disable_on_name_match": "DIsabl ON nahm metch",
   "text.commonboat.config.disable_on_name_match.tooltip": "DIsabl TEH Mod if catnahm has sPECifid stwing",
-  "text.commonboat.config.name_match_string": "nahm metch stwing",
-  "text.commonboat.config.name_match_string.tooltip": "TEH stwing 2 meow fr iN catnahm. \nOoose ';' as sePAW-ator",
+  "text.commonboat.config.name_match_string": "nahm metch lis",
+  "text.commonboat.config.name_match_string.tooltip": "TEH lis 2 meow fr iN catnahm",
 
   "text.commonboat.config.enable_velocity": "enabl velOcitie multipliR oVRride",
   "text.commonboat.config.velocity_value": "velOcitie multipliR Meow",
@@ -52,6 +52,11 @@
   "text.commonboat.config.enable_lefischeauchocolat": "enabl CrAFtfisH O chockylAT",
   "text.commonboat.config.enable_elytraboat": "enabl Wingus-boATZ?? (hOLD BOING)",
   "text.commonboat.config.disable_block_breaking_penalty": "DIsabl iN-Aiw bwaaaKE deBFF",
+
+  "text.commonboat.config.namematch.blacklist": "Bluclis",
+  "text.commonboat.config.namematch.whitelist": "Whaiiiitlis",
+  "text.commonboat.config.name_match_mode": "nahm metch MUD",
+  "text.commonboat.config.name_match_mode.tooltip": "sayywz o nahm metch lis woks\nBluclis DIsabl Mod if nahm fund\nWhaiiiitlis DIsabl Mod if nahm NUT fund",
 
   "text.commonboat.status.enabled": "enabld",
   "text.commonboat.status.disabled": "disubLd",

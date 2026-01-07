@@ -2,10 +2,10 @@
   "category.commonboat": "Common-Boat",
   "key.commonboat.toggle": "Activer/Désactiver Common-Boat",
 
-  "text.commonboat.config.title": "Config Common-Boat",
   "text.commonboat.config.category.general": "Général",
   "text.commonboat.config.category.values": "Valeurs",
   "text.commonboat.config.category.eastereggs": "Easter Eggs",
+  "text.commonboat.config.category.hotkeys": "Contrôles",
 
   "text.commonboat.config.enable_mod": "Activer le mod",
   "text.commonboat.config.enable_mod.tooltip": "Active ou désactive Common-Boat entièrement.",
@@ -16,7 +16,7 @@
   "text.commonboat.config.disable_on_name_match": "Désactivation Automatique",
   "text.commonboat.config.disable_on_name_match.tooltip": "Désactive le mod automatiquement si un pseudonyme contient ces caractères.",
   "text.commonboat.config.name_match_string": "Caractères visés",
-  "text.commonboat.config.name_match_string.tooltip": "Les caractères à vérifier dans les pseudonymes. \nUtiliser ';' comme séparateur.",
+  "text.commonboat.config.name_match_string.tooltip": "Les caractères à vérifier dans les pseudonymes.",
 
   "text.commonboat.config.enable_velocity": "Activer le remplacement de Velocity Multiplier",
   "text.commonboat.config.velocity_value": "Velocity Multiplier",
@@ -52,6 +52,11 @@
   "text.commonboat.config.enable_lefischeauchocolat": "Activer Le Fische Au Chocolat",
   "text.commonboat.config.enable_elytraboat": "Activer le Bateau-Élytres (Maintenez Sauter)",
   "text.commonboat.config.disable_block_breaking_penalty": "Désactiver la pénalité de cassage en l'air",
+
+  "text.commonboat.config.namematch.blacklist": "Blacklist",
+  "text.commonboat.config.namematch.whitelist": "Whitelist",
+  "text.commonboat.config.name_match_mode": "Détection de caractères",
+  "text.commonboat.config.name_match_mode.tooltip": "Définis comment la liste de cracactères se comporte\nEn Blacklist, désactivation si présent.\nEn Whitelist, désactivation si absent.",
 
   "text.commonboat.status.enabled": "Activé",
   "text.commonboat.status.disabled": "Désactivé",

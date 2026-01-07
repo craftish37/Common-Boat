@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -88,13 +89,20 @@ public class EasterEggFishHighlighter {
         put("Red Lipped Blenny", 235340288);
     }};
     private static final Set<Integer> DEFAULT_IGNORED_FISH_IDS = Set.copyOf(SPECIAL_FISH_NAME_TO_ID_MAP.values());
-    private static volatile Set<Integer> HIGHLIGHT_FISH_IDS = Set.of();
-    private static volatile boolean usingSheetOverride = false;
-    private static volatile Set<Integer> HIGHLIGHT_FISH_IDS_2 = Set.of();
-    private static volatile boolean usingSheetOverride2 = false;
+    private static class SheetData {
+        int color;
+        Set<Integer> ids;
+        boolean isWildcard;
+        SheetData(int color, Set<Integer> ids, boolean isWildcard) {
+            this.color = color;
+            this.ids = ids;
+            this.isWildcard = isWildcard;
+        }
+    }
+    private static final List<SheetData> LOADED_SHEETS = new CopyOnWriteArrayList<>();
     private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private static final Pattern SHEET_ID_PATTERN = Pattern.compile("spreadsheets/d/([a-zA-Z0-9_-]+)");
-    private static final Pattern GID_PATTERN = Pattern.compile("[#&]gid=(\\d+)");
+    private static final Pattern GID_PATTERN = Pattern.compile("[?#&]gid=(\\d+)");
     private static final Pattern CSV_SPLIT_REGEX = Pattern.compile(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
     private static final Pattern QUOTE_COUNT_REGEX = Pattern.compile("\"");
     public static Integer getVariantIdFromBucket(ItemStack stack) {
@@ -180,20 +188,23 @@ public class EasterEggFishHighlighter {
         }
     }
     public static Integer getFishVariantColor(int variantId) {
-        if (usingSheetOverride && HIGHLIGHT_FISH_IDS.contains(variantId)) {
-            return 0xFFFFFFFF;
-        }
-        if (usingSheetOverride2 && HIGHLIGHT_FISH_IDS_2.contains(variantId)) {
-            return getColorIntFromHex(ConfigAccess.get().capturedFishSheetUrl2Color);
+        for (SheetData sheet : LOADED_SHEETS) {
+            if ((sheet.isWildcard && !DEFAULT_IGNORED_FISH_IDS.contains(variantId)) || sheet.ids.contains(variantId)) {
+                return sheet.color;
+            }
         }
         return null;
     }
-
     private static int getColorIntFromHex(String hex) {
         if (hex == null) return 0xFFFFFFFF;
         hex = hex.trim();
         if (hex.startsWith("#")) hex = hex.substring(1);
-        if (hex.length() != 6) return 0xFFFFFFFF;
+        if (hex.length() == 8) {
+            hex = hex.substring(2);
+        }
+        if (hex.length() != 6) {
+            return 0xFFFFFFFF;
+        }
         try {
             int r = Integer.parseInt(hex.substring(0, 2), 16);
             int g = Integer.parseInt(hex.substring(2, 4), 16);
@@ -217,23 +228,30 @@ public class EasterEggFishHighlighter {
         }
         return count;
     }
-    private static Set<Integer> fetchSheetData(String sheetUrl) {
-        if (sheetUrl == null || sheetUrl.trim().isEmpty()) {
-            return null;
+    private static class SheetFetchResult {
+        Set<Integer> ids = ConcurrentHashMap.newKeySet();
+        boolean hasWildcard = false;
+    }
+    private static SheetFetchResult fetchSheetData(String sheetUrl) {
+        if (sheetUrl == null) return null;
+        sheetUrl = sheetUrl.replace("\\u003d", "=").replace("\\u0026", "&").trim();
+        if (sheetUrl.isEmpty()) return null;
+        if (sheetUrl.equals("*")) {
+            SheetFetchResult result = new SheetFetchResult();
+            result.hasWildcard = true;
+            return result;
         }
         Matcher idMatcher = SHEET_ID_PATTERN.matcher(sheetUrl);
         if (!idMatcher.find()) {
-            System.err.println("[CommonBoat] Invalid Google Sheets URL format: " + sheetUrl);
+            System.out.println("[CommonBoat Debug] Failed to extract Sheet ID.");
             return null;
         }
         String sheetId = idMatcher.group(1);
         String gid = "0";
         Matcher gidMatcher = GID_PATTERN.matcher(sheetUrl);
-        if (gidMatcher.find()) {
-            gid = gidMatcher.group(1);
-        }
+        if (gidMatcher.find()) gid = gidMatcher.group(1);
         String exportUrl = "https://docs.google.com/spreadsheets/d/" + sheetId + "/export?format=csv&gid=" + gid;
-        Set<Integer> newHighlightIdSet = ConcurrentHashMap.newKeySet();
+        SheetFetchResult result = new SheetFetchResult();
         try {
             URL url = new URL(exportUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -261,6 +279,10 @@ public class EasterEggFishHighlighter {
                         if (captured.equalsIgnoreCase("FALSE")) {
                             String name = columns[nameIndex].trim().replace("\"", "");
                             String type = columns[typeIndex].trim().replace("\"", "");
+                            if (name.equals("*")) {
+                                result.hasWildcard = true;
+                                continue;
+                            }
                             Integer variantId = null;
                             if (name.equals("-")) {
                                 variantId = getVariantIdFromTypeString(type);
@@ -268,71 +290,67 @@ public class EasterEggFishHighlighter {
                                 variantId = SPECIAL_FISH_NAME_TO_ID_MAP.get(name);
                             }
                             if (variantId != null) {
-                                newHighlightIdSet.add(variantId);
+                                result.ids.add(variantId);
                             }
                         }
                     }
                 }
             }
-            return newHighlightIdSet;
+            return result;
         } catch (Exception e) {
-            System.err.println("[CommonBoat] Failed to fetch sheet data from: " + sheetUrl);
+            System.err.println("[CommonBoat Debug] FAILED to fetch sheet data from: " + sheetUrl);
             e.printStackTrace();
             return null;
         }
     }
     private static void updateCapturedFishList() {
         CommonBoatConfig cfg = ConfigAccess.get();
-        Set<Integer> list1 = fetchSheetData(cfg.capturedFishSheetUrl);
-        if (list1 != null) {
-            HIGHLIGHT_FISH_IDS = list1;
-            usingSheetOverride = true;
-        } else {
-            usingSheetOverride = false;
+        List<SheetData> newSheets = new ArrayList<>();
+        for (String url : cfg.capturedFishSheetUrls) {
+            if (url == null || url.trim().isEmpty()) continue;
+            String cleanUrl = url.replace("\\u003d", "=").replace("\\u0026", "&").trim();
+            String hexColor = cfg.capturedFishSheetColors.getOrDefault(cleanUrl, "#FFFFFF");
+            int colorInt = getColorIntFromHex(hexColor);
+            SheetFetchResult result = fetchSheetData(url);
+            if (result != null && (result.hasWildcard || !result.ids.isEmpty())) {
+                newSheets.add(new SheetData(colorInt, result.ids, result.hasWildcard));
+            }
         }
-        Set<Integer> list2 = fetchSheetData(cfg.capturedFishSheetUrl2);
-        if (list2 != null) {
-            HIGHLIGHT_FISH_IDS_2 = list2;
-            usingSheetOverride2 = true;
-        } else {
-            usingSheetOverride2 = false;
-        }
+        LOADED_SHEETS.clear();
+        LOADED_SHEETS.addAll(newSheets);
     }
-    private static float[] getRGBFromHex(String hex) {
-        if (hex == null) return new float[]{0.0f, 0.0f, 0.0f};
-        hex = hex.trim();
-        if (hex.startsWith("#")) hex = hex.substring(1);
-        if (hex.length() != 6) return new float[]{0.0f, 0.0f, 0.0f};
-        try {
-            int r = Integer.parseInt(hex.substring(0, 2), 16);
-            int g = Integer.parseInt(hex.substring(2, 4), 16);
-            int b = Integer.parseInt(hex.substring(4, 6), 16);
-            return new float[]{r / 255.0f, g / 255.0f, b / 255.0f};
-        } catch (NumberFormatException e) {
-            return new float[]{0.0f, 0.0f, 0.0f};
-        }
+    private static float[] getRGBFromInt(int color) {
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+        return new float[]{r / 255.0f, g / 255.0f, b / 255.0f};
     }
     public static void onWorldRender(@org.jetbrains.annotations.Nullable MatrixStack matrices) {
         var cfg = ConfigAccess.get();
         if (!cfg.enabled || !cfg.easterEggsEnabled || !cfg.leFischeAuChocolatEnabled) return;
         if (client.world == null || client.player == null || matrices == null) return;
         Vec3d cameraPos = client.gameRenderer.getCamera().getPos();
-        List<TropicalFishEntity> fishToHighlight1 = new ArrayList<>();
-        List<TropicalFishEntity> fishToHighlight2 = new ArrayList<>();
+
+        Map<SheetData, List<TropicalFishEntity>> batches = new LinkedHashMap<>();
+        for (SheetData sheet : LOADED_SHEETS) {
+            batches.put(sheet, new ArrayList<>());
+        }
+        List<TropicalFishEntity> defaults = new ArrayList<>();
         for (Entity entity : client.world.getOtherEntities(client.player, client.player.getBoundingBox().expand(cfg.fishDetectionDistance))) {
             if (!(entity instanceof TropicalFishEntity fish)) continue;
             int variant = fish.getDataTracker().get(TropicalFishEntityAccessor.getVariantTrackedData());
-
-            if (usingSheetOverride || usingSheetOverride2) {
-                if (usingSheetOverride && HIGHLIGHT_FISH_IDS.contains(variant)) {
-                    fishToHighlight1.add(fish);
-                }
-                else if (usingSheetOverride2 && HIGHLIGHT_FISH_IDS_2.contains(variant)) {
-                    fishToHighlight2.add(fish);
+            if (!LOADED_SHEETS.isEmpty()) {
+                boolean matched = false;
+                for (SheetData sheet : LOADED_SHEETS) {
+                    if ((sheet.isWildcard && !DEFAULT_IGNORED_FISH_IDS.contains(variant)) || sheet.ids.contains(variant)) {
+                        batches.get(sheet).add(fish);
+                        matched = true;
+                        break;
+                    }
                 }
             } else {
                 if (!DEFAULT_IGNORED_FISH_IDS.contains(variant)) {
-                    fishToHighlight1.add(fish);
+                    defaults.add(fish);
                 }
             }
         }
@@ -344,12 +362,17 @@ public class EasterEggFishHighlighter {
         GL11.glLineWidth(1.0f);
 
         VertexConsumer consumer = provider.getBuffer(RenderLayer.getLines());
-        renderFishList(consumer, matrices, cameraPos, fishToHighlight1, 1.0f, 1.0f, 1.0f);
+        for (Map.Entry<SheetData, List<TropicalFishEntity>> entry : batches.entrySet()) {
+            if (!entry.getValue().isEmpty()) {
+                float[] rgb = getRGBFromInt(entry.getKey().color);
+                renderFishList(consumer, matrices, cameraPos, entry.getValue(), rgb[0], rgb[1], rgb[2]);
+            }
+        }
+        if (!defaults.isEmpty()) {
+            renderFishList(consumer, matrices, cameraPos, defaults, 1.0f, 1.0f, 1.0f);
+        }
 
-        float[] color2 = getRGBFromHex(cfg.capturedFishSheetUrl2Color);
-        renderFishList(consumer, matrices, cameraPos, fishToHighlight2, color2[0], color2[1], color2[2]);
         provider.draw();
-
         GL11.glDepthMask(true);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
     }

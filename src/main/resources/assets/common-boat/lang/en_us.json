@@ -1,11 +1,14 @@
 {
+  "gui.tab.commonboat": "Common-Boat",
   "category.commonboat": "Common-Boat",
   "key.commonboat.toggle": "Toggle Common-Boat",
-
   "text.commonboat.config.title": "Common-Boat Config",
+  "text.commonboat.config.tab": "CommonBoat",
+
   "text.commonboat.config.category.general": "General",
   "text.commonboat.config.category.values": "Values",
   "text.commonboat.config.category.eastereggs": "Easter Eggs",
+  "text.commonboat.config.category.hotkeys": "Hotkeys",
 
   "text.commonboat.config.enable_mod": "Enable Mod",
   "text.commonboat.config.enable_mod.tooltip": "Master toggle to enable or disable Common-Boat entirely.",
@@ -15,8 +18,7 @@
   "text.commonboat.config.slipperiness_value.tooltip": "Overrides slipperiness for boats on ice.",
   "text.commonboat.config.disable_on_name_match": "Disable on Name Match",
   "text.commonboat.config.disable_on_name_match.tooltip": "Automatically disable the mod if a username contains the specified string.",
-  "text.commonboat.config.name_match_string": "Name Match String",
-  "text.commonboat.config.name_match_string.tooltip": "The string to check for in usernames. \nUse ';' as a separator.",
+  "text.commonboat.config.name_match_string.tooltip": "The list to check for in usernames.",
 
   "text.commonboat.config.enable_velocity": "Enable Velocity Multiplier Override",
   "text.commonboat.config.velocity_value": "Velocity Multiplier",
@@ -43,6 +45,8 @@
   "text.commonboat.config.captured_fish_sheet_url_2.tooltip": "A secondary public Google Sheets URL for the captured fish list.\nFish in the first list take priority.",
   "text.commonboat.config.captured_fish_sheet_url_2_color": "Secondary List Color (Hex)",
   "text.commonboat.config.fish_list_updated": "Fish highlight list updated (%s entries)",
+  "text.commonboat.config.name_match_mode": "Name Match Mode",
+  "text.commonboat.config.name_match_string": "Name Match List",
 
   "text.commonboat.config.enable_easter_eggs": "Enable Easter Eggs",
   "text.commonboat.config.enable_easter_eggs.tooltip": "0w0",
@@ -53,7 +57,24 @@
   "text.commonboat.config.enable_elytraboat": "Enable Elytra-Boat (Hold Jump)",
   "text.commonboat.config.disable_block_breaking_penalty": "Disable In-Air Break Debuff",
 
+  "text.commonboat.config.namematch.blacklist": "Blacklist",
+  "text.commonboat.config.namematch.whitelist": "Whitelist",
+  "text.commonboat.config.name_match_mode.tooltip": "Select whether the Name Match List acts\n As a Blacklist, disable mod if name found.\nAs a Whitelist, disable mod if name NOT found.",
+
   "text.commonboat.status.enabled": "Enabled",
   "text.commonboat.status.disabled": "Disabled",
-  "common-boat.ggsheet": "Google Sheet Example"
+  "common-boat.ggsheet": "Google Sheet Example",
+
+  "text.commonboat.hotkey.toggle_master": "Master Toggle",
+  "text.commonboat.hotkey.toggle_slipperiness": "Toggle Slipperiness",
+  "text.commonboat.hotkey.toggle_velocity": "Toggle Velocity",
+  "text.commonboat.hotkey.toggle_step_height": "Toggle Step Height",
+  "text.commonboat.hotkey.toggle_air_drag": "Toggle Air Drag",
+  "text.commonboat.hotkey.toggle_easter_eggs": "Toggle Easter Eggs",
+  "text.commonboat.hotkey.toggle_handbrake": "Toggle Handbrake",
+  "text.commonboat.hotkey.toggle_flappybird": "Toggle Flappy Bird",
+  "text.commonboat.hotkey.toggle_flappybird_pitch": "Toggle Pitch Control",
+  "text.commonboat.hotkey.toggle_lefische": "Toggle Le Fische",
+  "text.commonboat.hotkey.toggle_elytraboat": "Toggle Elytra Boat",
+  "text.commonboat.hotkey.toggle_block_breaking": "Toggle Block Break Penalty"
 }

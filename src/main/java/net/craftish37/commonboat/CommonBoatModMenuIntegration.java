@@ -2,226 +2,138 @@ package net.craftish37.commonboat;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import me.shedaniel.clothconfig2.api.ConfigBuilder;
-import me.shedaniel.clothconfig2.api.ConfigCategory;
-import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import fi.dy.masa.malilib.config.IConfigBase;
+import fi.dy.masa.malilib.config.options.ConfigColor;
+import fi.dy.masa.malilib.gui.GuiConfigsBase;
+import fi.dy.masa.malilib.gui.button.ButtonGeneric;
+import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registries;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 public class CommonBoatModMenuIntegration implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
         return (Screen parent) -> {
-            CommonBoatConfig cfg = ConfigAccess.get();
-            ConfigBuilder builder = ConfigBuilder.create()
-                    .setParentScreen(parent)
-                    .setTitle(Text.translatable("text.commonboat.config.title"))
-                    .setSavingRunnable(ConfigAccess::save);
-
-            ConfigCategory general = builder.getOrCreateCategory(Text.translatable("text.commonboat.config.category.general"));
-            ConfigCategory values = builder.getOrCreateCategory(Text.translatable("text.commonboat.config.category.values"));
-            ConfigCategory blockSettings = builder.getOrCreateCategory(Text.translatable("text.commonboat.config.slipperiness_value"));
-            ConfigEntryBuilder entryBuilder = builder.entryBuilder();
-
-            general.addEntry(entryBuilder
-                    .startBooleanToggle(Text.translatable("text.commonboat.config.enable_mod"), cfg.enabled)
-                    .setDefaultValue(false)
-                    .setTooltip(Text.translatable("text.commonboat.config.enable_mod.tooltip"))
-                    .setSaveConsumer(v -> cfg.enabled = v)
-                    .build());
-
-            general.addEntry(entryBuilder
-                    .startBooleanToggle(Text.translatable("text.commonboat.config.disable_on_name_match"), cfg.disableOnNameMatch)
-                    .setDefaultValue(false)
-                    .setTooltip(Text.translatable("text.commonboat.config.disable_on_name_match.tooltip"))
-                    .setSaveConsumer(v -> cfg.disableOnNameMatch = v)
-                    .build());
-            general.addEntry(entryBuilder
-                    .startStrField(Text.translatable("text.commonboat.config.name_match_string"), cfg.nameMatchString)
-                    .setDefaultValue("")
-                    .setTooltip(Text.translatable("text.commonboat.config.name_match_string.tooltip"))
-                    .setSaveConsumer(v -> cfg.nameMatchString = v)
-                    .build());
-            general.addEntry(entryBuilder
-                    .startBooleanToggle(Text.translatable("text.commonboat.config.enable_slipperiness"), cfg.slipperinessEnabled)
-                    .setDefaultValue(false)
-                    .setSaveConsumer(v -> cfg.slipperinessEnabled = v)
-                    .build());
-            values.addEntry(entryBuilder
-                    .startDoubleField(Text.translatable("text.commonboat.config.slipperiness_value"), cfg.slipperiness)
-                    .setDefaultValue(0.989)
-                    .setMin(0.1)
-                    .setMax(1.0)
-                    .setTooltip(Text.translatable("text.commonboat.config.slipperiness_value.tooltip"))
-                    .setSaveConsumer(v -> cfg.slipperiness = v)
-                    .build());
-            List<String> initialStringList = new ArrayList<>();
-            for (Entry<String, Double> entry : cfg.customBlockSlipperiness.entrySet()) {
-                initialStringList.add(entry.getKey() + "=" + entry.getValue());
-            }
-            if (initialStringList.isEmpty()) {
-                initialStringList.add("minecraft:blue_ice=0.989");
-            }
-            blockSettings.addEntry(entryBuilder.startStrList(
-                            Text.translatable("text.commonboat.config.slipperiness_value"),
-                            initialStringList
-                    )
-                    .setExpanded(true)
-                    .setInsertInFront(true)
-                    .setSaveConsumer(strings -> {
-                        Map<String, Double> newMap = new HashMap<>();
-                        for (String entry : strings) {
-                            String trimmedEntry = entry.trim();
-                            if (trimmedEntry.isEmpty()) continue;
-                            String[] parts = trimmedEntry.split("=", 2);
-                            if (parts.length != 2) {
-                                throw new RuntimeException("Invalid format: " + trimmedEntry + ". Must be 'block_id=slipperiness'.");
-                            }
-                            String blockIdString = parts[0].trim();
-                            double slipperinessValue;
-                            try {
-                                slipperinessValue = Double.parseDouble(parts[1].trim());
-                            } catch (NumberFormatException e) {
-                                throw new RuntimeException("Invalid slipperiness value for block " + blockIdString + ".");
-                            }
-                            Identifier id = Identifier.tryParse(blockIdString);
-                            if (id == null || !Registries.BLOCK.containsId(id)) {
-                                throw new RuntimeException("Invalid or unknown block ID: " + blockIdString);
-                            }
-                            if (slipperinessValue < 0.0 || slipperinessValue > 1.0) {
-                                throw new RuntimeException("Slipperiness value for block " + blockIdString + " must be between 0.0 and 1.0");
-                            }
-                            newMap.put(blockIdString, slipperinessValue);
-                        }
-                        cfg.customBlockSlipperiness = newMap;
-                    })
-                    .build());
-
-            general.addEntry(entryBuilder
-                    .startBooleanToggle(Text.translatable("text.commonboat.config.enable_velocity"), cfg.velocityMultiplierEnabled)
-                    .setDefaultValue(false)
-                    .setSaveConsumer(v -> cfg.velocityMultiplierEnabled = v)
-                    .build());
-            values.addEntry(entryBuilder
-                    .startDoubleField(Text.translatable("text.commonboat.config.velocity_value"), cfg.velocityMultiplier)
-                    .setDefaultValue(1.1)
-                    .setMin(0.1)
-                    .setMax(2.0)
-                    .setTooltip(Text.translatable("text.commonboat.config.velocity_value.tooltip"))
-                    .setSaveConsumer(v -> cfg.velocityMultiplier = v)
-                    .build());
-
-            general.addEntry(entryBuilder
-                    .startBooleanToggle(Text.translatable("text.commonboat.config.enable_step_height"), cfg.boatStepHeightEnabled)
-                    .setDefaultValue(false)
-                    .setSaveConsumer(v -> cfg.boatStepHeightEnabled = v)
-                    .build());
-            values.addEntry(entryBuilder
-                    .startDoubleField(Text.translatable("text.commonboat.config.step_height_value"), cfg.boatStepHeight)
-                    .setDefaultValue(0.5)
-                    .setMin(0.0)
-                    .setMax(5.0)
-                    .setTooltip(Text.translatable("text.commonboat.config.step_height_value.tooltip"))
-                    .setSaveConsumer(v -> cfg.boatStepHeight = v)
-                    .build());
-
-            general.addEntry(entryBuilder
-                    .startBooleanToggle(Text.translatable("text.commonboat.config.remove_air_drag"), cfg.removeAirDrag)
-                    .setDefaultValue(false)
-                    .setTooltip(Text.translatable("text.commonboat.config.remove_air_drag.tooltip"))
-                    .setSaveConsumer(v -> cfg.removeAirDrag = v)
-                    .build());
-
-            general.addEntry(entryBuilder
-                    .startBooleanToggle(Text.translatable("text.commonboat.config.enable_easter_eggs"), cfg.easterEggsEnabled)
-                    .setDefaultValue(false)
-                    .setTooltip(Text.translatable("text.commonboat.config.enable_easter_eggs.tooltip"))
-                    .setSaveConsumer(v -> cfg.easterEggsEnabled = v)
-                    .build());
-
-            values.addEntry(entryBuilder
-                    .startDoubleField(Text.translatable("text.commonboat.config.max_speed"), cfg.maxSpeed)
-                    .setDefaultValue(-1.0)
-                    .setMin(-1.0)
-                    .setMax(220.0)
-                    .setTooltip(Text.translatable("text.commonboat.config.max_speed.tooltip"))
-                    .setSaveConsumer(v -> cfg.maxSpeed = v)
-                    .build());
-            if (cfg.easterEggsEnabled) {
-                ConfigCategory eastereggs = builder.getOrCreateCategory(Text.translatable("text.commonboat.config.category.eastereggs"));
-                eastereggs.addEntry(entryBuilder
-                        .startBooleanToggle(Text.translatable("text.commonboat.config.enable_handbrake"), cfg.handbrakeEnabled)
-                        .setDefaultValue(false)
-                        .setSaveConsumer(v -> cfg.handbrakeEnabled = v)
-                        .build());
-                eastereggs.addEntry(entryBuilder
-                        .startBooleanToggle(Text.translatable("text.commonboat.config.enable_flappybird"), cfg.flappyBirdEnabled)
-                        .setDefaultValue(false)
-                        .setSaveConsumer(v -> cfg.flappyBirdEnabled = v)
-                        .build());
-                eastereggs.addEntry(entryBuilder
-                        .startBooleanToggle(Text.translatable("text.commonboat.config.enable_flappybird_pitch_control"), cfg.flappyBirdPitchControl)
-                        .setDefaultValue(false)
-                        .setTooltip(Text.translatable("text.commonboat.config.enable_flappybird_pitch_control.tooltip"))
-                        .setSaveConsumer(v -> cfg.flappyBirdPitchControl = v)
-                        .build());
-                eastereggs.addEntry(entryBuilder
-                        .startBooleanToggle(Text.translatable("text.commonboat.config.enable_lefischeauchocolat"), cfg.leFischeAuChocolatEnabled)
-                        .setDefaultValue(false)
-                        .setSaveConsumer(v -> cfg.leFischeAuChocolatEnabled = v)
-                        .build());
-                eastereggs.addEntry(entryBuilder
-                        .startBooleanToggle(Text.translatable("text.commonboat.config.enable_elytraboat"), cfg.elytraBoatEnabled)
-                        .setDefaultValue(false)
-                        .setSaveConsumer(v -> cfg.elytraBoatEnabled = v)
-                        .build());
-                eastereggs.addEntry(entryBuilder
-                        .startBooleanToggle(Text.translatable("text.commonboat.config.disable_block_breaking_penalty"), cfg.disableBlockBreakingPenalty)
-                        .setDefaultValue(false)
-                        .setSaveConsumer(v -> cfg.disableBlockBreakingPenalty = v)
-                        .build());
-                eastereggs.addEntry(entryBuilder
-                        .startDoubleField(Text.translatable("text.commonboat.config.fish_detection_distance"), cfg.fishDetectionDistance)
-                        .setDefaultValue(48.0)
-                        .setMin(0.0)
-                        .setMax(256.0)
-                        .setTooltip(Text.translatable("text.commonboat.config.fish_detection_distance.tooltip"))
-                        .setSaveConsumer(v -> cfg.fishDetectionDistance = v)
-                        .build());
-                eastereggs.addEntry(entryBuilder
-                        .startStrField(Text.translatable("text.commonboat.config.captured_fish_sheet_url"), cfg.capturedFishSheetUrl)
-                        .setDefaultValue("")
-                        .setTooltip(Text.translatable("text.commonboat.config.captured_fish_sheet_url.tooltip"))
-                        .setSaveConsumer(v -> cfg.capturedFishSheetUrl = v)
-                        .build());
-                eastereggs.addEntry(entryBuilder
-                        .startStrField(Text.translatable("text.commonboat.config.captured_fish_sheet_url_2"), cfg.capturedFishSheetUrl2)
-                        .setDefaultValue("")
-                        .setTooltip(Text.translatable("text.commonboat.config.captured_fish_sheet_url_2.tooltip"))
-                        .setSaveConsumer(v -> cfg.capturedFishSheetUrl2 = v)
-                        .build());
-                eastereggs.addEntry(entryBuilder
-                        .startStrField(Text.translatable("text.commonboat.config.captured_fish_sheet_url_2_color"), cfg.capturedFishSheetUrl2Color)
-                        .setDefaultValue("#000000")
-                        .setSaveConsumer(v -> cfg.capturedFishSheetUrl2Color = v)
-                        .build());
-                eastereggs.addEntry(entryBuilder
-                        .startDoubleField(Text.translatable("text.commonboat.config.max_jump_height"), cfg.maxJumpHeight)
-                        .setDefaultValue(-1.0)
-                        .setMin(-1.0)
-                        .setMax(2048.0)
-                        .setTooltip(Text.translatable("text.commonboat.config.max_jump_height.tooltip"))
-                        .setSaveConsumer(v -> cfg.maxJumpHeight = v)
-                        .build());
-            }
-
-            return builder.build();
+            CommonBoatMalilibConfig.getInstance().load();
+            return new CommonBoatConfigScreen(parent);
         };
+    }
+    public static class CommonBoatConfigScreen extends GuiConfigsBase {
+        private enum Tab {
+            GENERAL("text.commonboat.config.category.general"),
+            VALUES("text.commonboat.config.category.values"),
+            EASTER_EGGS("text.commonboat.config.category.eastereggs"),
+            HOTKEYS("text.commonboat.config.category.hotkeys");
+            public final String translationKey;
+            Tab(String key) { this.translationKey = key; }
+        }
+        private Tab activeTab = Tab.GENERAL;
+        private final Map<String, ConfigColor> dynamicColorWidgets = new LinkedHashMap<>();
+
+        public CommonBoatConfigScreen(Screen parent) {
+            super(10, 50, StringUtils.translate("text.commonboat.config.tab"), parent, StringUtils.translate("text.commonboat.config.title"));
+        }
+        @Override
+        public void initGui() {
+            saveDynamicColors();
+            dynamicColorWidgets.clear();
+            super.initGui();
+            int x = 20;
+            int y = 20;
+            int buttonWidth = 80;
+            for (Tab tab : Tab.values()) {
+                ButtonGeneric button = new ButtonGeneric(x, y, buttonWidth, 20, StringUtils.translate(tab.translationKey));
+                button.setEnabled(this.activeTab != tab);
+                this.addButton(button, (b, mouseButton) -> {
+                    this.activeTab = tab;
+                    this.initGui();
+                });
+                x += buttonWidth + 4;
+            }
+        }
+        private void saveDynamicColors() {
+            for (Map.Entry<String, ConfigColor> entry : dynamicColorWidgets.entrySet()) {
+                CommonBoatMalilibConfig.capturedFishSheetColors.put(entry.getKey(), entry.getValue().getStringValue());
+            }
+        }
+        @Override
+        public List<ConfigOptionWrapper> getConfigs() {
+            List<IConfigBase> configs = new ArrayList<>();
+            switch (this.activeTab) {
+                case GENERAL:
+                    configs.add(CommonBoatMalilibConfig.enabled);
+                    configs.add(CommonBoatMalilibConfig.disableOnNameMatch);
+                    configs.add(CommonBoatMalilibConfig.nameMatchMode);
+                    configs.add(CommonBoatMalilibConfig.slipperinessEnabled);
+                    configs.add(CommonBoatMalilibConfig.velocityMultiplierEnabled);
+                    configs.add(CommonBoatMalilibConfig.boatStepHeightEnabled);
+                    configs.add(CommonBoatMalilibConfig.removeAirDrag);
+                    configs.add(CommonBoatMalilibConfig.easterEggsEnabled);
+                    break;
+                case VALUES:
+                    configs.add(CommonBoatMalilibConfig.nameMatchList);
+                    configs.add(CommonBoatMalilibConfig.slipperiness);
+                    configs.add(CommonBoatMalilibConfig.velocityMultiplier);
+                    configs.add(CommonBoatMalilibConfig.boatStepHeight);
+                    configs.add(CommonBoatMalilibConfig.maxSpeed);
+                    configs.add(CommonBoatMalilibConfig.customBlockSlipperiness);
+                    break;
+                case EASTER_EGGS:
+                    if (CommonBoatMalilibConfig.easterEggsEnabled.getBooleanValue()) {
+                        configs.add(CommonBoatMalilibConfig.handbrakeEnabled);
+                        configs.add(CommonBoatMalilibConfig.flappyBirdEnabled);
+                        configs.add(CommonBoatMalilibConfig.flappyBirdPitchControl);
+                        configs.add(CommonBoatMalilibConfig.leFischeAuChocolatEnabled);
+                        configs.add(CommonBoatMalilibConfig.elytraBoatEnabled);
+                        configs.add(CommonBoatMalilibConfig.disableBlockBreakingPenalty);
+                        configs.add(CommonBoatMalilibConfig.fishDetectionDistance);
+                        configs.add(CommonBoatMalilibConfig.capturedFishSheetUrls);
+
+                        List<String> urls = CommonBoatMalilibConfig.capturedFishSheetUrls.getStrings();
+                        for (int i = 0; i < urls.size(); i++) {
+                            String url = urls.get(i);
+                            if (url == null || url.trim().isEmpty()) continue;
+
+                            String label = "Captured Fish Google Sheet URL " + (i + 1);
+                            String colorVal = CommonBoatMalilibConfig.capturedFishSheetColors.getOrDefault(url, "#FFFFFF");
+
+                            ConfigColor colorWidget = new ConfigColor(label, colorVal, "");
+                            colorWidget.setValueFromString(colorVal);
+
+                            dynamicColorWidgets.put(url, colorWidget);
+                            configs.add(colorWidget);
+                        }
+
+                        configs.add(CommonBoatMalilibConfig.maxJumpHeight);
+                    }
+                    break;
+                case HOTKEYS:
+                    configs.add(CommonBoatMalilibConfig.masterToggleKey);
+                    configs.add(CommonBoatMalilibConfig.slipperinessToggleKey);
+                    configs.add(CommonBoatMalilibConfig.velocityToggleKey);
+                    configs.add(CommonBoatMalilibConfig.stepHeightToggleKey);
+                    configs.add(CommonBoatMalilibConfig.airDragToggleKey);
+                    configs.add(CommonBoatMalilibConfig.easterEggsToggleKey);
+                    if (CommonBoatMalilibConfig.easterEggsEnabled.getBooleanValue()) {
+                        configs.add(CommonBoatMalilibConfig.handbrakeToggleKey);
+                        configs.add(CommonBoatMalilibConfig.flappyBirdToggleKey);
+                        configs.add(CommonBoatMalilibConfig.flappyBirdPitchToggleKey);
+                        configs.add(CommonBoatMalilibConfig.leFischeAuChocolatToggleKey);
+                        configs.add(CommonBoatMalilibConfig.elytraBoatToggleKey);
+                        configs.add(CommonBoatMalilibConfig.blockBreakingPenaltyToggleKey);
+                    }
+                    break;
+            }
+            return ConfigOptionWrapper.createFor(configs);
+        }
+        @Override
+        public void removed() {
+            saveDynamicColors();
+            super.removed();
+            CommonBoatMalilibConfig.getInstance().save();
+        }
     }
 }
