@@ -4,6 +4,8 @@
   "key.commonboat.toggle": "Toggle Common-Boat",
   "text.commonboat.config.title": "Common-Boat Config",
   "text.commonboat.config.tab": "CommonBoat",
+  "config.name.commonboat": "Common-Boat",
+  "text.commonboat.config.no_comment": " ",
 
   "text.commonboat.config.category.general": "General",
   "text.commonboat.config.category.values": "Values",
@@ -59,7 +61,7 @@
 
   "text.commonboat.config.namematch.blacklist": "Blacklist",
   "text.commonboat.config.namematch.whitelist": "Whitelist",
-  "text.commonboat.config.name_match_mode.tooltip": "Select whether the Name Match List acts\n As a Blacklist, disable mod if name found.\nAs a Whitelist, disable mod if name NOT found.",
+  "text.commonboat.config.name_match_mode.tooltip": "Select whether the Name Match List acts.\nAs a Blacklist, disable mod if name found.\nAs a Whitelist, disable mod if name NOT found.",
 
   "text.commonboat.status.enabled": "Enabled",
   "text.commonboat.status.disabled": "Disabled",
@@ -74,7 +76,7 @@
   "text.commonboat.hotkey.toggle_handbrake": "Toggle Handbrake",
   "text.commonboat.hotkey.toggle_flappybird": "Toggle Flappy Bird",
   "text.commonboat.hotkey.toggle_flappybird_pitch": "Toggle Pitch Control",
-  "text.commonboat.hotkey.toggle_lefische": "Toggle Le Fische",
+  "text.commonboat.hotkey.toggle_lefische": "Toggle Le Fische Au Chocolat",
   "text.commonboat.hotkey.toggle_elytraboat": "Toggle Elytra Boat",
   "text.commonboat.hotkey.toggle_block_breaking": "Toggle Block Break Penalty"
 }

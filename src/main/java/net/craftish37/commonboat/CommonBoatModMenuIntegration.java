@@ -3,15 +3,12 @@ package net.craftish37.commonboat;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import fi.dy.masa.malilib.config.IConfigBase;
-import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.client.gui.screen.Screen;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CommonBoatModMenuIntegration implements ModMenuApi {
     @Override
@@ -31,15 +28,12 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
             Tab(String key) { this.translationKey = key; }
         }
         private Tab activeTab = Tab.GENERAL;
-        private final Map<String, ConfigColor> dynamicColorWidgets = new LinkedHashMap<>();
 
         public CommonBoatConfigScreen(Screen parent) {
             super(10, 50, StringUtils.translate("text.commonboat.config.tab"), parent, StringUtils.translate("text.commonboat.config.title"));
         }
         @Override
         public void initGui() {
-            saveDynamicColors();
-            dynamicColorWidgets.clear();
             super.initGui();
             int x = 20;
             int y = 20;
@@ -52,11 +46,6 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                     this.initGui();
                 });
                 x += buttonWidth + 4;
-            }
-        }
-        private void saveDynamicColors() {
-            for (Map.Entry<String, ConfigColor> entry : dynamicColorWidgets.entrySet()) {
-                CommonBoatMalilibConfig.capturedFishSheetColors.put(entry.getKey(), entry.getValue().getStringValue());
             }
         }
         @Override
@@ -91,22 +80,7 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                         configs.add(CommonBoatMalilibConfig.disableBlockBreakingPenalty);
                         configs.add(CommonBoatMalilibConfig.fishDetectionDistance);
                         configs.add(CommonBoatMalilibConfig.capturedFishSheetUrls);
-
-                        List<String> urls = CommonBoatMalilibConfig.capturedFishSheetUrls.getStrings();
-                        for (int i = 0; i < urls.size(); i++) {
-                            String url = urls.get(i);
-                            if (url == null || url.trim().isEmpty()) continue;
-
-                            String label = "Captured Fish Google Sheet URL " + (i + 1);
-                            String colorVal = CommonBoatMalilibConfig.capturedFishSheetColors.getOrDefault(url, "#FFFFFF");
-
-                            ConfigColor colorWidget = new ConfigColor(label, colorVal, "");
-                            colorWidget.setValueFromString(colorVal);
-
-                            dynamicColorWidgets.put(url, colorWidget);
-                            configs.add(colorWidget);
-                        }
-
+                        configs.addAll(CommonBoatMalilibConfig.dynamicFishColorWidgets.values());
                         configs.add(CommonBoatMalilibConfig.maxJumpHeight);
                     }
                     break;
@@ -131,7 +105,6 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
         }
         @Override
         public void removed() {
-            saveDynamicColors();
             super.removed();
             CommonBoatMalilibConfig.getInstance().save();
         }

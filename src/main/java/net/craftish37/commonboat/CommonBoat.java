@@ -2,15 +2,16 @@ package net.craftish37.commonboat;
 
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
-import fi.dy.masa.malilib.event.InitializationHandler;
 import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.hotkeys.IKeybindManager;
 import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
 import fi.dy.masa.malilib.interfaces.IInitializationHandler;
+import fi.dy.masa.malilib.registry.Registry;
+import fi.dy.masa.malilib.util.data.ModInfo;
+import net.minecraft.client.MinecraftClient;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.entity.vehicle.AbstractBoatEntity;
 import net.minecraft.util.math.Box;
@@ -59,9 +60,7 @@ public class CommonBoat implements ClientModInitializer {
     }
     private static String stripPort(String address) {
         if (address == null) return "";
-        if (address.contains(":")) {
-            return address.split(":")[0];
-        }
+        if (address.contains(":")) return address.split(":")[0];
         return address;
     }
     private static String resolveToIp(String address) {
@@ -91,15 +90,18 @@ public class CommonBoat implements ClientModInitializer {
         @Override
         public void registerModHandlers() {
             ConfigManager.getInstance().registerConfigHandler("commonboat", CommonBoatMalilibConfig.getInstance());
+            Registry.CONFIG_SCREEN.registerConfigScreenFactory(
+                    new ModInfo("commonboat", "Common-Boat", () ->
+                            new CommonBoatModMenuIntegration.CommonBoatConfigScreen(MinecraftClient.getInstance().currentScreen)
+                    )
+            );
             InputEventHandler.getKeybindManager().registerKeybindProvider(new KeybindProvider());
             CommonBoatMalilibConfig.getInstance().load();
         }
     }
-    static {
-        InitializationHandler.getInstance().registerInitializationHandler(new InitHandler());
-    }
     @Override
     public void onInitializeClient() {
+        new InitHandler().registerModHandlers();
         Sounds.registerSounds();
         ConfigAccess.get();
         EasterEggFishHighlighter.startUpdater();

@@ -2,6 +2,8 @@ package net.craftish37.commonboat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.util.StringUtils;
 import java.io.File;
@@ -67,18 +69,18 @@ public class CommonBoatConfig {
     public Map<String, String> capturedFishSheetColors = new HashMap<>();
     public double maxJumpHeight = -1.0;
 
-    public String masterToggleKey = "G";
-    public String slipperinessToggleKey = "";
-    public String velocityToggleKey = "";
-    public String stepHeightToggleKey = "";
-    public String airDragToggleKey = "";
-    public String easterEggsToggleKey = "";
-    public String handbrakeToggleKey = "";
-    public String flappyBirdToggleKey = "";
-    public String flappyBirdPitchToggleKey = "";
-    public String leFischeAuChocolatToggleKey = "";
-    public String elytraBoatToggleKey = "";
-    public String blockBreakingPenaltyToggleKey = "";
+    public JsonElement masterToggleKey = new JsonPrimitive("G");
+    public JsonElement slipperinessToggleKey = new JsonPrimitive("");
+    public JsonElement velocityToggleKey = new JsonPrimitive("");
+    public JsonElement stepHeightToggleKey = new JsonPrimitive("");
+    public JsonElement airDragToggleKey = new JsonPrimitive("");
+    public JsonElement easterEggsToggleKey = new JsonPrimitive("");
+    public JsonElement handbrakeToggleKey = new JsonPrimitive("");
+    public JsonElement flappyBirdToggleKey = new JsonPrimitive("");
+    public JsonElement flappyBirdPitchToggleKey = new JsonPrimitive("");
+    public JsonElement leFischeAuChocolatToggleKey = new JsonPrimitive("");
+    public JsonElement elytraBoatToggleKey = new JsonPrimitive("");
+    public JsonElement blockBreakingPenaltyToggleKey = new JsonPrimitive("");
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final File FILE = new File("config/commonboat.json");

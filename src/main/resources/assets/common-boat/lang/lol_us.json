@@ -1,6 +1,11 @@
 {
+  "gui.tab.commonboat": "Cmmonbowt",
   "category.commonboat": "Cmmonbowt",
   "key.commonboat.toggle": "TogGL Cmmonbowt PweaSe :3",
+  "text.commonboat.config.title": "Cmmonbowt Config",
+  "text.commonboat.config.tab": "CmmonBowt",
+  "config.name.commonboat": "Cmmonbowt",
+  "text.commonboat.config.no_comment": " ",
 
   "text.commonboat.config.category.general": "Genrwal",
   "text.commonboat.config.category.values": "VAhHlHueS",
@@ -15,7 +20,6 @@
   "text.commonboat.config.slipperiness_value.tooltip": "oVRrideZ slipPERInes fr boATZ?? ON ISSSsss",
   "text.commonboat.config.disable_on_name_match": "DIsabl ON nahm metch",
   "text.commonboat.config.disable_on_name_match.tooltip": "DIsabl TEH Mod if catnahm has sPECifid stwing",
-  "text.commonboat.config.name_match_string": "nahm metch lis",
   "text.commonboat.config.name_match_string.tooltip": "TEH lis 2 meow fr iN catnahm",
 
   "text.commonboat.config.enable_velocity": "enabl velOcitie multipliR oVRride",
@@ -43,6 +47,8 @@
   "text.commonboat.config.captured_fish_sheet_url_2.tooltip": "SHEcundawy public gogl shet url to oVRrideZ TEH capturd fish lis\nfish iN TEH furst lis tak pwiowity",
   "text.commonboat.config.captured_fish_sheet_url_2_color": "Secondary List Color (Hex)",
   "text.commonboat.config.fish_list_updated": "fish HIghlite lis mowed(%s intrEIS)",
+  "text.commonboat.config.name_match_mode": "nahm metch MUD",
+  "text.commonboat.config.name_match_string": "nahm metch lis",
 
   "text.commonboat.config.enable_easter_eggs": "enabl eastr EGgz",
   "text.commonboat.config.enable_easter_eggs.tooltip": "nename nenajyuunanado no neRABI de nEKUNAKU ENanaku nenahAN nenadai nenNAku neraBETE neganAgame :3c",
@@ -55,10 +61,22 @@
 
   "text.commonboat.config.namematch.blacklist": "Bluclis",
   "text.commonboat.config.namematch.whitelist": "Whaiiiitlis",
-  "text.commonboat.config.name_match_mode": "nahm metch MUD",
   "text.commonboat.config.name_match_mode.tooltip": "sayywz o nahm metch lis woks\nBluclis DIsabl Mod if nahm fund\nWhaiiiitlis DIsabl Mod if nahm NUT fund",
 
   "text.commonboat.status.enabled": "enabld",
   "text.commonboat.status.disabled": "disubLd",
-  "common-boat.ggsheet": "gogl shet exampul"
+  "common-boat.ggsheet": "gogl shet exampul",
+
+  "text.commonboat.hotkey.toggle_master": "mastr toGGL",
+  "text.commonboat.hotkey.toggle_slipperiness": "toGGL slipPERInes",
+  "text.commonboat.hotkey.toggle_velocity": "toGGL velOcitie",
+  "text.commonboat.hotkey.toggle_step_height": "toGGL STEP HEIte Meow",
+  "text.commonboat.hotkey.toggle_air_drag": "toGGL Aiw dRRRRAG",
+  "text.commonboat.hotkey.toggle_easter_eggs": "toGGL eastr EGgz",
+  "text.commonboat.hotkey.toggle_handbrake": "toGGL hundbwaaaKE",
+  "text.commonboat.hotkey.toggle_flappybird": "toGGL FlaP FlaP BIrB",
+  "text.commonboat.hotkey.toggle_flappybird_pitch": "toGGL PSCHIT Contwool",
+  "text.commonboat.hotkey.toggle_lefische": "toGGL CrAFtfisH O chockylAT",
+  "text.commonboat.hotkey.toggle_elytraboat": "toGGL Wingus-boATZ?? (hOLD BOING)",
+  "text.commonboat.hotkey.toggle_block_breaking": "toGGL iN-Aiw bwaaaKE deBFF"
 }

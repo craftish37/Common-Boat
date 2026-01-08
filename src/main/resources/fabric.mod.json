@@ -37,10 +37,11 @@
   "depends": {
     "fabricloader": ">=${min_fabricloader_version}",
     "fabric": ">=${min_fabric_version}",
-    "minecraft": ">=${min_minecraft_version} <=${minecraft_version}"
+    "minecraft": ">=${min_minecraft_version} <=${minecraft_version}",
+    "malilib": ">=${min_malilib_version}"
   },
   "suggests": {
     "modmenu": "*",
-    "cloth-config": "*"
+    "malilib": "*"
   }
 }

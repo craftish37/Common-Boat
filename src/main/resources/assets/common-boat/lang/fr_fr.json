@@ -1,6 +1,11 @@
 {
+  "gui.tab.commonboat": "Common-Boat",
   "category.commonboat": "Common-Boat",
   "key.commonboat.toggle": "Activer/Désactiver Common-Boat",
+  "text.commonboat.config.title": "Common-Boat Config",
+  "text.commonboat.config.tab": "CommonBoat",
+  "config.name.commonboat": "Common-Boat",
+  "text.commonboat.config.no_comment": " ",
 
   "text.commonboat.config.category.general": "Général",
   "text.commonboat.config.category.values": "Valeurs",
@@ -15,7 +20,6 @@
   "text.commonboat.config.slipperiness_value.tooltip": "Remplace la valeur de slipperiness pour les bateaux sur la glace.",
   "text.commonboat.config.disable_on_name_match": "Désactivation Automatique",
   "text.commonboat.config.disable_on_name_match.tooltip": "Désactive le mod automatiquement si un pseudonyme contient ces caractères.",
-  "text.commonboat.config.name_match_string": "Caractères visés",
   "text.commonboat.config.name_match_string.tooltip": "Les caractères à vérifier dans les pseudonymes.",
 
   "text.commonboat.config.enable_velocity": "Activer le remplacement de Velocity Multiplier",
@@ -43,6 +47,8 @@
   "text.commonboat.config.captured_fish_sheet_url_2.tooltip": "Une URL publique Google Sheets secondaire pour remplacer la liste des poissons capturés.\nLes poissons de la première liste sont prioritaires.",
   "text.commonboat.config.captured_fish_sheet_url_2_color": "Couleur de la liste secondaire (Hex)",
   "text.commonboat.config.fish_list_updated": "Liste des poissons mise à jour (%s entries)",
+  "text.commonboat.config.name_match_mode": "Détection de caractères",
+  "text.commonboat.config.name_match_string": "Caractères visés",
 
   "text.commonboat.config.enable_easter_eggs": "Activer les Easter Eggs",
   "text.commonboat.config.enable_easter_eggs.tooltip": "0w0",
@@ -55,10 +61,22 @@
 
   "text.commonboat.config.namematch.blacklist": "Blacklist",
   "text.commonboat.config.namematch.whitelist": "Whitelist",
-  "text.commonboat.config.name_match_mode": "Détection de caractères",
   "text.commonboat.config.name_match_mode.tooltip": "Définis comment la liste de cracactères se comporte\nEn Blacklist, désactivation si présent.\nEn Whitelist, désactivation si absent.",
 
   "text.commonboat.status.enabled": "Activé",
   "text.commonboat.status.disabled": "Désactivé",
-  "common-boat.ggsheet": "Exemple de Google Sheet"
+  "common-boat.ggsheet": "Exemple de Google Sheet",
+
+  "text.commonboat.hotkey.toggle_master": "Activer le mod",
+  "text.commonboat.hotkey.toggle_slipperiness": "Activer le remplacement de Slipperiness",
+  "text.commonboat.hotkey.toggle_velocity": "Activer le remplacement de Velocity Multiplier",
+  "text.commonboat.hotkey.toggle_step_height": "Activer le remplacement de Step Height",
+  "text.commonboat.hotkey.toggle_air_drag": "Retirer l'Air Drag",
+  "text.commonboat.hotkey.toggle_easter_eggs": "Activer les Easter Eggs",
+  "text.commonboat.hotkey.toggle_handbrake": "Activer Frein à main",
+  "text.commonboat.hotkey.toggle_flappybird": "Activer Flappy Bird",
+  "text.commonboat.hotkey.toggle_flappybird_pitch": "Activer Pitch Control",
+  "text.commonboat.hotkey.toggle_lefische": "Activer Le Fische Au Chocolat",
+  "text.commonboat.hotkey.toggle_elytraboat": "Activer le Bateau-Élytres (Maintenez Sauter)",
+  "text.commonboat.hotkey.toggle_block_breaking": "Désactiver la pénalité de cassage en l'air"
 }

@@ -7,8 +7,10 @@ import fi.dy.masa.malilib.config.options.ConfigDouble;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.config.options.ConfigOptionList;
 import fi.dy.masa.malilib.config.options.ConfigStringList;
+import fi.dy.masa.malilib.config.options.ConfigColor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.registry.Registries;
@@ -18,14 +20,41 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
     private static final CommonBoatMalilibConfig INSTANCE = new CommonBoatMalilibConfig();
     public static CommonBoatMalilibConfig getInstance() { return INSTANCE; }
 
+    public static class ConfigColorNoComment extends ConfigColor {
+        public ConfigColorNoComment(String name, String defaultValue) {
+            super(name, defaultValue, "NO_COMMENT_PLACEHOLDER");
+        }
+        @Override
+        public String getComment() { return null; }
+    }
+    public static class ConfigBooleanNoComment extends ConfigBoolean {
+        public ConfigBooleanNoComment(String name, boolean defaultValue) {
+            super(name, defaultValue, "NO_COMMENT_PLACEHOLDER");
+        }
+        @Override
+        public String getComment() {
+            return null;
+        }
+    }
+    public static class ConfigHotkeyNoComment extends ConfigHotkey {
+        public ConfigHotkeyNoComment(String name, String defaultStorageString) {
+            super(name, defaultStorageString, "NO_COMMENT_PLACEHOLDER");
+        }
+        @Override
+        public String getComment() {
+            return null;
+        }
+    }
+
+    public static final Map<String, ConfigColor> dynamicFishColorWidgets = new LinkedHashMap<>();
     public static final ConfigBoolean enabled = new ConfigBoolean("text.commonboat.config.enable_mod", false, "text.commonboat.config.enable_mod.tooltip");
     public static final ConfigBoolean disableOnNameMatch = new ConfigBoolean("text.commonboat.config.disable_on_name_match", false, "text.commonboat.config.disable_on_name_match.tooltip");
     public static final ConfigOptionList nameMatchMode = new ConfigOptionList("text.commonboat.config.name_match_mode", CommonBoatConfig.BlackWhiteList.BLACKLIST, "text.commonboat.config.name_match_mode.tooltip");
     public static final ConfigStringList nameMatchList = new ConfigStringList("text.commonboat.config.name_match_string", ImmutableList.of(), "text.commonboat.config.name_match_string.tooltip");
 
-    public static final ConfigBoolean slipperinessEnabled = new ConfigBoolean("text.commonboat.config.enable_slipperiness", false);
-    public static final ConfigBoolean velocityMultiplierEnabled = new ConfigBoolean("text.commonboat.config.enable_velocity", false);
-    public static final ConfigBoolean boatStepHeightEnabled = new ConfigBoolean("text.commonboat.config.enable_step_height", false);
+    public static final ConfigBoolean slipperinessEnabled = new ConfigBooleanNoComment("text.commonboat.config.enable_slipperiness", false);
+    public static final ConfigBoolean velocityMultiplierEnabled = new ConfigBooleanNoComment("text.commonboat.config.enable_velocity", false);
+    public static final ConfigBoolean boatStepHeightEnabled = new ConfigBooleanNoComment("text.commonboat.config.enable_step_height", false);
 
     public static final ConfigBoolean removeAirDrag = new ConfigBoolean("text.commonboat.config.remove_air_drag", false, "text.commonboat.config.remove_air_drag.tooltip");
     public static final ConfigBoolean easterEggsEnabled = new ConfigBoolean("text.commonboat.config.enable_easter_eggs", false, "text.commonboat.config.enable_easter_eggs.tooltip");
@@ -36,12 +65,12 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
     public static final ConfigDouble maxSpeed = new ConfigDouble("text.commonboat.config.max_speed", -1.0, -1.0, 220.0, "text.commonboat.config.max_speed.tooltip");
     public static final ConfigStringList customBlockSlipperiness = new ConfigStringList("text.commonboat.config.slipperiness_value", ImmutableList.of(), "text.commonboat.config.slipperiness_value.tooltip");
 
-    public static final ConfigBoolean handbrakeEnabled = new ConfigBoolean("text.commonboat.config.enable_handbrake", false);
-    public static final ConfigBoolean flappyBirdEnabled = new ConfigBoolean("text.commonboat.config.enable_flappybird", false);
+    public static final ConfigBoolean handbrakeEnabled = new ConfigBooleanNoComment("text.commonboat.config.enable_handbrake", false);
+    public static final ConfigBoolean flappyBirdEnabled = new ConfigBooleanNoComment("text.commonboat.config.enable_flappybird", false);
     public static final ConfigBoolean flappyBirdPitchControl = new ConfigBoolean("text.commonboat.config.enable_flappybird_pitch_control", false, "text.commonboat.config.enable_flappybird_pitch_control.tooltip");
-    public static final ConfigBoolean leFischeAuChocolatEnabled = new ConfigBoolean("text.commonboat.config.enable_lefischeauchocolat", false);
-    public static final ConfigBoolean elytraBoatEnabled = new ConfigBoolean("text.commonboat.config.enable_elytraboat", false);
-    public static final ConfigBoolean disableBlockBreakingPenalty = new ConfigBoolean("text.commonboat.config.disable_block_breaking_penalty", false);
+    public static final ConfigBoolean leFischeAuChocolatEnabled = new ConfigBooleanNoComment("text.commonboat.config.enable_lefischeauchocolat", false);
+    public static final ConfigBoolean elytraBoatEnabled = new ConfigBooleanNoComment("text.commonboat.config.enable_elytraboat", false);
+    public static final ConfigBoolean disableBlockBreakingPenalty = new ConfigBooleanNoComment("text.commonboat.config.disable_block_breaking_penalty", false);
     public static final ConfigDouble fishDetectionDistance = new ConfigDouble("text.commonboat.config.fish_detection_distance", 48.0, 0.0, 256.0, "text.commonboat.config.fish_detection_distance.tooltip");
 
     public static final ConfigStringList capturedFishSheetUrls = new ConfigStringList("text.commonboat.config.captured_fish_sheet_url", ImmutableList.of(), "text.commonboat.config.captured_fish_sheet_url.tooltip");
@@ -50,18 +79,18 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
 
     public static final ConfigHotkey masterToggleKey = new ConfigHotkey("text.commonboat.config.enable_mod", "G", "text.commonboat.config.enable_mod.tooltip");
 
-    public static final ConfigHotkey slipperinessToggleKey = new ConfigHotkey("text.commonboat.config.enable_slipperiness", "");
-    public static final ConfigHotkey velocityToggleKey = new ConfigHotkey("text.commonboat.config.enable_velocity", "");
-    public static final ConfigHotkey stepHeightToggleKey = new ConfigHotkey("text.commonboat.config.enable_step_height", "");
+    public static final ConfigHotkey slipperinessToggleKey = new ConfigHotkeyNoComment("text.commonboat.config.enable_slipperiness", "");
+    public static final ConfigHotkey velocityToggleKey = new ConfigHotkeyNoComment("text.commonboat.config.enable_velocity", "");
+    public static final ConfigHotkey stepHeightToggleKey = new ConfigHotkeyNoComment("text.commonboat.config.enable_step_height", "");
     public static final ConfigHotkey airDragToggleKey = new ConfigHotkey("text.commonboat.config.remove_air_drag", "", "text.commonboat.config.remove_air_drag.tooltip");
     public static final ConfigHotkey easterEggsToggleKey = new ConfigHotkey("text.commonboat.config.enable_easter_eggs", "", "text.commonboat.config.enable_easter_eggs.tooltip");
 
-    public static final ConfigHotkey handbrakeToggleKey = new ConfigHotkey("text.commonboat.config.enable_handbrake", "");
-    public static final ConfigHotkey flappyBirdToggleKey = new ConfigHotkey("text.commonboat.config.enable_flappybird", "");
+    public static final ConfigHotkey handbrakeToggleKey = new ConfigHotkeyNoComment("text.commonboat.config.enable_handbrake", "");
+    public static final ConfigHotkey flappyBirdToggleKey = new ConfigHotkeyNoComment("text.commonboat.config.enable_flappybird", "");
     public static final ConfigHotkey flappyBirdPitchToggleKey = new ConfigHotkey("text.commonboat.config.enable_flappybird_pitch_control", "", "text.commonboat.config.enable_flappybird_pitch_control.tooltip");
-    public static final ConfigHotkey leFischeAuChocolatToggleKey = new ConfigHotkey("text.commonboat.config.enable_lefischeauchocolat", "");
-    public static final ConfigHotkey elytraBoatToggleKey = new ConfigHotkey("text.commonboat.config.enable_elytraboat", "");
-    public static final ConfigHotkey blockBreakingPenaltyToggleKey = new ConfigHotkey("text.commonboat.config.disable_block_breaking_penalty", "");
+    public static final ConfigHotkey leFischeAuChocolatToggleKey = new ConfigHotkeyNoComment("text.commonboat.config.enable_lefischeauchocolat", "");
+    public static final ConfigHotkey elytraBoatToggleKey = new ConfigHotkeyNoComment("text.commonboat.config.enable_elytraboat", "");
+    public static final ConfigHotkey blockBreakingPenaltyToggleKey = new ConfigHotkeyNoComment("text.commonboat.config.disable_block_breaking_penalty", "");
 
     public static final List<ConfigHotkey> HOTKEYS = ImmutableList.of(
             masterToggleKey, slipperinessToggleKey, velocityToggleKey, stepHeightToggleKey,
@@ -103,20 +132,33 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         fishDetectionDistance.setDoubleValue(cfg.fishDetectionDistance);
         capturedFishSheetUrls.setStrings(cfg.capturedFishSheetUrls);
         capturedFishSheetColors = new HashMap<>(cfg.capturedFishSheetColors);
+
+        dynamicFishColorWidgets.clear();
+        List<String> urls = capturedFishSheetUrls.getStrings();
+        for (int i = 0; i < urls.size(); i++) {
+            String url = urls.get(i);
+            if (url == null || url.trim().isEmpty()) continue;
+            String label = "Captured Fish Google Sheet URL " + (i + 1);
+            String colorVal = capturedFishSheetColors.getOrDefault(url, "#FFFFFF");
+            ConfigColor colorWidget = new ConfigColorNoComment(label, colorVal);
+            colorWidget.setValueFromString(colorVal);
+            dynamicFishColorWidgets.put(url, colorWidget);
+        }
+
         maxJumpHeight.setDoubleValue(cfg.maxJumpHeight);
 
-        masterToggleKey.setValueFromString(cfg.masterToggleKey);
-        slipperinessToggleKey.setValueFromString(cfg.slipperinessToggleKey);
-        velocityToggleKey.setValueFromString(cfg.velocityToggleKey);
-        stepHeightToggleKey.setValueFromString(cfg.stepHeightToggleKey);
-        airDragToggleKey.setValueFromString(cfg.airDragToggleKey);
-        easterEggsToggleKey.setValueFromString(cfg.easterEggsToggleKey);
-        handbrakeToggleKey.setValueFromString(cfg.handbrakeToggleKey);
-        flappyBirdToggleKey.setValueFromString(cfg.flappyBirdToggleKey);
-        flappyBirdPitchToggleKey.setValueFromString(cfg.flappyBirdPitchToggleKey);
-        leFischeAuChocolatToggleKey.setValueFromString(cfg.leFischeAuChocolatToggleKey);
-        elytraBoatToggleKey.setValueFromString(cfg.elytraBoatToggleKey);
-        blockBreakingPenaltyToggleKey.setValueFromString(cfg.blockBreakingPenaltyToggleKey);
+        if (cfg.masterToggleKey != null) masterToggleKey.setValueFromJsonElement(cfg.masterToggleKey);
+        if (cfg.slipperinessToggleKey != null) slipperinessToggleKey.setValueFromJsonElement(cfg.slipperinessToggleKey);
+        if (cfg.velocityToggleKey != null) velocityToggleKey.setValueFromJsonElement(cfg.velocityToggleKey);
+        if (cfg.stepHeightToggleKey != null) stepHeightToggleKey.setValueFromJsonElement(cfg.stepHeightToggleKey);
+        if (cfg.airDragToggleKey != null) airDragToggleKey.setValueFromJsonElement(cfg.airDragToggleKey);
+        if (cfg.easterEggsToggleKey != null) easterEggsToggleKey.setValueFromJsonElement(cfg.easterEggsToggleKey);
+        if (cfg.handbrakeToggleKey != null) handbrakeToggleKey.setValueFromJsonElement(cfg.handbrakeToggleKey);
+        if (cfg.flappyBirdToggleKey != null) flappyBirdToggleKey.setValueFromJsonElement(cfg.flappyBirdToggleKey);
+        if (cfg.flappyBirdPitchToggleKey != null) flappyBirdPitchToggleKey.setValueFromJsonElement(cfg.flappyBirdPitchToggleKey);
+        if (cfg.leFischeAuChocolatToggleKey != null) leFischeAuChocolatToggleKey.setValueFromJsonElement(cfg.leFischeAuChocolatToggleKey);
+        if (cfg.elytraBoatToggleKey != null) elytraBoatToggleKey.setValueFromJsonElement(cfg.elytraBoatToggleKey);
+        if (cfg.blockBreakingPenaltyToggleKey != null) blockBreakingPenaltyToggleKey.setValueFromJsonElement(cfg.blockBreakingPenaltyToggleKey);
     }
 
     @Override
@@ -160,21 +202,24 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         cfg.disableBlockBreakingPenalty = disableBlockBreakingPenalty.getBooleanValue();
         cfg.fishDetectionDistance = fishDetectionDistance.getDoubleValue();
         cfg.capturedFishSheetUrls = new ArrayList<>(capturedFishSheetUrls.getStrings());
+        for (Map.Entry<String, ConfigColor> entry : dynamicFishColorWidgets.entrySet()) {
+            capturedFishSheetColors.put(entry.getKey(), entry.getValue().getStringValue());
+        }
         cfg.capturedFishSheetColors = new HashMap<>(capturedFishSheetColors);
         cfg.maxJumpHeight = maxJumpHeight.getDoubleValue();
 
-        cfg.masterToggleKey = masterToggleKey.getStringValue();
-        cfg.slipperinessToggleKey = slipperinessToggleKey.getStringValue();
-        cfg.velocityToggleKey = velocityToggleKey.getStringValue();
-        cfg.stepHeightToggleKey = stepHeightToggleKey.getStringValue();
-        cfg.airDragToggleKey = airDragToggleKey.getStringValue();
-        cfg.easterEggsToggleKey = easterEggsToggleKey.getStringValue();
-        cfg.handbrakeToggleKey = handbrakeToggleKey.getStringValue();
-        cfg.flappyBirdToggleKey = flappyBirdToggleKey.getStringValue();
-        cfg.flappyBirdPitchToggleKey = flappyBirdPitchToggleKey.getStringValue();
-        cfg.leFischeAuChocolatToggleKey = leFischeAuChocolatToggleKey.getStringValue();
-        cfg.elytraBoatToggleKey = elytraBoatToggleKey.getStringValue();
-        cfg.blockBreakingPenaltyToggleKey = blockBreakingPenaltyToggleKey.getStringValue();
+        cfg.masterToggleKey = masterToggleKey.getAsJsonElement();
+        cfg.slipperinessToggleKey = slipperinessToggleKey.getAsJsonElement();
+        cfg.velocityToggleKey = velocityToggleKey.getAsJsonElement();
+        cfg.stepHeightToggleKey = stepHeightToggleKey.getAsJsonElement();
+        cfg.airDragToggleKey = airDragToggleKey.getAsJsonElement();
+        cfg.easterEggsToggleKey = easterEggsToggleKey.getAsJsonElement();
+        cfg.handbrakeToggleKey = handbrakeToggleKey.getAsJsonElement();
+        cfg.flappyBirdToggleKey = flappyBirdToggleKey.getAsJsonElement();
+        cfg.flappyBirdPitchToggleKey = flappyBirdPitchToggleKey.getAsJsonElement();
+        cfg.leFischeAuChocolatToggleKey = leFischeAuChocolatToggleKey.getAsJsonElement();
+        cfg.elytraBoatToggleKey = elytraBoatToggleKey.getAsJsonElement();
+        cfg.blockBreakingPenaltyToggleKey = blockBreakingPenaltyToggleKey.getAsJsonElement();
 
         ConfigAccess.save();
     }
