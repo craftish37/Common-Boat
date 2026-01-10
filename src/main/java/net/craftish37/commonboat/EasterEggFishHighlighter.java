@@ -331,27 +331,28 @@ public class EasterEggFishHighlighter {
         if (client.world == null || client.player == null || matrices == null) return;
         Vec3d cameraPos = client.gameRenderer.getCamera().getPos();
 
+        List<SheetData> currentSheets = new ArrayList<>(LOADED_SHEETS);
         Map<SheetData, List<TropicalFishEntity>> batches = new LinkedHashMap<>();
-        for (SheetData sheet : LOADED_SHEETS) {
+        for (SheetData sheet : currentSheets) {
             batches.put(sheet, new ArrayList<>());
         }
         List<TropicalFishEntity> defaults = new ArrayList<>();
         for (Entity entity : client.world.getOtherEntities(client.player, client.player.getBoundingBox().expand(cfg.fishDetectionDistance))) {
             if (!(entity instanceof TropicalFishEntity fish)) continue;
             int variant = fish.getDataTracker().get(TropicalFishEntityAccessor.getVariantTrackedData());
-            if (!LOADED_SHEETS.isEmpty()) {
+            if (!currentSheets.isEmpty()) {
                 boolean matched = false;
-                for (SheetData sheet : LOADED_SHEETS) {
+                for (SheetData sheet : currentSheets) {
                     if ((sheet.isWildcard && !DEFAULT_IGNORED_FISH_IDS.contains(variant)) || sheet.ids.contains(variant)) {
                         batches.get(sheet).add(fish);
                         matched = true;
                         break;
                     }
                 }
-            } else {
-                if (!DEFAULT_IGNORED_FISH_IDS.contains(variant)) {
-                    defaults.add(fish);
-                }
+                if (matched) continue;
+            }
+            if (!DEFAULT_IGNORED_FISH_IDS.contains(variant)) {
+                defaults.add(fish);
             }
         }
         VertexConsumerProvider.Immediate provider = client.getBufferBuilders().getEntityVertexConsumers();

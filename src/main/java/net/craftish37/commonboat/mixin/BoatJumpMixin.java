@@ -43,7 +43,6 @@ public class BoatJumpMixin {
             this.commonboat$elytraCurrentSpeed += acceleration;
         } else if (pressingBack) {
             this.commonboat$elytraCurrentSpeed -= deceleration;
-        } else {
         }
         if (cfg.maxSpeed != -1.0) {
             float maxSpeedCap = (float) (cfg.maxSpeed / 20.0);
