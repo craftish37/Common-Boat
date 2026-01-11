@@ -1,11 +1,7 @@
 {
-  "gui.tab.commonboat": "Cmmonbowt",
-  "category.commonboat": "Cmmonbowt",
-  "key.commonboat.toggle": "TogGL Cmmonbowt PweaSe :3",
   "text.commonboat.config.title": "Cmmonbowt Config",
   "text.commonboat.config.tab": "CmmonBowt",
   "config.name.commonboat": "Cmmonbowt",
-  "text.commonboat.config.no_comment": " ",
 
   "text.commonboat.config.category.general": "Genrwal",
   "text.commonboat.config.category.values": "VAhHlHueS",
@@ -45,10 +41,6 @@
   "text.commonboat.config.captured_fish_sheet_url": "capturd fish gogl shet url",
   "text.commonboat.config.captured_fish_sheet_url.tooltip": "public gogl shet url to oVRrideZ TEH capturd fish lis\nMus B csv EXPort lINK or standard shet lINK K?\nleeve MT 2 us TEH deefalt lis",
   "text.commonboat.config.captured_fish_sheet_url_color": "capturd fish gogl shet url colUwU",
-  "text.commonboat.config.captured_fish_sheet_url_2": "SHEcundawy capturd fish gogl shet url",
-  "text.commonboat.config.captured_fish_sheet_url_2.tooltip": "SHEcundawy public gogl shet url to oVRrideZ TEH capturd fish lis\nfish iN TEH furst lis tak pwiowity",
-  "text.commonboat.config.captured_fish_sheet_url_2_color": "Secondary List Color (Hex)",
-  "text.commonboat.config.fish_list_updated": "fish HIghlite lis mowed(%s intrEIS)",
   "text.commonboat.config.name_match_mode": "nahm metch MUD",
   "text.commonboat.config.name_match_string": "nahm metch lis",
 
@@ -67,19 +59,5 @@
 
   "text.commonboat.status.enabled": "enabld",
   "text.commonboat.status.disabled": "disubLd",
-  "common-boat.ggsheet": "gogl shet exampul",
-
-  "text.commonboat.hotkey.toggle_master": "mastr toGGL",
-  "text.commonboat.hotkey.toggle_slipperiness": "toGGL slipPERInes",
-  "text.commonboat.hotkey.toggle_velocity": "toGGL velOcitie",
-  "text.commonboat.hotkey.toggle_step_height": "toGGL STEP HEIte Meow",
-  "text.commonboat.hotkey.toggle_air_drag": "toGGL Aiw dRRRRAG",
-  "text.commonboat.hotkey.toggle_camera_rotation": "toGGL welatif cameowa",
-  "text.commonboat.hotkey.toggle_easter_eggs": "toGGL eastr EGgz",
-  "text.commonboat.hotkey.toggle_handbrake": "toGGL hundbwaaaKE",
-  "text.commonboat.hotkey.toggle_flappybird": "toGGL FlaP FlaP BIrB",
-  "text.commonboat.hotkey.toggle_flappybird_pitch": "toGGL PSCHIT Contwool",
-  "text.commonboat.hotkey.toggle_lefische": "toGGL CrAFtfisH O chockylAT",
-  "text.commonboat.hotkey.toggle_elytraboat": "toGGL Wingus-boATZ?? (hOLD BOING)",
-  "text.commonboat.hotkey.toggle_block_breaking": "toGGL iN-Aiw bwaaaKE deBFF"
+  "common-boat.ggsheet": "gogl shet exampul"
 }
