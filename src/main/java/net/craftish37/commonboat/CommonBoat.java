@@ -84,7 +84,6 @@ public class CommonBoat implements ClientModInitializer {
             }
         }
         public void addHotkeys(IKeybindManager manager) { addKeysToMap(manager); }
-        public List<ConfigHotkey> getHotkeys() { return CommonBoatMalilibConfig.HOTKEYS; }
     }
     public static class InitHandler implements IInitializationHandler {
         @Override
@@ -103,11 +102,8 @@ public class CommonBoat implements ClientModInitializer {
     public void onInitializeClient() {
         new InitHandler().registerModHandlers();
         Sounds.registerSounds();
-        ConfigAccess.get();
         EasterEggFishHighlighter.startUpdater();
-        WorldRenderEvents.END_MAIN.register(context -> {
-            EasterEggFishHighlighter.onWorldRender(context.matrices());
-        });
+        WorldRenderEvents.END_MAIN.register(context -> EasterEggFishHighlighter.onWorldRender(context.matrices()));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player != null && client.getNetworkHandler() != null && client.getCurrentServerEntry() != null) {
                 String currentAddress = client.getCurrentServerEntry().address;
@@ -158,7 +154,7 @@ public class CommonBoat implements ClientModInitializer {
                             break;
                         }
                     }
-                    boolean shouldFlag = (cfg.nameMatchMode == CommonBoatConfig.BlackWhiteList.WHITELIST) ? !matchFound : matchFound;
+                    boolean shouldFlag = (cfg.nameMatchMode == CommonBoatConfig.BlackWhiteList.WHITELIST) != matchFound;
                     if (shouldFlag) {
                         currentMatches.add(name);
                         if (!flaggedNames.contains(name)) {

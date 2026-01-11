@@ -56,6 +56,23 @@ public class BoatJumpMixin {
 
         this.commonboat$lastJumpPeakY = boat.getY();
     }
+    @Unique
+    private double commonboat$calculateAirJumpHeight(ClientPlayerEntity player, AbstractBoatEntity boat, CommonBoatConfig cfg) {
+        double jumpHeight = 1.0;
+        if (cfg.flappyBirdPitchControl) {
+            float pitch = player.getPitch();
+            double fallHeight = commonboat$lastJumpPeakY - boat.getY();
+            if (fallHeight < 0.0) fallHeight = 0.0;
+            if (pitch >= 0) {
+                double pitchPercent = pitch / 90.0;
+                jumpHeight = (1.0 - pitchPercent) * fallHeight;
+            } else {
+                double pitchPercent = pitch / -90.0;
+                jumpHeight = (pitchPercent * (5.0 - fallHeight)) + fallHeight;
+            }
+        }
+        return jumpHeight;
+    }
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         ClientPlayerEntity player = (ClientPlayerEntity) (Object) this;
@@ -105,19 +122,7 @@ public class BoatJumpMixin {
                             commonboat$lastJumpPeakY = boat.getY();
                         }
                     } else if (!onSurface) {
-                        double jumpHeight = 1.0;
-                        if (cfg.flappyBirdPitchControl) {
-                            float pitch = player.getPitch();
-                            double fallHeight = commonboat$lastJumpPeakY - boat.getY();
-                            if (fallHeight < 0.0) fallHeight = 0.0;
-                            if (pitch >= 0) {
-                                double pitchPercent = pitch / 90.0;
-                                jumpHeight = (1.0 - pitchPercent) * fallHeight;
-                            } else {
-                                double pitchPercent = pitch / -90.0;
-                                jumpHeight = (pitchPercent * (5.0 - fallHeight)) + fallHeight;
-                            }
-                        }
+                        double jumpHeight = this.commonboat$calculateAirJumpHeight(player, boat, cfg);
 
                         double airJumpVelocity = Math.sqrt(2 * gravity * jumpHeight);
                         Vec3d currentVel = boat.getVelocity();

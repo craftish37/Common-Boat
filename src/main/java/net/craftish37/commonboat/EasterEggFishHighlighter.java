@@ -14,6 +14,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.util.DyeColor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -30,6 +33,8 @@ import java.util.regex.Pattern;
 
 public class EasterEggFishHighlighter {
     private static final MinecraftClient client = MinecraftClient.getInstance();
+    private static final Logger LOGGER = LoggerFactory.getLogger(EasterEggFishHighlighter.class);
+
     private static final Map<String, Integer> SMALL_SHAPE_MAP = new HashMap<>() {{
         put("Kob", 0);
         put("Sunstreak", 1);
@@ -243,7 +248,7 @@ public class EasterEggFishHighlighter {
         }
         Matcher idMatcher = SHEET_ID_PATTERN.matcher(sheetUrl);
         if (!idMatcher.find()) {
-            System.out.println("[CommonBoat Debug] Failed to extract Sheet ID.");
+            LOGGER.warn("[CommonBoat Debug] Failed to extract Sheet ID.");
             return null;
         }
         String sheetId = idMatcher.group(1);
@@ -283,7 +288,7 @@ public class EasterEggFishHighlighter {
                                 result.hasWildcard = true;
                                 continue;
                             }
-                            Integer variantId = null;
+                            Integer variantId;
                             if (name.equals("-")) {
                                 variantId = getVariantIdFromTypeString(type);
                             } else {
@@ -298,8 +303,7 @@ public class EasterEggFishHighlighter {
             }
             return result;
         } catch (Exception e) {
-            System.err.println("[CommonBoat Debug] FAILED to fetch sheet data from: " + sheetUrl);
-            e.printStackTrace();
+            LOGGER.error("[CommonBoat Debug] FAILED to fetch sheet data from: {}", sheetUrl, e);
             return null;
         }
     }

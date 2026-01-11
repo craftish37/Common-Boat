@@ -6,6 +6,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -84,23 +86,27 @@ public class CommonBoatConfig {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final File FILE = new File("config/commonboat.json");
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonBoatConfig.class);
 
     public static CommonBoatConfig load() {
         if (FILE.exists()) {
             try (FileReader reader = new FileReader(FILE)) {
                 return GSON.fromJson(reader, CommonBoatConfig.class);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Failed to load CommonBoat config", e);
             }
         }
         return new CommonBoatConfig();
     }
     public void save() {
-        FILE.getParentFile().mkdirs();
+        File parent = FILE.getParentFile();
+        if (!parent.exists() && !parent.mkdirs()) {
+            LOGGER.warn("Failed to create config directory: {}", parent.getAbsolutePath());
+        }
         try (FileWriter writer = new FileWriter(FILE)) {
             GSON.toJson(this, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to save CommonBoat config", e);
         }
     }
 }
