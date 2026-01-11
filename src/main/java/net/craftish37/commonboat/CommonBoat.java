@@ -105,79 +105,73 @@ public class CommonBoat implements ClientModInitializer {
         EasterEggFishHighlighter.startUpdater();
         WorldRenderEvents.END_MAIN.register(context -> EasterEggFishHighlighter.onWorldRender(context.matrices()));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            CommonBoatConfig cfg = ConfigAccess.get();
-            handleRestrictedServerLogic(client);
-            handleNameMatchLogic(client, cfg);
-            handleKeybinds(client, cfg);
-        });
-    }
-    private static void handleRestrictedServerLogic(MinecraftClient client) {
-        if (client.player != null && client.getNetworkHandler() != null && client.getCurrentServerEntry() != null) {
-            String currentAddress = client.getCurrentServerEntry().address;
-            UUID playerUuid = client.player.getUuid();
-            if (!currentAddress.equals(cachedServerAddress)) {
-                cachedServerAddress = currentAddress;
-                cachedResolvedIp = resolveToIp(currentAddress);
-            }
-            boolean isRestrictedServer = RESTRICTED_SERVERS.contains(cachedResolvedIp) ||
-                    RESTRICTED_SERVERS.contains(currentAddress);
-            if (isRestrictedServer) {
-                if (!WHITELISTED_UUIDS.contains(playerUuid)) {
-                    if (client.player.getVehicle() instanceof AbstractBoatEntity boat) {
-                        boolean inWater = boat.isSubmergedInWater();
-                        if (inWater) {
-                            airTicks = 0;
-                        } else {
-                            Box checkZone = boat.getBoundingBox().stretch(0, -1.0, 0);
-                            assert client.world != null;
-                            Iterable<VoxelShape> collisions = client.world.getBlockCollisions(boat, checkZone);
-                            boolean hasBlockUnder = StreamSupport.stream(collisions.spliterator(), false)
-                                    .anyMatch(shape -> !shape.isEmpty());
-                            if (!hasBlockUnder) {
-                                airTicks++;
-                                if (airTicks > DISCONNECT_TICK_THRESHOLD) {
-                                    client.getNetworkHandler().getConnection().disconnect(Text.translatable("multiplayer.disconnect.flying"));
+            if (client.player != null && client.getNetworkHandler() != null && client.getCurrentServerEntry() != null) {
+                String currentAddress = client.getCurrentServerEntry().address;
+                UUID playerUuid = client.player.getUuid();
+                if (!currentAddress.equals(cachedServerAddress)) {
+                    cachedServerAddress = currentAddress;
+                    cachedResolvedIp = resolveToIp(currentAddress);
+                }
+                boolean isRestrictedServer = RESTRICTED_SERVERS.contains(cachedResolvedIp) ||
+                        RESTRICTED_SERVERS.contains(currentAddress);
+                if (isRestrictedServer) {
+                    if (!WHITELISTED_UUIDS.contains(playerUuid)) {
+                        if (client.player.getVehicle() instanceof AbstractBoatEntity boat) {
+                            boolean inWater = boat.isSubmergedInWater();
+                            if (inWater) {
+                                airTicks = 0;
+                            } else {
+                                Box checkZone = boat.getBoundingBox().stretch(0, -1.0, 0);
+                                assert client.world != null;
+                                Iterable<VoxelShape> collisions = client.world.getBlockCollisions(boat, checkZone);
+                                boolean hasBlockUnder = StreamSupport.stream(collisions.spliterator(), false)
+                                        .anyMatch(shape -> !shape.isEmpty());
+                                if (!hasBlockUnder) {
+                                    airTicks++;
+                                    if (airTicks > DISCONNECT_TICK_THRESHOLD) {
+                                        client.getNetworkHandler().getConnection().disconnect(Text.translatable("multiplayer.disconnect.flying"));
+                                        airTicks = 0;
+                                    }
+                                } else {
                                     airTicks = 0;
                                 }
-                            } else {
-                                airTicks = 0;
+                            }
+                        } else {
+                            airTicks = 0;
+                        }
+                    }
+                }
+            }
+            CommonBoatConfig cfg = ConfigAccess.get();
+            if (client.getNetworkHandler() != null && cfg.disableOnNameMatch && !cfg.nameMatchList.isEmpty()) {
+                Collection<String> onlinePlayerNames = client.getNetworkHandler().getCommandSource().getPlayerNames();
+                Set<String> currentMatches = new HashSet<>();
+                for (String name : onlinePlayerNames) {
+                    boolean matchFound = false;
+                    for (String part : cfg.nameMatchList) {
+                        if (part != null && !part.isEmpty() && name.contains(part)) {
+                            matchFound = true;
+                            break;
+                        }
+                    }
+                    boolean shouldFlag = (cfg.nameMatchMode == CommonBoatConfig.BlackWhiteList.WHITELIST) != matchFound;
+                    if (shouldFlag) {
+                        currentMatches.add(name);
+                        if (!flaggedNames.contains(name)) {
+                            flaggedNames.add(name);
+                            if (cfg.enabled) {
+                                cfg.enabled = false;
+                                performToggle(client, cfg, "text.commonboat.config.enable_mod", false);
                             }
                         }
-                    } else {
-                        airTicks = 0;
                     }
                 }
+                flaggedNames.removeIf(n -> !currentMatches.contains(n));
+            } else {
+                flaggedNames.clear();
             }
-        }
-    }
-    private static void handleNameMatchLogic(MinecraftClient client, CommonBoatConfig cfg) {
-        if (client.getNetworkHandler() != null && cfg.disableOnNameMatch && !cfg.nameMatchList.isEmpty()) {
-            Collection<String> onlinePlayerNames = client.getNetworkHandler().getCommandSource().getPlayerNames();
-            Set<String> currentMatches = new HashSet<>();
-            for (String name : onlinePlayerNames) {
-                boolean matchFound = false;
-                for (String part : cfg.nameMatchList) {
-                    if (part != null && !part.isEmpty() && name.contains(part)) {
-                        matchFound = true;
-                        break;
-                    }
-                }
-                boolean shouldFlag = (cfg.nameMatchMode == CommonBoatConfig.BlackWhiteList.WHITELIST) != matchFound;
-                if (shouldFlag) {
-                    currentMatches.add(name);
-                    if (!flaggedNames.contains(name)) {
-                        flaggedNames.add(name);
-                        if (cfg.enabled) {
-                            cfg.enabled = false;
-                            performToggle(client, cfg, "text.commonboat.config.enable_mod", false);
-                        }
-                    }
-                }
-            }
-            flaggedNames.removeIf(n -> !currentMatches.contains(n));
-        } else {
-            flaggedNames.clear();
-        }
+            handleKeybinds(client, cfg);
+        });
     }
     private static void handleKeybinds(MinecraftClient client, CommonBoatConfig cfg) {
         if (isKeyJustPressed(CommonBoatMalilibConfig.masterToggleKey)) {
