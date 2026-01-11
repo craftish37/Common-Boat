@@ -32,7 +32,8 @@
 
   "text.commonboat.config.remove_air_drag": "Remove Air Drag",
   "text.commonboat.config.remove_air_drag.tooltip": "Prevents the boat from slowing down while in the air.",
-
+  "text.commonboat.config.enable_camera_rotation": "Enable Relative Camera",
+  "text.commonboat.config.enable_camera_rotation.tooltip": "Locks the camera rotation relative to the boat.",
   "text.commonboat.config.max_jump_height": "Max Jump Height",
   "text.commonboat.config.max_jump_height.tooltip": "Limits the Flappy Bird jump height. Set to -1 to disable.",
   "text.commonboat.config.max_speed": "Max Speed",
@@ -43,6 +44,7 @@
   "text.commonboat.config.enable_flappybird_pitch_control.tooltip": "Controls in-air jump height with view pitch.\nLook up to jump higher (max 5), look down to jump lower (min 0).",
   "text.commonboat.config.captured_fish_sheet_url": "Captured Fish Google Sheet URL",
   "text.commonboat.config.captured_fish_sheet_url.tooltip": "A public Google Sheets URL to override the captured fish list.\nMust be a CSV export link or a standard sheet link.\nLeave empty to use the default list.",
+  "text.commonboat.config.captured_fish_sheet_url_color": "Captured Fish Google Sheet URL Color",
   "text.commonboat.config.captured_fish_sheet_url_2": "Secondary Fish Google Sheet URL",
   "text.commonboat.config.captured_fish_sheet_url_2.tooltip": "A secondary public Google Sheets URL for the captured fish list.\nFish in the first list take priority.",
   "text.commonboat.config.captured_fish_sheet_url_2_color": "Secondary List Color (Hex)",
@@ -72,6 +74,7 @@
   "text.commonboat.hotkey.toggle_velocity": "Toggle Velocity",
   "text.commonboat.hotkey.toggle_step_height": "Toggle Step Height",
   "text.commonboat.hotkey.toggle_air_drag": "Toggle Air Drag",
+  "text.commonboat.hotkey.toggle_camera_rotation": "Toggle Relative Camera",
   "text.commonboat.hotkey.toggle_easter_eggs": "Toggle Easter Eggs",
   "text.commonboat.hotkey.toggle_handbrake": "Toggle Handbrake",
   "text.commonboat.hotkey.toggle_flappybird": "Toggle Flappy Bird",

@@ -7,6 +7,7 @@ import fi.dy.masa.malilib.hotkeys.IKeybindManager;
 import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
 import fi.dy.masa.malilib.interfaces.IInitializationHandler;
 import fi.dy.masa.malilib.registry.Registry;
+import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.data.ModInfo;
 import net.minecraft.client.MinecraftClient;
 import net.fabricmc.api.ClientModInitializer;
@@ -49,6 +50,7 @@ public class CommonBoat implements ClientModInitializer {
     private static String cachedServerAddress = "";
     private static String cachedResolvedIp = "";
     private static final Map<ConfigHotkey, Boolean> keyStateMap = new HashMap<>();
+    private static boolean commonboat$initialized = false;
     private static void performToggle(MinecraftClient client, CommonBoatConfig cfg, String configKey, boolean newState) {
         cfg.save();
         if (client.player != null) {
@@ -89,12 +91,14 @@ public class CommonBoat implements ClientModInitializer {
         @Override
         public void registerModHandlers() {
             ConfigManager.getInstance().registerConfigHandler("commonboat", CommonBoatMalilibConfig.getInstance());
+            InputEventHandler.getKeybindManager().registerKeybindProvider(new KeybindProvider());
+        }
+        public void registerLateHandlers() {
             Registry.CONFIG_SCREEN.registerConfigScreenFactory(
-                    new ModInfo("commonboat", "Common-Boat", () ->
+                    new ModInfo("commonboat", StringUtils.translate("config.name.commonboat"), () ->
                             new CommonBoatModMenuIntegration.CommonBoatConfigScreen(MinecraftClient.getInstance().currentScreen)
                     )
             );
-            InputEventHandler.getKeybindManager().registerKeybindProvider(new KeybindProvider());
             CommonBoatMalilibConfig.getInstance().load();
         }
     }
@@ -105,6 +109,10 @@ public class CommonBoat implements ClientModInitializer {
         EasterEggFishHighlighter.startUpdater();
         WorldRenderEvents.END_MAIN.register(context -> EasterEggFishHighlighter.onWorldRender(context.matrices()));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (!commonboat$initialized) {
+                commonboat$initialized = true;
+                new InitHandler().registerLateHandlers();
+            }
             CommonBoatConfig cfg = ConfigAccess.get();
             handleRestrictedServerLogic(client);
             handleNameMatchLogic(client, cfg);

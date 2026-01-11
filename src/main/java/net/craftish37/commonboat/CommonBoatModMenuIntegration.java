@@ -60,6 +60,7 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                     configs.add(CommonBoatMalilibConfig.velocityMultiplierEnabled);
                     configs.add(CommonBoatMalilibConfig.boatStepHeightEnabled);
                     configs.add(CommonBoatMalilibConfig.removeAirDrag);
+                    configs.add(CommonBoatMalilibConfig.boatCameraRotationEnabled);
                     configs.add(CommonBoatMalilibConfig.easterEggsEnabled);
                     break;
                 case VALUES:
@@ -90,6 +91,7 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                     configs.add(CommonBoatMalilibConfig.velocityToggleKey);
                     configs.add(CommonBoatMalilibConfig.stepHeightToggleKey);
                     configs.add(CommonBoatMalilibConfig.airDragToggleKey);
+                    configs.add(CommonBoatMalilibConfig.boatCameraRotationToggleKey);
                     configs.add(CommonBoatMalilibConfig.easterEggsToggleKey);
                     if (CommonBoatMalilibConfig.easterEggsEnabled.getBooleanValue()) {
                         configs.add(CommonBoatMalilibConfig.handbrakeToggleKey);

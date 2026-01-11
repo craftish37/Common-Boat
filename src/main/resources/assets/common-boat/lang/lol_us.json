@@ -28,11 +28,12 @@
 
   "text.commonboat.config.enable_step_height": "enabl STEP HEIte oVRride",
   "text.commonboat.config.step_height_value": "STEP HEIte Meow",
-  "text.commonboat.config.step_height_value.tooltip": "oVRrideZ STEP HEIte fr boATZ??. Vanuwla r 0",
+  "text.commonboat.config.step_height_value.tooltip": "oVRrideZ STEP HEIte fr boATZ?? Vanuwla r 0",
 
   "text.commonboat.config.remove_air_drag": "Wemov Aiw dRRRRAG",
   "text.commonboat.config.remove_air_drag.tooltip": "prevenTZ TEH boATZ?? Frum slowin dowN wil iN TEH Aiw",
-
+  "text.commonboat.config.enable_camera_rotation": "enabl welatif cameowa",
+  "text.commonboat.config.enable_camera_rotation.tooltip": "lucks TEH cameowa rutazion 2 TEH boATZ??",
   "text.commonboat.config.max_jump_height": "maks BOING HEIte",
   "text.commonboat.config.max_jump_height.tooltip": "Bonk TEH FlaP FlaP BIrB BOING HEIte. Meow 2 '-1' 2 DIsabl",
   "text.commonboat.config.max_speed": "maks ZOOOOOOOM",
@@ -43,6 +44,7 @@
   "text.commonboat.config.enable_flappybird_pitch_control.tooltip": "Contwool iN-Aiw BOING HEIte wif vew PSCHIT.\nLuk op 2 BOING heigher (+ 5), luk dawn 2 BOING lawer (+ 0)",
   "text.commonboat.config.captured_fish_sheet_url": "capturd fish gogl shet url",
   "text.commonboat.config.captured_fish_sheet_url.tooltip": "public gogl shet url to oVRrideZ TEH capturd fish lis\nMus B csv EXPort lINK or standard shet lINK K?\nleeve MT 2 us TEH deefalt lis",
+  "text.commonboat.config.captured_fish_sheet_url_color": "capturd fish gogl shet url colUwU",
   "text.commonboat.config.captured_fish_sheet_url_2": "SHEcundawy capturd fish gogl shet url",
   "text.commonboat.config.captured_fish_sheet_url_2.tooltip": "SHEcundawy public gogl shet url to oVRrideZ TEH capturd fish lis\nfish iN TEH furst lis tak pwiowity",
   "text.commonboat.config.captured_fish_sheet_url_2_color": "Secondary List Color (Hex)",
@@ -72,6 +74,7 @@
   "text.commonboat.hotkey.toggle_velocity": "toGGL velOcitie",
   "text.commonboat.hotkey.toggle_step_height": "toGGL STEP HEIte Meow",
   "text.commonboat.hotkey.toggle_air_drag": "toGGL Aiw dRRRRAG",
+  "text.commonboat.hotkey.toggle_camera_rotation": "toGGL welatif cameowa",
   "text.commonboat.hotkey.toggle_easter_eggs": "toGGL eastr EGgz",
   "text.commonboat.hotkey.toggle_handbrake": "toGGL hundbwaaaKE",
   "text.commonboat.hotkey.toggle_flappybird": "toGGL FlaP FlaP BIrB",

@@ -32,7 +32,8 @@
 
   "text.commonboat.config.remove_air_drag": "Retirer l'Air Drag",
   "text.commonboat.config.remove_air_drag.tooltip": "Empêche le bateau de ralentir en l'air.",
-
+  "text.commonboat.config.enable_camera_rotation": "Activer la caméra relative",
+  "text.commonboat.config.enable_camera_rotation.tooltip": "Verrouille la rotation relative de la caméra au bateau.",
   "text.commonboat.config.max_jump_height": "Hauteur de saut max.",
   "text.commonboat.config.max_jump_height.tooltip": "Limite la hauteur de saut de Flappy Bird. Mettre à -1 pour désactiver.",
   "text.commonboat.config.max_speed": "Vitesse max.",
@@ -43,6 +44,7 @@
   "text.commonboat.config.enable_flappybird_pitch_control.tooltip": "Controllez la hateur de saut en l'air à l'aide de l'inclinaison de caméra.\nRegardez en l'air pour sauter plus haut (max 5), regardez plus bas pour sauter moins haut (min 0).",
   "text.commonboat.config.captured_fish_sheet_url": "URL Google Sheet des poissons capturés",
   "text.commonboat.config.captured_fish_sheet_url.tooltip": "Une URL publique Google Sheets pour remplacer la liste des poissons capturés.\nDoit être un lien d'export CSV ou un lien de feuille standard.\nLaissez vide pour utiliser la liste par défaut.",
+  "text.commonboat.config.captured_fish_sheet_url_color": "Couleur de l'URL Google Sheet des poissons capturés",
   "text.commonboat.config.captured_fish_sheet_url_2": "URL Google Sheet secondaire des poissons capturés",
   "text.commonboat.config.captured_fish_sheet_url_2.tooltip": "Une URL publique Google Sheets secondaire pour remplacer la liste des poissons capturés.\nLes poissons de la première liste sont prioritaires.",
   "text.commonboat.config.captured_fish_sheet_url_2_color": "Couleur de la liste secondaire (Hex)",
@@ -72,6 +74,7 @@
   "text.commonboat.hotkey.toggle_velocity": "Activer le remplacement de Velocity Multiplier",
   "text.commonboat.hotkey.toggle_step_height": "Activer le remplacement de Step Height",
   "text.commonboat.hotkey.toggle_air_drag": "Retirer l'Air Drag",
+  "text.commonboat.hotkey.toggle_camera_rotation": "Activer la caméra relative",
   "text.commonboat.hotkey.toggle_easter_eggs": "Activer les Easter Eggs",
   "text.commonboat.hotkey.toggle_handbrake": "Activer Frein à main",
   "text.commonboat.hotkey.toggle_flappybird": "Activer Flappy Bird",

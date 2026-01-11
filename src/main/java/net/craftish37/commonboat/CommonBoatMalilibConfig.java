@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
@@ -55,8 +57,8 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
     public static final ConfigBoolean slipperinessEnabled = new ConfigBooleanNoComment("text.commonboat.config.enable_slipperiness", false);
     public static final ConfigBoolean velocityMultiplierEnabled = new ConfigBooleanNoComment("text.commonboat.config.enable_velocity", false);
     public static final ConfigBoolean boatStepHeightEnabled = new ConfigBooleanNoComment("text.commonboat.config.enable_step_height", false);
-
     public static final ConfigBoolean removeAirDrag = new ConfigBoolean("text.commonboat.config.remove_air_drag", false, "text.commonboat.config.remove_air_drag.tooltip");
+    public static final ConfigBoolean boatCameraRotationEnabled = new ConfigBoolean("text.commonboat.config.enable_camera_rotation", false, "text.commonboat.config.enable_camera_rotation.tooltip");
     public static final ConfigBoolean easterEggsEnabled = new ConfigBoolean("text.commonboat.config.enable_easter_eggs", false, "text.commonboat.config.enable_easter_eggs.tooltip");
 
     public static final ConfigDouble slipperiness = new ConfigDouble("text.commonboat.config.slipperiness_value", 0.989, 0.1, 1.0, "text.commonboat.config.slipperiness_value.tooltip");
@@ -83,6 +85,7 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
     public static final ConfigHotkey velocityToggleKey = new ConfigHotkeyNoComment("text.commonboat.config.enable_velocity", "");
     public static final ConfigHotkey stepHeightToggleKey = new ConfigHotkeyNoComment("text.commonboat.config.enable_step_height", "");
     public static final ConfigHotkey airDragToggleKey = new ConfigHotkey("text.commonboat.config.remove_air_drag", "", "text.commonboat.config.remove_air_drag.tooltip");
+    public static final ConfigHotkey boatCameraRotationToggleKey = new ConfigHotkeyNoComment("text.commonboat.config.enable_camera_rotation", "");
     public static final ConfigHotkey easterEggsToggleKey = new ConfigHotkey("text.commonboat.config.enable_easter_eggs", "", "text.commonboat.config.enable_easter_eggs.tooltip");
 
     public static final ConfigHotkey handbrakeToggleKey = new ConfigHotkeyNoComment("text.commonboat.config.enable_handbrake", "");
@@ -94,7 +97,7 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
 
     public static final List<ConfigHotkey> HOTKEYS = ImmutableList.of(
             masterToggleKey, slipperinessToggleKey, velocityToggleKey, stepHeightToggleKey,
-            airDragToggleKey, easterEggsToggleKey, handbrakeToggleKey, flappyBirdToggleKey,
+            airDragToggleKey, boatCameraRotationToggleKey, easterEggsToggleKey, handbrakeToggleKey, flappyBirdToggleKey,
             flappyBirdPitchToggleKey, leFischeAuChocolatToggleKey, elytraBoatToggleKey,
             blockBreakingPenaltyToggleKey
     );
@@ -117,6 +120,7 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         velocityMultiplierEnabled.setBooleanValue(cfg.velocityMultiplierEnabled);
         boatStepHeightEnabled.setBooleanValue(cfg.boatStepHeightEnabled);
         removeAirDrag.setBooleanValue(cfg.removeAirDrag);
+        boatCameraRotationEnabled.setBooleanValue(cfg.boatCameraRotationEnabled);
         slipperiness.setDoubleValue(cfg.slipperiness);
         velocityMultiplier.setDoubleValue(cfg.velocityMultiplier);
         boatStepHeight.setDoubleValue(cfg.boatStepHeight);
@@ -150,7 +154,7 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         for (int i = 0; i < urls.size(); i++) {
             String url = urls.get(i);
             if (url == null || url.trim().isEmpty()) continue;
-            String label = "Captured Fish Google Sheet URL " + (i + 1);
+            String label = StringUtils.translate("text.commonboat.config.captured_fish_sheet_url_color") + " " + (i + 1);
             String colorVal = capturedFishSheetColors.getOrDefault(url, "#FFFFFF");
             ConfigColor colorWidget = new ConfigColorNoComment(label, colorVal);
             colorWidget.setValueFromString(colorVal);
@@ -163,6 +167,7 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         if (cfg.velocityToggleKey != null) velocityToggleKey.setValueFromJsonElement(cfg.velocityToggleKey);
         if (cfg.stepHeightToggleKey != null) stepHeightToggleKey.setValueFromJsonElement(cfg.stepHeightToggleKey);
         if (cfg.airDragToggleKey != null) airDragToggleKey.setValueFromJsonElement(cfg.airDragToggleKey);
+        if (cfg.boatCameraRotationToggleKey != null) boatCameraRotationToggleKey.setValueFromJsonElement(cfg.boatCameraRotationToggleKey);
         if (cfg.easterEggsToggleKey != null) easterEggsToggleKey.setValueFromJsonElement(cfg.easterEggsToggleKey);
         if (cfg.handbrakeToggleKey != null) handbrakeToggleKey.setValueFromJsonElement(cfg.handbrakeToggleKey);
         if (cfg.flappyBirdToggleKey != null) flappyBirdToggleKey.setValueFromJsonElement(cfg.flappyBirdToggleKey);
@@ -183,6 +188,7 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         cfg.velocityMultiplierEnabled = velocityMultiplierEnabled.getBooleanValue();
         cfg.boatStepHeightEnabled = boatStepHeightEnabled.getBooleanValue();
         cfg.removeAirDrag = removeAirDrag.getBooleanValue();
+        cfg.boatCameraRotationEnabled = boatCameraRotationEnabled.getBooleanValue();
         cfg.easterEggsEnabled = easterEggsEnabled.getBooleanValue();
         cfg.slipperiness = slipperiness.getDoubleValue();
         cfg.velocityMultiplier = velocityMultiplier.getDoubleValue();
@@ -224,6 +230,7 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         cfg.velocityToggleKey = velocityToggleKey.getAsJsonElement();
         cfg.stepHeightToggleKey = stepHeightToggleKey.getAsJsonElement();
         cfg.airDragToggleKey = airDragToggleKey.getAsJsonElement();
+        cfg.boatCameraRotationToggleKey = boatCameraRotationToggleKey.getAsJsonElement();
         cfg.easterEggsToggleKey = easterEggsToggleKey.getAsJsonElement();
         cfg.handbrakeToggleKey = handbrakeToggleKey.getAsJsonElement();
         cfg.flappyBirdToggleKey = flappyBirdToggleKey.getAsJsonElement();

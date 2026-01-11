@@ -24,6 +24,43 @@ public class BoatJumpMixin {
     @Unique
     private float commonboat$elytraCurrentSpeed = 0.0F;
     @Unique
+    private float commonboat$lastBoatYaw = 0.0F;
+    @Unique
+    private int commonboat$lastVehicleId = -1;
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void onTick(CallbackInfo ci) {
+        ClientPlayerEntity player = (ClientPlayerEntity) (Object) this;
+        CommonBoatConfig cfg = ConfigAccess.get();
+        if (cfg.enabled && player.getVehicle() instanceof AbstractBoatEntity boat) {
+            if (cfg.boatCameraRotationEnabled) {
+                if (boat.getId() != this.commonboat$lastVehicleId) {
+                    this.commonboat$lastVehicleId = boat.getId();
+                    this.commonboat$lastBoatYaw = boat.getYaw();
+                }
+                boolean isDriver = player.equals(boat.getControllingPassenger());
+                float currentBoatYaw = boat.getYaw();
+                if (!isDriver) {
+                    float yawChange = MathHelper.wrapDegrees(currentBoatYaw - this.commonboat$lastBoatYaw);
+
+                    player.setYaw(player.getYaw() + yawChange);
+                }
+                this.commonboat$lastBoatYaw = currentBoatYaw;
+            } else {
+                this.commonboat$lastVehicleId = -1;
+            }
+            if (cfg.easterEggsEnabled) {
+                if (commonboat$processElytraLogic(player, boat, cfg)) {
+                    return;
+                }
+                if (cfg.flappyBirdEnabled) {
+                    commonboat$processFlappyBirdLogic(player, boat, cfg);
+                }
+            }
+        } else {
+            this.commonboat$lastVehicleId = -1;
+        }
+    }
+    @Unique
     private void commonboat$handleElytraBoat(ClientPlayerEntity player, AbstractBoatEntity boat, CommonBoatConfig cfg) {
         boat.setYaw(player.getYaw());
         boat.setPitch(player.getPitch());
@@ -73,19 +110,6 @@ public class BoatJumpMixin {
         }
         return jumpHeight;
     }
-    @Inject(method = "tick", at = @At("HEAD"))
-    private void onTick(CallbackInfo ci) {
-        ClientPlayerEntity player = (ClientPlayerEntity) (Object) this;
-        CommonBoatConfig cfg = ConfigAccess.get();
-        if (cfg.enabled && cfg.easterEggsEnabled && player.getVehicle() instanceof AbstractBoatEntity boat) {
-            if (commonboat$processElytraLogic(player, boat, cfg)) {
-                return;
-            }
-            if (cfg.flappyBirdEnabled) {
-                commonboat$processFlappyBirdLogic(player, boat, cfg);
-            }
-        }
-    }
     @Unique
     private boolean commonboat$processElytraLogic(ClientPlayerEntity player, AbstractBoatEntity boat, CommonBoatConfig cfg) {
         boolean isElytraBoatActive = cfg.elytraBoatEnabled && this.client.options.jumpKey.isPressed();
@@ -94,7 +118,6 @@ public class BoatJumpMixin {
             this.commonboat$handleElytraBoat(player, boat, cfg);
             return true;
         } else if (cfg.elytraBoatEnabled) {
-            // Decay speed when not active
             this.commonboat$elytraCurrentSpeed = (float) (this.commonboat$elytraCurrentSpeed * 0.9);
             if (Math.abs(this.commonboat$elytraCurrentSpeed) < 0.005F) {
                 this.commonboat$elytraCurrentSpeed = 0.0F;

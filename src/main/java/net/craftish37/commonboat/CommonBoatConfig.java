@@ -51,6 +51,7 @@ public class CommonBoatConfig {
     public boolean velocityMultiplierEnabled = false;
     public boolean boatStepHeightEnabled = false;
     public boolean removeAirDrag = false;
+    public boolean boatCameraRotationEnabled = false;
     public boolean easterEggsEnabled = false;
 
     public double slipperiness = 0.989;
@@ -76,6 +77,7 @@ public class CommonBoatConfig {
     public JsonElement velocityToggleKey = new JsonPrimitive("");
     public JsonElement stepHeightToggleKey = new JsonPrimitive("");
     public JsonElement airDragToggleKey = new JsonPrimitive("");
+    public JsonElement boatCameraRotationToggleKey = new JsonPrimitive("");
     public JsonElement easterEggsToggleKey = new JsonPrimitive("");
     public JsonElement handbrakeToggleKey = new JsonPrimitive("");
     public JsonElement flappyBirdToggleKey = new JsonPrimitive("");
