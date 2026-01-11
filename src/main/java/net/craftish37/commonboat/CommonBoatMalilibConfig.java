@@ -47,7 +47,6 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
             return null;
         }
     }
-
     public static final Map<String, ConfigColor> dynamicFishColorWidgets = new LinkedHashMap<>();
     public static final ConfigBoolean enabled = new ConfigBoolean("text.commonboat.config.enable_mod", false, "text.commonboat.config.enable_mod.tooltip");
     public static final ConfigBoolean disableOnNameMatch = new ConfigBoolean("text.commonboat.config.disable_on_name_match", false, "text.commonboat.config.disable_on_name_match.tooltip");
@@ -145,21 +144,30 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         disableBlockBreakingPenalty.setBooleanValue(cfg.disableBlockBreakingPenalty);
         fishDetectionDistance.setDoubleValue(cfg.fishDetectionDistance);
     }
-    private void loadFishSheetSettings(CommonBoatConfig cfg) {
-        capturedFishSheetUrls.setStrings(cfg.capturedFishSheetUrls);
-        capturedFishSheetColors = new HashMap<>(cfg.capturedFishSheetColors);
-
-        dynamicFishColorWidgets.clear();
+    public void refreshFishWidgets() {
         List<String> urls = capturedFishSheetUrls.getStrings();
+        Map<String, ConfigColor> newWidgets = new LinkedHashMap<>();
         for (int i = 0; i < urls.size(); i++) {
             String url = urls.get(i);
             if (url == null || url.trim().isEmpty()) continue;
             String label = StringUtils.translate("text.commonboat.config.captured_fish_sheet_url_color") + " " + (i + 1);
-            String colorVal = capturedFishSheetColors.getOrDefault(url, "#FFFFFF");
-            ConfigColor colorWidget = new ConfigColorNoComment(label, colorVal);
-            colorWidget.setValueFromString(colorVal);
-            dynamicFishColorWidgets.put(url, colorWidget);
+            String currentValue;
+            if (dynamicFishColorWidgets.containsKey(url)) {
+                currentValue = dynamicFishColorWidgets.get(url).getStringValue();
+            } else {
+                currentValue = capturedFishSheetColors.getOrDefault(url, "#FFFFFF");
+            }
+            ConfigColorNoComment widget = new ConfigColorNoComment(label, currentValue);
+            widget.setValueFromString(currentValue);
+            newWidgets.put(url, widget);
         }
+        dynamicFishColorWidgets.clear();
+        dynamicFishColorWidgets.putAll(newWidgets);
+    }
+    private void loadFishSheetSettings(CommonBoatConfig cfg) {
+        capturedFishSheetUrls.setStrings(cfg.capturedFishSheetUrls);
+        capturedFishSheetColors = new HashMap<>(cfg.capturedFishSheetColors);
+        refreshFishWidgets();
     }
     private void loadKeybinds(CommonBoatConfig cfg) {
         if (cfg.masterToggleKey != null) masterToggleKey.setValueFromJsonElement(cfg.masterToggleKey);
@@ -222,7 +230,15 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         for (Map.Entry<String, ConfigColor> entry : dynamicFishColorWidgets.entrySet()) {
             capturedFishSheetColors.put(entry.getKey(), entry.getValue().getStringValue());
         }
-        cfg.capturedFishSheetColors = new HashMap<>(capturedFishSheetColors);
+        Map<String, String> cleanColorMap = new HashMap<>();
+        for (String url : cfg.capturedFishSheetUrls) {
+            if (url != null && !url.trim().isEmpty()) {
+                cleanColorMap.put(url, capturedFishSheetColors.getOrDefault(url, "#FFFFFF"));
+            }
+        }
+        capturedFishSheetColors = cleanColorMap;
+        cfg.capturedFishSheetColors = new HashMap<>(cleanColorMap);
+
         cfg.maxJumpHeight = maxJumpHeight.getDoubleValue();
 
         cfg.masterToggleKey = masterToggleKey.getAsJsonElement();

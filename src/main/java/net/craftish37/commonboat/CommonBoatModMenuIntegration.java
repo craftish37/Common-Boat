@@ -81,6 +81,7 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                         configs.add(CommonBoatMalilibConfig.disableBlockBreakingPenalty);
                         configs.add(CommonBoatMalilibConfig.fishDetectionDistance);
                         configs.add(CommonBoatMalilibConfig.capturedFishSheetUrls);
+                        CommonBoatMalilibConfig.getInstance().refreshFishWidgets();
                         configs.addAll(CommonBoatMalilibConfig.dynamicFishColorWidgets.values());
                         configs.add(CommonBoatMalilibConfig.maxJumpHeight);
                     }
