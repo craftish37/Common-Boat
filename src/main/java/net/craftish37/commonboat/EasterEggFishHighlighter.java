@@ -312,8 +312,7 @@ public class EasterEggFishHighlighter {
         List<SheetData> newSheets = new ArrayList<>();
         for (String url : cfg.capturedFishSheetUrls) {
             if (url == null || url.trim().isEmpty()) continue;
-            String cleanUrl = url.replace("\\u003d", "=").replace("\\u0026", "&").trim();
-            String hexColor = cfg.capturedFishSheetColors.getOrDefault(cleanUrl, "#FFFFFF");
+            String hexColor = cfg.capturedFishSheetColors.getOrDefault(url, "#FFFFFF");
             int colorInt = getColorIntFromHex(hexColor);
             SheetFetchResult result = fetchSheetData(url);
             if (result != null && (result.hasWildcard || !result.ids.isEmpty())) {
