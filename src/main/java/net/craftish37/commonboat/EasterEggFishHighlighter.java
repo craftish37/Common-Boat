@@ -332,20 +332,25 @@ public class EasterEggFishHighlighter {
     public static void onWorldRender(@org.jetbrains.annotations.Nullable MatrixStack matrices) {
         var cfg = ConfigAccess.get();
         if (!cfg.enabled || !cfg.easterEggsEnabled || !cfg.leFischeAuChocolatEnabled) return;
-        if (client.world == null || client.player == null || matrices == null) return;
+        var world = client.world;
+        var player = client.player;
+        if (world == null || player == null || matrices == null) return;
         Vec3d cameraPos = client.gameRenderer.getCamera().getPos();
-
         List<SheetData> currentSheets = new ArrayList<>(LOADED_SHEETS);
         Map<SheetData, List<TropicalFishEntity>> batches = new LinkedHashMap<>();
         for (SheetData sheet : currentSheets) {
             batches.put(sheet, new ArrayList<>());
         }
         List<TropicalFishEntity> defaults = new ArrayList<>();
-        for (Entity entity : client.world.getOtherEntities(client.player, client.player.getBoundingBox().expand(cfg.fishDetectionDistance))) {
+        collectFishEntities(world, player, cfg, currentSheets, batches, defaults);
+        renderFishBatches(matrices, cameraPos, batches, defaults);
+    }
+    private static void collectFishEntities(net.minecraft.world.World world, net.minecraft.entity.player.PlayerEntity player, CommonBoatConfig cfg, List<SheetData> currentSheets, Map<SheetData, List<TropicalFishEntity>> batches, List<TropicalFishEntity> defaults) {
+        for (Entity entity : world.getOtherEntities(player, player.getBoundingBox().expand(cfg.fishDetectionDistance))) {
             if (!(entity instanceof TropicalFishEntity fish)) continue;
             int variant = fish.getDataTracker().get(TropicalFishEntityAccessor.getVariantTrackedData());
+            boolean matched = false;
             if (!currentSheets.isEmpty()) {
-                boolean matched = false;
                 for (SheetData sheet : currentSheets) {
                     if ((sheet.isWildcard && !DEFAULT_IGNORED_FISH_IDS.contains(variant)) || sheet.ids.contains(variant)) {
                         batches.get(sheet).add(fish);
@@ -353,12 +358,13 @@ public class EasterEggFishHighlighter {
                         break;
                     }
                 }
-                if (matched) continue;
             }
-            if (!DEFAULT_IGNORED_FISH_IDS.contains(variant)) {
+            if (!matched && !DEFAULT_IGNORED_FISH_IDS.contains(variant)) {
                 defaults.add(fish);
             }
         }
+    }
+    private static void renderFishBatches(MatrixStack matrices, Vec3d cameraPos, Map<SheetData, List<TropicalFishEntity>> batches, List<TropicalFishEntity> defaults) {
         VertexConsumerProvider.Immediate provider = client.getBufferBuilders().getEntityVertexConsumers();
         provider.draw();
 

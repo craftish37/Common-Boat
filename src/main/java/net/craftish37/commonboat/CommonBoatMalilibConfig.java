@@ -102,6 +102,13 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
     @Override
     public void load() {
         CommonBoatConfig cfg = ConfigAccess.get();
+        loadBasicSettings(cfg);
+        loadCustomBlockSlipperiness(cfg);
+        loadEasterEggSettings(cfg);
+        loadFishSheetSettings(cfg);
+        loadKeybinds(cfg);
+    }
+    private void loadBasicSettings(CommonBoatConfig cfg) {
         enabled.setBooleanValue(cfg.enabled);
         disableOnNameMatch.setBooleanValue(cfg.disableOnNameMatch);
         nameMatchMode.setOptionListValue(cfg.nameMatchMode);
@@ -110,19 +117,22 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         velocityMultiplierEnabled.setBooleanValue(cfg.velocityMultiplierEnabled);
         boatStepHeightEnabled.setBooleanValue(cfg.boatStepHeightEnabled);
         removeAirDrag.setBooleanValue(cfg.removeAirDrag);
-        easterEggsEnabled.setBooleanValue(cfg.easterEggsEnabled);
         slipperiness.setDoubleValue(cfg.slipperiness);
         velocityMultiplier.setDoubleValue(cfg.velocityMultiplier);
         boatStepHeight.setDoubleValue(cfg.boatStepHeight);
         maxSpeed.setDoubleValue(cfg.maxSpeed);
-
+        maxJumpHeight.setDoubleValue(cfg.maxJumpHeight);
+    }
+    private void loadCustomBlockSlipperiness(CommonBoatConfig cfg) {
         List<String> blockList = new ArrayList<>();
         for (Map.Entry<String, Double> entry : cfg.customBlockSlipperiness.entrySet()) {
             blockList.add(entry.getKey() + "=" + entry.getValue());
         }
         if (blockList.isEmpty()) blockList.add("minecraft:blue_ice=0.989");
         customBlockSlipperiness.setStrings(blockList);
-
+    }
+    private void loadEasterEggSettings(CommonBoatConfig cfg) {
+        easterEggsEnabled.setBooleanValue(cfg.easterEggsEnabled);
         handbrakeEnabled.setBooleanValue(cfg.handbrakeEnabled);
         flappyBirdEnabled.setBooleanValue(cfg.flappyBirdEnabled);
         flappyBirdPitchControl.setBooleanValue(cfg.flappyBirdPitchControl);
@@ -130,6 +140,8 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         elytraBoatEnabled.setBooleanValue(cfg.elytraBoatEnabled);
         disableBlockBreakingPenalty.setBooleanValue(cfg.disableBlockBreakingPenalty);
         fishDetectionDistance.setDoubleValue(cfg.fishDetectionDistance);
+    }
+    private void loadFishSheetSettings(CommonBoatConfig cfg) {
         capturedFishSheetUrls.setStrings(cfg.capturedFishSheetUrls);
         capturedFishSheetColors = new HashMap<>(cfg.capturedFishSheetColors);
 
@@ -144,9 +156,8 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
             colorWidget.setValueFromString(colorVal);
             dynamicFishColorWidgets.put(url, colorWidget);
         }
-
-        maxJumpHeight.setDoubleValue(cfg.maxJumpHeight);
-
+    }
+    private void loadKeybinds(CommonBoatConfig cfg) {
         if (cfg.masterToggleKey != null) masterToggleKey.setValueFromJsonElement(cfg.masterToggleKey);
         if (cfg.slipperinessToggleKey != null) slipperinessToggleKey.setValueFromJsonElement(cfg.slipperinessToggleKey);
         if (cfg.velocityToggleKey != null) velocityToggleKey.setValueFromJsonElement(cfg.velocityToggleKey);

@@ -78,58 +78,64 @@ public class BoatJumpMixin {
         ClientPlayerEntity player = (ClientPlayerEntity) (Object) this;
         CommonBoatConfig cfg = ConfigAccess.get();
         if (cfg.enabled && cfg.easterEggsEnabled && player.getVehicle() instanceof AbstractBoatEntity boat) {
-
-            boolean isElytraBoatActive = cfg.elytraBoatEnabled && this.client.options.jumpKey.isPressed();
-
-            if (isElytraBoatActive) {
-                this.commonboat$handleElytraBoat(player, boat, cfg);
+            if (commonboat$processElytraLogic(player, boat, cfg)) {
                 return;
-            } else {
-                if (cfg.elytraBoatEnabled) {
-                    this.commonboat$elytraCurrentSpeed = (float) (this.commonboat$elytraCurrentSpeed * 0.9);
-                    if (Math.abs(this.commonboat$elytraCurrentSpeed) < 0.005F) {
-                        this.commonboat$elytraCurrentSpeed = 0.0F;
-                    }
-                    float currentActualSpeed = (float) boat.getVelocity().length();
-                    if (currentActualSpeed < this.commonboat$elytraCurrentSpeed - 0.05F) {
-                        this.commonboat$elytraCurrentSpeed = currentActualSpeed;
-                    }
-                }
+            }
+            if (cfg.flappyBirdEnabled) {
+                commonboat$processFlappyBirdLogic(player, boat, cfg);
             }
         }
-        if (cfg.enabled && cfg.easterEggsEnabled && cfg.flappyBirdEnabled) {
-            if (player.getVehicle() instanceof AbstractBoatEntity boat) {
-                boolean canInitiateJump = boat.getVelocity().y <= 0.01;
-                double gravity = 0.04D;
-                if (boat.getVelocity().y > 0) {
-                    commonboat$lastJumpPeakY = boat.getY();
-                } else if (boat.isOnGround() || ((AbstractBoatEntityAccessor) boat).getLocationField() == Location.IN_WATER) {
+    }
+    @Unique
+    private boolean commonboat$processElytraLogic(ClientPlayerEntity player, AbstractBoatEntity boat, CommonBoatConfig cfg) {
+        boolean isElytraBoatActive = cfg.elytraBoatEnabled && this.client.options.jumpKey.isPressed();
+
+        if (isElytraBoatActive) {
+            this.commonboat$handleElytraBoat(player, boat, cfg);
+            return true;
+        } else if (cfg.elytraBoatEnabled) {
+            // Decay speed when not active
+            this.commonboat$elytraCurrentSpeed = (float) (this.commonboat$elytraCurrentSpeed * 0.9);
+            if (Math.abs(this.commonboat$elytraCurrentSpeed) < 0.005F) {
+                this.commonboat$elytraCurrentSpeed = 0.0F;
+            }
+            float currentActualSpeed = (float) boat.getVelocity().length();
+            if (currentActualSpeed < this.commonboat$elytraCurrentSpeed - 0.05F) {
+                this.commonboat$elytraCurrentSpeed = currentActualSpeed;
+            }
+        }
+        return false;
+    }
+    @Unique
+    private void commonboat$processFlappyBirdLogic(ClientPlayerEntity player, AbstractBoatEntity boat, CommonBoatConfig cfg) {
+        boolean canInitiateJump = boat.getVelocity().y <= 0.01;
+        double gravity = 0.04D;
+        if (boat.getVelocity().y > 0) {
+            commonboat$lastJumpPeakY = boat.getY();
+        } else if (boat.isOnGround() || ((AbstractBoatEntityAccessor) boat).getLocationField() == Location.IN_WATER) {
+            commonboat$lastJumpPeakY = boat.getY();
+        }
+        if (this.client.options.jumpKey.isPressed()) {
+            Location currentLocation = ((AbstractBoatEntityAccessor) boat).getLocationField();
+            boolean onSurface = boat.isOnGround() || currentLocation == Location.IN_WATER;
+            if (onSurface && canInitiateJump) {
+                double jumpVelocity = boat.getVelocity().horizontalLength() * 1;
+                if (cfg.maxJumpHeight != -1.0) {
+                    double maxVerticalVelocity = Math.sqrt(2 * gravity * cfg.maxJumpHeight);
+                    if (jumpVelocity > maxVerticalVelocity) {
+                        jumpVelocity = maxVerticalVelocity;
+                    }
+                }
+                if (jumpVelocity > 0) {
+                    boat.addVelocity(0.0, jumpVelocity, 0.0);
                     commonboat$lastJumpPeakY = boat.getY();
                 }
-                if (this.client.options.jumpKey.isPressed()) {
-                    Location currentLocation = ((AbstractBoatEntityAccessor) boat).getLocationField();
-                    boolean onSurface = boat.isOnGround() || currentLocation == Location.IN_WATER;
-                    if (onSurface && canInitiateJump) {
-                        double jumpVelocity = boat.getVelocity().horizontalLength() * 1;
-                        if (cfg.maxJumpHeight != -1.0) {
-                            double maxVerticalVelocity = Math.sqrt(2 * gravity * cfg.maxJumpHeight);
-                            if (jumpVelocity > maxVerticalVelocity) {
-                                jumpVelocity = maxVerticalVelocity;
-                            }
-                        }
-                        if (jumpVelocity > 0) {
-                            boat.addVelocity(0.0, jumpVelocity, 0.0);
-                            commonboat$lastJumpPeakY = boat.getY();
-                        }
-                    } else if (!onSurface) {
-                        double jumpHeight = this.commonboat$calculateAirJumpHeight(player, boat, cfg);
-
-                        double airJumpVelocity = Math.sqrt(2 * gravity * jumpHeight);
-                        Vec3d currentVel = boat.getVelocity();
-                        if (currentVel.y <= 0.0 && airJumpVelocity > 0) {
-                            boat.setVelocity(currentVel.x, airJumpVelocity, currentVel.z);
-                        }
-                    }
+            } else if (!onSurface) {
+                double jumpHeight = this.commonboat$calculateAirJumpHeight(player, boat, cfg);
+                double airJumpVelocity = Math.sqrt(2 * gravity * jumpHeight);
+                Vec3d currentVel = boat.getVelocity();
+                if (currentVel.y <= 0.0 && airJumpVelocity > 0) {
+                    boat.setVelocity(currentVel.x, airJumpVelocity, currentVel.z);
                 }
             }
         }
