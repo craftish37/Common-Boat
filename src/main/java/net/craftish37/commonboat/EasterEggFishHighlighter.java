@@ -410,6 +410,36 @@ public class EasterEggFishHighlighter {
             }
         }
     }
+    public static Integer getRecursiveFishColor(ItemStack stack) {
+        return findFishColor(stack, 0);
+    }
+    private static Integer findFishColor(ItemStack stack, int depth) {
+        if (stack.isEmpty() || depth > 3) return null;
+        if (stack.getItem() == Items.TROPICAL_FISH_BUCKET) {
+            Integer variant = getVariantIdFromBucket(stack);
+            if (variant != null) {
+                return getFishVariantColor(variant);
+            }
+            return null;
+        }
+        var bundle = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
+        if (bundle != null) {
+            return bundle.stream()
+                    .map(inner -> findFishColor(inner, depth + 1))
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(null);
+        }
+        var container = stack.get(DataComponentTypes.CONTAINER);
+        if (container != null) {
+            return container.stream()
+                    .map(inner -> findFishColor(inner, depth + 1))
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(null);
+        }
+        return null;
+    }
     private static void drawBoxOutline(MatrixStack matrices, VertexConsumer consumer, Vec3d cameraPos, Box box, float r, float g, float b) {
         Matrix4f matrix = matrices.peek().getPositionMatrix();
 

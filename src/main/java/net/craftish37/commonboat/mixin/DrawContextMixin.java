@@ -16,16 +16,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class DrawContextMixin {
     @Inject(method = "drawStackOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V", at = @At("TAIL"))
     private void renderCapturedFishAsterisk(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel, CallbackInfo ci) {
-        if (stack.isEmpty() || stack.getItem() != Items.TROPICAL_FISH_BUCKET) return;
+        if (stack.isEmpty()) return;
         CommonBoatConfig cfg = ConfigAccess.get();
         if (!cfg.enabled || !cfg.easterEggsEnabled || !cfg.leFischeAuChocolatEnabled) return;
-        Integer variant = EasterEggFishHighlighter.getVariantIdFromBucket(stack);
-        if (variant != null) {
-            Integer color = EasterEggFishHighlighter.getFishVariantColor(variant);
-            if (color != null) {
-                DrawContext context = (DrawContext) (Object) this;
-                context.drawText(renderer, "*", x + 12, y , color, false);
-            }
+        Integer color = EasterEggFishHighlighter.getRecursiveFishColor(stack);
+        if (color != null) {
+            DrawContext context = (DrawContext) (Object) this;
+            context.drawText(renderer, "*", x + 12, y , color, false);
         }
     }
 }

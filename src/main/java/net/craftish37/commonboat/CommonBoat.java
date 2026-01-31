@@ -42,6 +42,7 @@ public class CommonBoat implements ClientModInitializer {
             UUID.fromString("ab7b2efe-181d-45b0-a84f-5817b5fbd50a"),
             UUID.fromString("c510a4a5-cd44-44c3-b07f-53a4337241f1"),
             UUID.fromString("c48696eb-e870-4875-89b9-a4fcf46a65e0"),
+            UUID.fromString("d4a11827-d86b-4a43-baf8-4b6c2f9e7dcd"),
             UUID.fromString("b86a7f60-aa09-43c4-8066-48a88eb95456")
     );
     private static final Set<String> RESTRICTED_SERVERS = Set.of("193.169.231.158");
