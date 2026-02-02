@@ -35,6 +35,8 @@
   "text.commonboat.config.max_speed": "maks ZOOOOOOOM",
   "text.commonboat.config.max_speed.tooltip": "Bonk TEH ZOOOOOOOM uf TEH boATZ?? Meow 2 '-1' 2 DIsabl",
   "text.commonboat.config.enable_custom_scrolling": "CraFtfisH surtin",
+  "text.commonboat.config.fish_sorting_mode": "CraFtfisH surtin MUD",
+  "text.commonboat.config.fish_sorting_mode.tooltip": "chews o 2 surt fish",
   "text.commonboat.config.fish_detection_distance": "CraFtfisH DeTEKshuN DistunCe",
   "text.commonboat.config.fish_detection_distance.tooltip": "Sat TEH DeTEKshuN DistunCe fr CrAFtfisH O chockylAT",
   "text.commonboat.config.enable_flappybird_pitch_control": "enabl PSCHIT Contwool",
@@ -57,6 +59,9 @@
   "text.commonboat.config.namematch.blacklist": "Bluclis",
   "text.commonboat.config.namematch.whitelist": "Whaiiiitlis",
   "text.commonboat.config.name_match_mode.tooltip": "sayywz o nahm metch lis woks\nBluclis DIsabl Mod if nahm fund\nWhaiiiitlis DIsabl Mod if nahm NUT fund",
+
+  "text.commonboat.config.fish_sorting.shape_first": "shep ON TOP",
+  "text.commonboat.config.fish_sorting.color_first": "colUwU ON TOP",
 
   "text.commonboat.status.enabled": "enabld",
   "text.commonboat.status.disabled": "disubLd",

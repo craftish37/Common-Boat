@@ -42,6 +42,27 @@ public class CommonBoatConfig {
         }
     }
 
+    public enum FishSortingMode implements IConfigOptionListEntry {
+        SHAPE_FIRST("shape_first", "text.commonboat.config.fish_sorting.shape_first"),
+        COLOR_FIRST("color_first", "text.commonboat.config.fish_sorting.color_first");
+        private final String configString;
+        private final String translationKey;
+        FishSortingMode(String configString, String translationKey) {
+            this.configString = configString;
+            this.translationKey = translationKey;
+        }
+        @Override
+        public String getStringValue() { return this.configString; }
+        @Override
+        public String getDisplayName() { return StringUtils.translate(this.translationKey); }
+        @Override
+        public IConfigOptionListEntry cycle(boolean forward) { return this == SHAPE_FIRST ? COLOR_FIRST : SHAPE_FIRST; }
+        @Override
+        public IConfigOptionListEntry fromString(String value) {
+            return "color_first".equalsIgnoreCase(value) ? COLOR_FIRST : SHAPE_FIRST;
+        }
+    }
+
     public boolean enabled = false;
     public boolean disableOnNameMatch = false;
     public BlackWhiteList nameMatchMode = BlackWhiteList.BLACKLIST;
@@ -67,6 +88,7 @@ public class CommonBoatConfig {
     public boolean elytraBoatEnabled = false;
     public boolean disableBlockBreakingPenalty = false;
     public boolean customItemScrolling = false;
+    public FishSortingMode fishSortingMode = FishSortingMode.COLOR_FIRST;
     public double fishDetectionDistance = 48.0;
 
     public List<String> capturedFishSheetUrls = new ArrayList<>();

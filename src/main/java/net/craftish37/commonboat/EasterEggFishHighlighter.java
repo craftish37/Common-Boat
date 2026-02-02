@@ -497,7 +497,12 @@ public class EasterEggFishHighlighter {
                 int sortShape = CUSTOM_SHAPE_ORDER.getOrDefault(shapeKey, 99);
                 int sortBase = CUSTOM_COLOR_ORDER.getOrDefault(baseColor, 99);
                 int sortPattern = CUSTOM_COLOR_ORDER.getOrDefault(patternColor, 99);
-                return (sortShape << 20) | (sortBase << 10) | sortPattern;
+                CommonBoatConfig.FishSortingMode mode = ConfigAccess.get().fishSortingMode;
+                if (mode == CommonBoatConfig.FishSortingMode.COLOR_FIRST) {
+                    return (sortBase << 20) | (sortShape << 10) | sortPattern;
+                } else {
+                    return (sortShape << 20) | (sortBase << 10) | sortPattern;
+                }
             }
         }
         return Integer.MAX_VALUE;

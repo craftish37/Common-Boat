@@ -80,6 +80,7 @@ public class CommonBoatModMenuIntegration implements ModMenuApi {
                         configs.add(CommonBoatMalilibConfig.elytraBoatEnabled);
                         configs.add(CommonBoatMalilibConfig.disableBlockBreakingPenalty);
                         configs.add(CommonBoatMalilibConfig.customItemScrolling);
+                        configs.add(CommonBoatMalilibConfig.fishSortingMode);
                         configs.add(CommonBoatMalilibConfig.fishDetectionDistance);
                         configs.add(CommonBoatMalilibConfig.capturedFishSheetUrls);
                         CommonBoatMalilibConfig.getInstance().refreshFishWidgets();
