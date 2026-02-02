@@ -257,6 +257,7 @@ processResources {
 dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "maven.modrinth:malilib:${project.malilib_version}"
+    modImplementation "maven.modrinth:item-scroller:${project.itemscroller_version}"
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     dependedMod "net.fabricmc.fabric-api:fabric-api:", "fabric", null, null

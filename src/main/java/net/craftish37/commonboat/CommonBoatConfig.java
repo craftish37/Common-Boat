@@ -66,6 +66,7 @@ public class CommonBoatConfig {
     public boolean leFischeAuChocolatEnabled = false;
     public boolean elytraBoatEnabled = false;
     public boolean disableBlockBreakingPenalty = false;
+    public boolean customItemScrolling = false;
     public double fishDetectionDistance = 48.0;
 
     public List<String> capturedFishSheetUrls = new ArrayList<>();

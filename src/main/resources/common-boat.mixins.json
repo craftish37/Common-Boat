@@ -14,7 +14,8 @@
     "AbstractBoatEntityAccessor",
     "AbstractBoatEntityTickMixin",
     "PlayerEntityMixin",
-    "DrawContextMixin"
+    "DrawContextMixin",
+    "ItemScrollerInventoryUtilsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

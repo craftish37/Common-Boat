@@ -72,6 +72,7 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
     public static final ConfigBoolean leFischeAuChocolatEnabled = new ConfigBooleanNoComment("text.commonboat.config.enable_lefischeauchocolat", false);
     public static final ConfigBoolean elytraBoatEnabled = new ConfigBooleanNoComment("text.commonboat.config.enable_elytraboat", false);
     public static final ConfigBoolean disableBlockBreakingPenalty = new ConfigBooleanNoComment("text.commonboat.config.disable_block_breaking_penalty", false);
+    public static final ConfigBoolean customItemScrolling = new ConfigBooleanNoComment("text.commonboat.config.enable_custom_scrolling", false);
     public static final ConfigDouble fishDetectionDistance = new ConfigDouble("text.commonboat.config.fish_detection_distance", 48.0, 0.0, 256.0, "text.commonboat.config.fish_detection_distance.tooltip");
 
     public static final ConfigStringList capturedFishSheetUrls = new ConfigStringList("text.commonboat.config.captured_fish_sheet_url", ImmutableList.of(), "text.commonboat.config.captured_fish_sheet_url.tooltip");
@@ -142,6 +143,7 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         leFischeAuChocolatEnabled.setBooleanValue(cfg.leFischeAuChocolatEnabled);
         elytraBoatEnabled.setBooleanValue(cfg.elytraBoatEnabled);
         disableBlockBreakingPenalty.setBooleanValue(cfg.disableBlockBreakingPenalty);
+        customItemScrolling.setBooleanValue(cfg.customItemScrolling);
         fishDetectionDistance.setDoubleValue(cfg.fishDetectionDistance);
     }
     public void refreshFishWidgets() {
@@ -225,6 +227,7 @@ public class CommonBoatMalilibConfig implements IConfigHandler {
         cfg.leFischeAuChocolatEnabled = leFischeAuChocolatEnabled.getBooleanValue();
         cfg.elytraBoatEnabled = elytraBoatEnabled.getBooleanValue();
         cfg.disableBlockBreakingPenalty = disableBlockBreakingPenalty.getBooleanValue();
+        cfg.customItemScrolling = customItemScrolling.getBooleanValue();
         cfg.fishDetectionDistance = fishDetectionDistance.getDoubleValue();
         cfg.capturedFishSheetUrls = new ArrayList<>(capturedFishSheetUrls.getStrings());
         for (Map.Entry<String, ConfigColor> entry : dynamicFishColorWidgets.entrySet()) {

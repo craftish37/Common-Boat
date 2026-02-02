@@ -1,11 +1,13 @@
 package net.craftish37.commonboat;
 
 import net.craftish37.commonboat.mixin.TropicalFishEntityAccessor;
+import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.TropicalFishEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
@@ -443,6 +445,62 @@ public class EasterEggFishHighlighter {
         if (container != null) {
             container.stream().forEach(inner -> collectFishVariants(inner, variants, depth + 1));
         }
+    }
+    private static final Map<Integer, Integer> CUSTOM_COLOR_ORDER = new HashMap<>() {{
+        put(-1, 0);  // Uncolored
+        put(0, 1);   // White
+        put(8, 2);   // Light Gray
+        put(7, 3);   // Gray
+        put(15, 4);  // Black
+        put(12, 5);  // Brown
+        put(14, 6);  // Red
+        put(1, 7);   // Orange
+        put(4, 8);   // Yellow
+        put(5, 9);   // Lime
+        put(13, 10); // Green
+        put(9, 11);  // Cyan
+        put(3, 12);  // Light Blue
+        put(11, 13); // Blue
+        put(10, 14); // Purple
+        put(2, 15);  // Magenta
+        put(6, 16);  // Pink
+    }};
+    private static final Map<Integer, Integer> CUSTOM_SHAPE_ORDER = new HashMap<>() {{
+        put(0, 0);  // Flopper
+        put(1, 1);  // Stripey
+        put(2, 2);  // Glitter
+        put(3, 3);  // Blockfish
+        put(4, 4);  // Betty
+        put(5, 5);  // Clayfish
+        put(6, 6);  // Kob
+        put(6 + 1, 7);  // Sunstreak
+        put(6 + 2, 8);  // Snooper
+        put(6 + 3, 9);  // Dasher
+        put(6 + 4, 10); // Brinely
+        put(6 + 5, 11); // Spotty
+    }};
+    public static int getCustomSortId(ItemStack stack) {
+        if (stack.isEmpty()) return Integer.MAX_VALUE;
+        if (stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ShulkerBoxBlock shulkerBlock) {
+            DyeColor color = shulkerBlock.getColor();
+            int colorId = (color == null) ? -1 : color.ordinal();
+            return CUSTOM_COLOR_ORDER.getOrDefault(colorId, 99);
+        }
+        if (stack.getItem() == Items.TROPICAL_FISH_BUCKET) {
+            Integer variant = getVariantIdFromBucket(stack);
+            if (variant != null) {
+                int size = variant & 0xFF;
+                int shapeRaw = (variant >> 8) & 0xFF;
+                int baseColor = (variant >> 16) & 0xFF;
+                int patternColor = (variant >> 24) & 0xFF;
+                int shapeKey = (size == 1) ? shapeRaw : (6 + shapeRaw);
+                int sortShape = CUSTOM_SHAPE_ORDER.getOrDefault(shapeKey, 99);
+                int sortBase = CUSTOM_COLOR_ORDER.getOrDefault(baseColor, 99);
+                int sortPattern = CUSTOM_COLOR_ORDER.getOrDefault(patternColor, 99);
+                return (sortShape << 20) | (sortBase << 10) | sortPattern;
+            }
+        }
+        return Integer.MAX_VALUE;
     }
     private static void drawBoxOutline(MatrixStack matrices, VertexConsumer consumer, Vec3d cameraPos, Box box, float r, float g, float b) {
         Matrix4f matrix = matrices.peek().getPositionMatrix();
