@@ -411,34 +411,38 @@ public class EasterEggFishHighlighter {
         }
     }
     public static Integer getRecursiveFishColor(ItemStack stack) {
-        return findFishColor(stack, 0);
-    }
-    private static Integer findFishColor(ItemStack stack, int depth) {
-        if (stack.isEmpty() || depth > 3) return null;
         if (stack.getItem() == Items.TROPICAL_FISH_BUCKET) {
-            Integer variant = getVariantIdFromBucket(stack);
-            if (variant != null) {
-                return getFishVariantColor(variant);
-            }
+            Integer v = getVariantIdFromBucket(stack);
+            if (v != null) return getFishVariantColor(v);
             return null;
+        }
+        Set<Integer> foundVariants = new HashSet<>();
+        collectFishVariants(stack, foundVariants, 0);
+        if (foundVariants.isEmpty()) return null;
+        for (SheetData sheet : LOADED_SHEETS) {
+            for (Integer variant : foundVariants) {
+                if ((sheet.isWildcard && !DEFAULT_IGNORED_FISH_IDS.contains(variant)) || sheet.ids.contains(variant)) {
+                    return sheet.color;
+                }
+            }
+        }
+        return null;
+    }
+    private static void collectFishVariants(ItemStack stack, Set<Integer> variants, int depth) {
+        if (stack.isEmpty() || depth > 3) return;
+        if (stack.getItem() == Items.TROPICAL_FISH_BUCKET) {
+            Integer v = getVariantIdFromBucket(stack);
+            if (v != null) variants.add(v);
+            return;
         }
         var bundle = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
         if (bundle != null) {
-            return bundle.stream()
-                    .map(inner -> findFishColor(inner, depth + 1))
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElse(null);
+            bundle.stream().forEach(inner -> collectFishVariants(inner, variants, depth + 1));
         }
         var container = stack.get(DataComponentTypes.CONTAINER);
         if (container != null) {
-            return container.stream()
-                    .map(inner -> findFishColor(inner, depth + 1))
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElse(null);
+            container.stream().forEach(inner -> collectFishVariants(inner, variants, depth + 1));
         }
-        return null;
     }
     private static void drawBoxOutline(MatrixStack matrices, VertexConsumer consumer, Vec3d cameraPos, Box box, float r, float g, float b) {
         Matrix4f matrix = matrices.peek().getPositionMatrix();
