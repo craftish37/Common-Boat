@@ -33,7 +33,10 @@ public class ItemScrollerInventoryUtilsMixin {
         boolean s1IsFish = (stack1.getItem() == Items.TROPICAL_FISH_BUCKET);
         boolean s2IsFish = (stack2.getItem() == Items.TROPICAL_FISH_BUCKET);
 
-        if ((s1IsShulker && s2IsShulker) || (s1IsFish && s2IsFish)) {
+        boolean s1IsHead = (stack1.getItem() == Items.PLAYER_HEAD);
+        boolean s2IsHead = (stack2.getItem() == Items.PLAYER_HEAD);
+
+        if ((s1IsShulker && s2IsShulker) || (s1IsFish && s2IsFish) || (s1IsHead && s2IsHead)) {
             int id1 = EasterEggFishHighlighter.getCustomSortId(stack1);
             int id2 = EasterEggFishHighlighter.getCustomSortId(stack2);
 

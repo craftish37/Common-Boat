@@ -493,19 +493,84 @@ public class EasterEggFishHighlighter {
                 int shapeRaw = (variant >> 8) & 0xFF;
                 int baseColor = (variant >> 16) & 0xFF;
                 int patternColor = (variant >> 24) & 0xFF;
-                int shapeKey = (size == 1) ? shapeRaw : (6 + shapeRaw);
-                int sortShape = CUSTOM_SHAPE_ORDER.getOrDefault(shapeKey, 99);
-                int sortBase = CUSTOM_COLOR_ORDER.getOrDefault(baseColor, 99);
-                int sortPattern = CUSTOM_COLOR_ORDER.getOrDefault(patternColor, 99);
-                CommonBoatConfig.FishSortingMode mode = ConfigAccess.get().fishSortingMode;
-                if (mode == CommonBoatConfig.FishSortingMode.COLOR_FIRST) {
-                    return (sortBase << 20) | (sortShape << 10) | sortPattern;
-                } else {
-                    return (sortShape << 20) | (sortBase << 10) | sortPattern;
+                return calculateSortId(size, shapeRaw, baseColor, patternColor);
+            }
+        }
+        if (stack.getItem() == Items.PLAYER_HEAD) {
+            String name = stack.getName().getString();
+            Integer headSortId = getSortIdFromHeadName(name);
+            if (headSortId != null) {
+                return headSortId;
+            }
+        }
+
+        return Integer.MAX_VALUE;
+    }
+    private static int calculateSortId(int size, int shapeRaw, int baseColor, int patternColor) {
+        int shapeKey = (size == 1) ? shapeRaw : (6 + shapeRaw);
+        int sortShape = CUSTOM_SHAPE_ORDER.getOrDefault(shapeKey, 99);
+        int sortBase = CUSTOM_COLOR_ORDER.getOrDefault(baseColor, 99);
+        int sortPattern = CUSTOM_COLOR_ORDER.getOrDefault(patternColor, 99);
+        CommonBoatConfig.FishSortingMode mode = ConfigAccess.get().fishSortingMode;
+        if (mode == CommonBoatConfig.FishSortingMode.COLOR_FIRST) {
+            return (sortBase << 20) | (sortShape << 10) | sortPattern;
+        } else {
+            return (sortShape << 20) | (sortBase << 10) | sortPattern;
+        }
+    }
+    private static Integer getColorIdByName(String name) {
+        for (Map.Entry<String, Integer> entry : COLOR_MAP.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase(name)) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+    private static Integer getSortIdFromHeadName(String name) {
+        String lowerName = name.toLowerCase();
+        int shapeId = -1;
+        int size = -1;
+        String shapeNameFound = null;
+        for (Map.Entry<String, Integer> entry : SMALL_SHAPE_MAP.entrySet()) {
+            if (lowerName.contains(entry.getKey().toLowerCase())) {
+                shapeId = entry.getValue();
+                size = 0;
+                shapeNameFound = entry.getKey();
+                break;
+            }
+        }
+        if (shapeId == -1) {
+            for (Map.Entry<String, Integer> entry : LARGE_SHAPE_MAP.entrySet()) {
+                if (lowerName.contains(entry.getKey().toLowerCase())) {
+                    shapeId = entry.getValue();
+                    size = 1;
+                    shapeNameFound = entry.getKey();
+                    break;
                 }
             }
         }
-        return Integer.MAX_VALUE;
+        if (shapeId != -1) {
+            int shapeIndex = lowerName.indexOf(shapeNameFound.toLowerCase());
+            if (shapeIndex > 0) {
+                String colorPart = name.substring(0, shapeIndex).trim();
+                String baseColorStr;
+                String patternColorStr;
+                if (colorPart.contains("-")) {
+                    int lastDash = colorPart.lastIndexOf('-');
+                    baseColorStr = colorPart.substring(0, lastDash).trim();
+                    patternColorStr = colorPart.substring(lastDash + 1).trim();
+                } else {
+                    baseColorStr = colorPart;
+                    patternColorStr = colorPart;
+                }
+                Integer baseColor = getColorIdByName(baseColorStr);
+                Integer patternColor = getColorIdByName(patternColorStr);
+                if (baseColor != null && patternColor != null) {
+                    return calculateSortId(size, shapeId, baseColor, patternColor);
+                }
+            }
+        }
+        return null;
     }
     private static void drawBoxOutline(MatrixStack matrices, VertexConsumer consumer, Vec3d cameraPos, Box box, float r, float g, float b) {
         Matrix4f matrix = matrices.peek().getPositionMatrix();
