@@ -447,23 +447,23 @@ public class EasterEggFishHighlighter {
         }
     }
     private static final Map<Integer, Integer> CUSTOM_COLOR_ORDER = new HashMap<>() {{
-        put(-1, 0);  // Uncolored
-        put(0, 1);   // White
-        put(8, 2);   // Light Gray
-        put(7, 3);   // Gray
-        put(15, 4);  // Black
-        put(12, 5);  // Brown
-        put(14, 6);  // Red
-        put(1, 7);   // Orange
-        put(4, 8);   // Yellow
-        put(5, 9);   // Lime
-        put(13, 10); // Green
-        put(9, 11);  // Cyan
-        put(3, 12);  // Light Blue
-        put(11, 13); // Blue
-        put(10, 14); // Purple
-        put(2, 15);  // Magenta
-        put(6, 16);  // Pink
+        put(-1, 1);  // Uncolored
+        put(0, 2);   // White
+        put(8, 3);   // Light Gray
+        put(7, 4);   // Gray
+        put(15, 5);  // Black
+        put(12, 6);  // Brown
+        put(14, 7);  // Red
+        put(1, 8);   // Orange
+        put(4, 9);   // Yellow
+        put(5, 10);  // Lime
+        put(13, 11); // Green
+        put(9, 12);  // Cyan
+        put(3, 13);  // Light Blue
+        put(11, 14); // Blue
+        put(10, 15); // Purple
+        put(2, 16);  // Magenta
+        put(6, 17);  // Pink
     }};
     private static final Map<Integer, Integer> CUSTOM_SHAPE_ORDER = new HashMap<>() {{
         put(0, 0);  // Flopper
@@ -481,23 +481,24 @@ public class EasterEggFishHighlighter {
     }};
     public static int getCustomSortId(ItemStack stack) {
         if (stack.isEmpty()) return Integer.MAX_VALUE;
-        Set<Integer> variants = new HashSet<>();
-        collectFishVariants(stack, variants, 0);
-        if (!variants.isEmpty()) {
-            int variant = variants.iterator().next();
-            return calculateSortId(variant & 0xFF, (variant >> 8) & 0xFF, (variant >> 16) & 0xFF, (variant >> 24) & 0xFF);
-        }
         DyeColor itemColor = getDyeColorFromItem(stack);
+        boolean isContainer = stack.isIn(net.minecraft.registry.tag.ItemTags.SHULKER_BOXES) || stack.isIn(net.minecraft.registry.tag.ItemTags.BUNDLES);
         int colorId = (itemColor == null) ? -1 : itemColor.ordinal();
         int colorPriority = CUSTOM_COLOR_ORDER.getOrDefault(colorId, 99);
-        if (stack.isIn(net.minecraft.registry.tag.ItemTags.SHULKER_BOXES) ||
-                stack.isIn(net.minecraft.registry.tag.ItemTags.BUNDLES)) {
-            return (colorPriority << 20);
-        }
-        if (stack.getItem() == Items.TROPICAL_FISH_BUCKET) {
+        Set<Integer> variants = new HashSet<>();
+        collectFishVariants(stack, variants, 0);
+        int fishId = 0;
+        if (!variants.isEmpty()) {
+            int variant = variants.iterator().next();
+            fishId = calculateSortId(variant & 0xFF, (variant >> 8) & 0xFF, (variant >> 16) & 0xFF, (variant >> 24) & 0xFF);
+        } else if (stack.getItem() == Items.TROPICAL_FISH_BUCKET) {
             Integer v = getVariantIdFromBucket(stack);
-            if (v != null) return calculateSortId(v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF, (v >> 24) & 0xFF);
+            if (v != null) fishId = calculateSortId(v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF, (v >> 24) & 0xFF);
         }
+        if (isContainer) {
+            return (colorPriority << 24) | (fishId & 0xFFFFFF);
+        }
+        if (fishId != 0) return fishId;
         if (stack.getItem() == Items.PLAYER_HEAD) {
             Integer headId = getSortIdFromHeadName(stack.getName().getString());
             if (headId != null) return headId;
@@ -505,6 +506,9 @@ public class EasterEggFishHighlighter {
         return Integer.MAX_VALUE;
     }
     private static DyeColor getDyeColorFromItem(ItemStack stack) {
+        if (stack.isOf(Items.SHULKER_BOX) || stack.isOf(Items.BUNDLE)) {
+            return null;
+        }
         if (stack.getItem() instanceof BlockItem bi && bi.getBlock() instanceof ShulkerBoxBlock sb) {
             return sb.getColor();
         }
