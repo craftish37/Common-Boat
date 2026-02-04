@@ -1,13 +1,10 @@
 package net.craftish37.commonboat.mixin;
 
-import net.craftish37.commonboat.CommonBoatConfig;
-import net.craftish37.commonboat.ConfigAccess;
 import net.craftish37.commonboat.EasterEggFishHighlighter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.BlockItem;
-import net.minecraft.block.ShulkerBoxBlock;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,23 +17,9 @@ public class ItemScrollerInventoryUtilsMixin {
         ItemStack stack1 = (ItemStack) stack1Obj;
         ItemStack stack2 = (ItemStack) stack2Obj;
 
-        CommonBoatConfig cfg = ConfigAccess.get();
-        if (cfg == null || !cfg.enabled || !cfg.customItemScrolling) {
-            return;
-        }
+        if (stack1.isEmpty() || stack2.isEmpty()) return;
 
-        if (stack1.isEmpty() && stack2.isEmpty()) return;
-
-        boolean s1IsShulker = (stack1.getItem() instanceof BlockItem bi && bi.getBlock() instanceof ShulkerBoxBlock);
-        boolean s2IsShulker = (stack2.getItem() instanceof BlockItem bi && bi.getBlock() instanceof ShulkerBoxBlock);
-
-        boolean s1IsFish = (stack1.getItem() == Items.TROPICAL_FISH_BUCKET);
-        boolean s2IsFish = (stack2.getItem() == Items.TROPICAL_FISH_BUCKET);
-
-        boolean s1IsHead = (stack1.getItem() == Items.PLAYER_HEAD);
-        boolean s2IsHead = (stack2.getItem() == Items.PLAYER_HEAD);
-
-        if ((s1IsShulker && s2IsShulker) || (s1IsFish && s2IsFish) || (s1IsHead && s2IsHead)) {
+        if (isCustomSortable(stack1) && isCustomSortable(stack2)) {
             int id1 = EasterEggFishHighlighter.getCustomSortId(stack1);
             int id2 = EasterEggFishHighlighter.getCustomSortId(stack2);
 
@@ -44,5 +27,12 @@ public class ItemScrollerInventoryUtilsMixin {
                 cir.setReturnValue(Integer.compare(id1, id2));
             }
         }
+    }
+    @Unique
+    private static boolean isCustomSortable(ItemStack stack) {
+        return stack.isIn(net.minecraft.registry.tag.ItemTags.SHULKER_BOXES) ||
+                stack.isIn(net.minecraft.registry.tag.ItemTags.BUNDLES) ||
+                stack.getItem() == Items.TROPICAL_FISH_BUCKET ||
+                stack.getItem() == Items.PLAYER_HEAD;
     }
 }

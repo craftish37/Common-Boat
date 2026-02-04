@@ -481,30 +481,40 @@ public class EasterEggFishHighlighter {
     }};
     public static int getCustomSortId(ItemStack stack) {
         if (stack.isEmpty()) return Integer.MAX_VALUE;
-        if (stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ShulkerBoxBlock shulkerBlock) {
-            DyeColor color = shulkerBlock.getColor();
-            int colorId = (color == null) ? -1 : color.ordinal();
-            return CUSTOM_COLOR_ORDER.getOrDefault(colorId, 99);
+        Set<Integer> variants = new HashSet<>();
+        collectFishVariants(stack, variants, 0);
+        if (!variants.isEmpty()) {
+            int variant = variants.iterator().next();
+            return calculateSortId(variant & 0xFF, (variant >> 8) & 0xFF, (variant >> 16) & 0xFF, (variant >> 24) & 0xFF);
+        }
+        DyeColor itemColor = getDyeColorFromItem(stack);
+        int colorId = (itemColor == null) ? -1 : itemColor.ordinal();
+        int colorPriority = CUSTOM_COLOR_ORDER.getOrDefault(colorId, 99);
+        if (stack.isIn(net.minecraft.registry.tag.ItemTags.SHULKER_BOXES) ||
+                stack.isIn(net.minecraft.registry.tag.ItemTags.BUNDLES)) {
+            return (colorPriority << 20);
         }
         if (stack.getItem() == Items.TROPICAL_FISH_BUCKET) {
-            Integer variant = getVariantIdFromBucket(stack);
-            if (variant != null) {
-                int size = variant & 0xFF;
-                int shapeRaw = (variant >> 8) & 0xFF;
-                int baseColor = (variant >> 16) & 0xFF;
-                int patternColor = (variant >> 24) & 0xFF;
-                return calculateSortId(size, shapeRaw, baseColor, patternColor);
-            }
+            Integer v = getVariantIdFromBucket(stack);
+            if (v != null) return calculateSortId(v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF, (v >> 24) & 0xFF);
         }
         if (stack.getItem() == Items.PLAYER_HEAD) {
-            String name = stack.getName().getString();
-            Integer headSortId = getSortIdFromHeadName(name);
-            if (headSortId != null) {
-                return headSortId;
+            Integer headId = getSortIdFromHeadName(stack.getName().getString());
+            if (headId != null) return headId;
+        }
+        return Integer.MAX_VALUE;
+    }
+    private static DyeColor getDyeColorFromItem(ItemStack stack) {
+        if (stack.getItem() instanceof BlockItem bi && bi.getBlock() instanceof ShulkerBoxBlock sb) {
+            return sb.getColor();
+        }
+        String itemId = net.minecraft.registry.Registries.ITEM.getId(stack.getItem()).getPath();
+        for (DyeColor color : DyeColor.values()) {
+            if (itemId.startsWith(color.asString() + "_")) {
+                return color;
             }
         }
-
-        return Integer.MAX_VALUE;
+        return null;
     }
     private static int calculateSortId(int size, int shapeRaw, int baseColor, int patternColor) {
         int shapeKey = (size == 1) ? shapeRaw : (6 + shapeRaw);
